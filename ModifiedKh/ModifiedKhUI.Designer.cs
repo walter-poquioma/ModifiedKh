@@ -82,6 +82,7 @@ namespace ModifiedKh
             this.ZonesListBox.FormattingEnabled = true;
             this.ZonesListBox.Location = new System.Drawing.Point(200, 342);
             this.ZonesListBox.Name = "ZonesListBox";
+            this.ZonesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.ZonesListBox.Size = new System.Drawing.Size(156, 134);
             this.ZonesListBox.TabIndex = 4;
             this.ZonesListBox.DataSourceChanged += new System.EventHandler(this.ZonesListBox_DataSourceChanged);
@@ -92,6 +93,7 @@ namespace ModifiedKh
             this.WellTestTextBox.Name = "WellTestTextBox";
             this.WellTestTextBox.Size = new System.Drawing.Size(108, 20);
             this.WellTestTextBox.TabIndex = 5;
+            this.WellTestTextBox.TextChanged += new System.EventHandler(this.WellTestTextBox_TextChanged);
             // 
             // textBox2
             // 

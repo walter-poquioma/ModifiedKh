@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace ModifiedKh
         {
             this.ListOfNamesOfIntersectedZones = new List<string>();
             this.root = ColorTableRoot.Get(PetrelProject.PrimaryProject);
+            this.KhWellTesting = -1;
         }
          
         public WellKh(Borehole SelectedWell, Property SelectedPermeability, double SelectedTop, double SelectedBottom ) 
@@ -32,6 +34,7 @@ namespace ModifiedKh
             this.ZoneIndex = null;
             this.root = null;
             this.ListOfNamesOfIntersectedZones = null;
+            this.KhWellTesting = -1;
         }
 
         public WellKh(Borehole SelectedWell, Property SelectedPermeability, DictionaryProperty SelectedZoneIndex)
@@ -41,6 +44,7 @@ namespace ModifiedKh
             this.ZoneIndex = SelectedZoneIndex;
             this.root = ColorTableRoot.Get(PetrelProject.PrimaryProject);
             this.ListOfNamesOfIntersectedZones = new List<string>();
+            this.KhWellTesting = -1;
         }
 
 
@@ -52,6 +56,10 @@ namespace ModifiedKh
         private double bottom;
         private double khWellTesting;
         private List<string> listOfNamesOfIntersectedZones = new List<string>();
+        private List<int> listOfSelectedZoneIndeces = new List<int>();
+        private List<Index3> ListOfIntersectedGridCells = new List<Index3>();
+        private List<int> ListOfZoneIndexCorrespondingToIntersectedCells = new List<int>();
+        public static double FactorToConvert_mdft_To_m3 = (9.869233E-16) * (0.3048);
         
 
         [Description("permeability", "The permeability given by the user")]
@@ -114,13 +122,14 @@ namespace ModifiedKh
 
         public bool GetListOfNamesOfIntersectedZones(bool PerforatedZonesOnly)
         {
+            this.ListOfNamesOfIntersectedZones.Clear();
             if (this.zoneIndex != null && this.permeability != null && this.well != null)
             {
                 //Getting the indeces of the cells that are intersected by the selected borehole.
-                List<Index3> ListOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(this.permeability.Grid, this.well, PerforatedZonesOnly);
+                ListOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(this.permeability.Grid, this.well, PerforatedZonesOnly);
 
                 //Getting the Zone Indeces corresponding to the cells that are intersected by the borehole.
-                List<int> ListOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(this.permeability,
+                ListOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(this.permeability,
                                                                                      ListOfIntersectedGridCells, this.zoneIndex);
                
                 DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(this.ZoneIndex);
@@ -132,7 +141,7 @@ namespace ModifiedKh
                     {
                         ColorTableEntry = TableAccess.GetEntryAt(i);
                         this.ListOfNamesOfIntersectedZones.Add(ColorTableEntry.Name);
-                        PetrelLogger.InfoOutputWindow(ColorTableEntry.Name);
+                        //PetrelLogger.InfoOutputWindow(ColorTableEntry.Name);
                     }
                 }
                 return true;
@@ -142,6 +151,56 @@ namespace ModifiedKh
                 return false;
             }
     
+        }
+
+        public bool VerticalContinuity(List<string> ListOfSelectedZoneNames)
+        {   DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(this.ZoneIndex);
+            DictionaryColorTableEntry ColorTableEntry;
+            this.listOfSelectedZoneIndeces.Clear();
+            int count = 0;
+            //Getting the zone indices corresponding to the selected zone names
+            foreach(string NameOfZone in ListOfSelectedZoneNames)
+            {
+                count = count + 1;
+                //Looping through all the names of the zones
+                for (int i = 0; i < TableAccess.Size; i++) 
+                {   ColorTableEntry = TableAccess.GetEntryAt(i);
+
+                    //Checking if one the names matches the selected zone name
+                    if(NameOfZone.Equals(ColorTableEntry.Name)) 
+                    {
+                        this.listOfSelectedZoneIndeces.Add(i);
+                        break;
+                    }
+                    
+                }
+                if (this.listOfSelectedZoneIndeces.Count != count)
+                {
+                    MessageBox.Show(NameOfZone +
+                        " zone does not correspond to any item in the Zone Index"); return false;
+                }
+               
+
+            }
+
+            //Sorting the indices in ascending order
+            this.listOfSelectedZoneIndeces.Sort();
+
+            //Checking if the indices follow a consecutive order (e.g 1 2 3 4 5 and not 1 3 4 5). If they are not consecutive then there is a gap
+            // between the selected zones and this is not accepted by the program. It returns a false.
+            for (int i = 0; i < this.listOfSelectedZoneIndeces.Count -1 ; i++)
+            {
+                if (this.listOfSelectedZoneIndeces[i] + 1 != this.listOfSelectedZoneIndeces[i+1] )
+                {
+                    this.listOfSelectedZoneIndeces = null;
+                    return false;
+                    
+                }
+                
+            }
+
+            //If everything has proceeded as expected then return true
+            return true;
         }
 
     

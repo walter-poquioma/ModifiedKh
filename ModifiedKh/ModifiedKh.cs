@@ -99,23 +99,29 @@ namespace ModifiedKh
             {
             }
 
-            private Property permeabilityFromModel;
-            private List<Borehole> wellsSelected;
+           // private Property permeabilityFromModel;
+           // private List<Borehole> wellsSelected;
+            private List<WellKh> listOfWellKh;
 
-            [Description("PermeabilityFromModel", "The permeability from the 3D model")]
-            public Property PermeabilityFromModel
+           // [Description("PermeabilityFromModel", "The permeability from the 3D model")]
+            //public Property PermeabilityFromModel
+            //{
+            //    internal get { return this.permeabilityFromModel; }
+            //    set { this.permeabilityFromModel = value; }
+            //}
+
+            //[Description("wellsSelected", "A list of the selected wells")]
+            //public List<Borehole> WellsSelected
+            //{
+            //    internal get { return this.wellsSelected; }
+            //    set { this.wellsSelected = value; }
+            //}
+
+            [Description("listOfWellKh", "A list of the WellKh Objects")]
+            public List<WellKh> ListOfWellKh
             {
-                internal get { return this.permeabilityFromModel; }
-                set { this.permeabilityFromModel = value; }
-            }
-
-
-
-            [Description("wellsSelected;", "A list of the selected wells")]
-            public List<Borehole> WellsSelected
-            {
-                internal get { return this.wellsSelected; }
-                set { this.wellsSelected = value; }
+                internal get { return this.listOfWellKh; }
+                set { this.listOfWellKh = value; }
             }
 
 

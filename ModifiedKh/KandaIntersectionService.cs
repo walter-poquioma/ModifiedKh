@@ -128,8 +128,9 @@ namespace ModifiedKh
         }
          //Method that returns a list of doubles containing the property values corresponding to a list of cell indices. 
          //PLEASE NOTE: The PROPERTY is used to check if the cell should be used for processing or not. For example: If I am interested in
-         // cells that have a defined value for porosity then my CheckProperty should be Porosity. If a value for porosity is not defined then 
-         // the program returns a  Nan corresponding to that cell index.
+         // cells that have a defined value for porosity then the program checks if porosity is defined in that cell. If a value for porosity 
+         // is not defined then the program returns a  Nan corresponding to that cell index.
+          
         public static List<double> GetThePropertyValueCorrespondingToTheCells(Property Property, List<Index3> CellIndeces)
         {
             NoBoundaryCheckPropertyIndexer MyPropertyIndexer = Property.SpecializedAccess.OpenNoBoundaryCheckPropertyIndexer();

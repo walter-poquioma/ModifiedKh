@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
@@ -31,15 +32,8 @@ namespace ModifiedKh
         /// </summary>
         private WorkflowContext context;
 
-        Property DroppedPermeability;
-        Borehole DroppedBorehole;
-        DictionaryProperty DroppedZoneIndex;
-        //List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ZonesIntersectedByWell;
-        List<Index3> ListOfIntersectedGridCells;
-        List<int> ListOfZoneIndexCorrespondingToIntersectedCells;
-        ColorTableRoot Root;
-        DictionaryColorTableAccess TableAccess;
         List<string> ListOfNamesOfIntersectedZones = new List<string>();
+        List<string> ListOfSelectedWellZones = new List<string>();
         WellKh WellKhObj = new WellKh();
 
        
@@ -62,15 +56,16 @@ namespace ModifiedKh
 
         private void UpdateArgs()
         {
-            this.args.PermeabilityFromModel = DroppedPermeability;
-            this.args.WellsSelected.Add(DroppedBorehole);
+            this.args.ListOfWellKh.Add(WellKhObj);
+           // this.args.PermeabilityFromModel = DroppedPermeability;
+           // this.args.WellsSelected.Add(DroppedBorehole);
         }
 
      
 
         private void PermeabilityDropTarget_DragDrop(object sender, DragEventArgs e)
         {
-            DroppedPermeability = e.Data.GetData(typeof(Property)) as Property;
+            
             WellKhObj.Permeability = e.Data.GetData(typeof(Property)) as Property;
             if (WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.Perm))
             {
@@ -88,7 +83,6 @@ namespace ModifiedKh
 
         private void WellDropTarget_DragDrop(object sender, DragEventArgs e)
         {
-            DroppedBorehole = e.Data.GetData(typeof(Borehole)) as Borehole;
             WellKhObj.Well = e.Data.GetData(typeof(Borehole)) as Borehole;
            
             if (WellKhObj.GetListOfNamesOfIntersectedZones(true))
@@ -104,49 +98,13 @@ namespace ModifiedKh
                 e.Effect = DragDropEffects.None;
                 MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
             }
-            //if (DroppedBorehole != null && DroppedPermeability != null && DroppedZoneIndex != null)
-            //{
-
-            //    e.Effect = DragDropEffects.All;
-            //    WellPresentationBox.Text = DroppedBorehole.Name;
-            //   // MessageBox.Show("This is" + WellKnownProcessGroups.PropertyModeling.GeometricalModeling);
-            //    //ZonesListBox.Items.AddRange(ZonesIntersectedByWell);
-
-            //    //Getting the indeces of the cells that are intersected by the selected borehole.
-            //    ListOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(DroppedZoneIndex.Grid, DroppedBorehole, true);
-
-            //    //Getting the Zone Indeces corresponding to the cells that are intersected by the borehole.
-            //    ListOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(DroppedPermeability,
-            //                                                                        ListOfIntersectedGridCells, DroppedZoneIndex);
-
-            //    DictionaryColorTableEntry ColorTableEntry;
-
-            //    foreach (int i in ListOfZoneIndexCorrespondingToIntersectedCells)
-            //    {
-            //        if (i > -1)
-            //        {
-            //            ColorTableEntry = TableAccess.GetEntryAt(i);
-            //            ListOfNamesOfIntersectedZones.Add(ColorTableEntry.Name);
-            //            PetrelLogger.InfoOutputWindow(ColorTableEntry.Name);
-            //        }
-            //    }
-
-            //    ZonesListBox.DataSource = null;
-            //    ZonesListBox.DataSource = ListOfNamesOfIntersectedZones.Distinct().ToList();
-
-            //}
-            //else
-            //{
-            //    e.Effect = DragDropEffects.None;
-            //    MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
-
-            //}
+          
         }
 
         private void ZoneIndexDropTarget_DragDrop(object sender, DragEventArgs e)
         {
-            DroppedZoneIndex = e.Data.GetData(typeof(DictionaryProperty)) as DictionaryProperty;
             WellKhObj.ZoneIndex = e.Data.GetData(typeof(DictionaryProperty)) as DictionaryProperty;
+
             if (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesSubHierarchy) ||
                  (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesMain)) ||
                 (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesSub)) ||
@@ -155,12 +113,6 @@ namespace ModifiedKh
 
                 e.Effect = DragDropEffects.All;
                 ZoneIndexPresentationBox.Text = WellKhObj.ZoneIndex.Name;
-
-               //Getting the names corresponding to the zone indeces of the cells that are intersected by the borehole.
-              //  Root = ColorTableRoot.Get(PetrelProject.PrimaryProject);
-               //TableAccess = Root.GetDictionaryColorTableAccess(DroppedZoneIndex);
-              
-
              
             }
             else
@@ -172,10 +124,21 @@ namespace ModifiedKh
 
         private void Add_Click(object sender, EventArgs e)
         {
-            if (ZonesListBox.SelectedItems != null)
-            {
+            if (ZonesListBox.SelectedItems != null && WellKhObj.KhWellTesting > 0)
+            {   
+                 //foreach (DataRowView objDataRowView in ZonesListBox.SelectedItems)
+                foreach (string ZoneName in ZonesListBox.SelectedItems)
+                {     
+                       ListOfSelectedWellZones.Add(ZoneName);
+                       PetrelLogger.InfoOutputWindow(ZoneName);
+                       //ListOfSelectedWellZones.Add(objDataRowView[0].ToString());
+                       //PetrelLogger.InfoOutputWindow(objDataRowView[0].ToString());
+                   }
 
-
+                 if (!WellKhObj.VerticalContinuity(ListOfSelectedWellZones)) 
+                 {
+                     MessageBox.Show("The selected Zone intervals are not vertically continous");
+                  }
 
             }
             else
@@ -200,37 +163,6 @@ namespace ModifiedKh
                     MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
                 }
 
-                //if (DroppedBorehole != null && DroppedPermeability != null && DroppedZoneIndex != null)
-                //{
-
-                //    //Getting the indeces of the cells that are intersected by the selected borehole.
-                //    ListOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(DroppedZoneIndex.Grid, DroppedBorehole, false);
-
-                //    //Getting the Zone Indeces corresponding to the cells that are intersected by the borehole.
-                //    ListOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(DroppedPermeability,
-                //                                                                        ListOfIntersectedGridCells, DroppedZoneIndex);
-
-                //    DictionaryColorTableEntry ColorTableEntry;
-
-                //    foreach (int i in ListOfZoneIndexCorrespondingToIntersectedCells)
-                //    {
-                //        if (i > -1)
-                //        {
-                //            ColorTableEntry = TableAccess.GetEntryAt(i);
-                //            ListOfNamesOfIntersectedZones.Add(ColorTableEntry.Name);
-                //            PetrelLogger.InfoOutputWindow(ColorTableEntry.Name);
-                //        }
-                //    }
-
-                //    ZonesListBox.DataSource = null;
-                //    ZonesListBox.DataSource = ListOfNamesOfIntersectedZones.Distinct().ToList();
-
-                //}
-                //else
-                //{
-                //    MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
-
-                //}
 
             }
 
@@ -246,38 +178,7 @@ namespace ModifiedKh
                 {
                     MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
                 }
-
-                //if (DroppedBorehole != null && DroppedPermeability != null && DroppedZoneIndex != null)
-                //{
-
-                //    //Getting the indeces of the cells that are intersected by the selected borehole.
-                //    ListOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(DroppedZoneIndex.Grid, DroppedBorehole, true);
-
-                //    //Getting the Zone Indeces corresponding to the cells that are intersected by the borehole.
-                //    ListOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(DroppedPermeability,
-                //                                                                        ListOfIntersectedGridCells, DroppedZoneIndex);
-
-                //    DictionaryColorTableEntry ColorTableEntry;
-
-                //    foreach (int i in ListOfZoneIndexCorrespondingToIntersectedCells)
-                //    {
-                //        if (i > -1)
-                //        {
-                //            ColorTableEntry = TableAccess.GetEntryAt(i);
-                //            ListOfNamesOfIntersectedZones.Add(ColorTableEntry.Name);
-                //            PetrelLogger.InfoOutputWindow(ColorTableEntry.Name);
-                //        }
-                //    }
-                //    ZonesListBox.DataSource = null;
-                //    ZonesListBox.DataSource = ListOfNamesOfIntersectedZones.Distinct().ToList();
-
-                //}
-                //else
-                //{
-                //    MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
-
-                //}
-
+          
             }
         
         }
@@ -296,6 +197,22 @@ namespace ModifiedKh
 			ctlLIST.Items.Clear();
 		
 			
+        }
+
+        private void WellTestTextBox_TextChanged(object sender, EventArgs e)
+        {
+            
+            try
+            {
+                WellKhObj.KhWellTesting = Convert.ToDouble(WellTestTextBox.Text)*WellKh.FactorToConvert_mdft_To_m3;
+            }
+
+            catch
+            {
+                WellKhObj.KhWellTesting = -1;
+                MessageBox.Show("Please input a valid entry (any number between 1.7E +/- 308 )");
+            }
+           
         }
 
        
