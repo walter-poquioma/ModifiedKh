@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using Slb.Ocean.Core;
 using Slb.Ocean.Petrel;
+using Slb.Ocean.Basics;
+using Slb.Ocean.Geometry;
 using Slb.Ocean.Petrel.UI;
 using Slb.Ocean.Petrel.Workflow;
 using Slb.Ocean.Petrel.Modeling;
@@ -76,7 +78,41 @@ namespace ModifiedKh
 
             public override void ExecuteSimple()
             {
-                // TODO: Implement the workstep logic here.
+
+                #region Creating and Setting the ratio Kh_wt/ SumKh as a Property
+                
+                double Kh_sum;
+                double x_ave;
+                double y_ave;
+                double counter;
+                Point3 cell_center;
+                
+
+                foreach (Dictionary<int, List<CellData>> dict in this.arguments.ListOfCellDataDictionaries)
+                {
+                    Kh_sum = 0.0;
+                    foreach (int ind in dict.Keys)
+                    {
+                        x_ave = 0.0;
+                        y_ave = 0.0;
+                        counter = 0;
+
+                        foreach (CellData cell in dict[ind])
+                        {
+                            counter = counter + 1;
+                            Kh_sum = cell.Perm * cell.Height + Kh_sum;
+                            cell_center = this.arguments.PermeabilityFromModel.Grid.GetCellCenter(cell.CellIndex);
+                            x_ave = x_ave + cell_center.X;
+                            y_ave = y_ave + cell_center.Y;
+                        }
+
+                        x_ave = x_ave / counter;
+                        y_ave = y_ave / counter;
+
+                    }
+                }
+
+                #endregion
             }
         }
 
@@ -102,13 +138,19 @@ namespace ModifiedKh
            // private Property permeabilityFromModel;
            // private List<Borehole> wellsSelected;
             private List<WellKh> listOfWellKh;
-
-           // [Description("PermeabilityFromModel", "The permeability from the 3D model")]
-            //public Property PermeabilityFromModel
-            //{
-            //    internal get { return this.permeabilityFromModel; }
-            //    set { this.permeabilityFromModel = value; }
-            //}
+            public List<Dictionary<Index3, List<double>>> listOfKhDictionaries;
+            private List<double> Kh_ave;
+            private List<double> Kh_wt;
+            private List<Dictionary<int, List<CellData>>> listOfCellDataDictionaries = new List<Dictionary<int, List<CellData>>>();
+            private Property permeabilityFromModel;
+           
+            //private Dictionary<string, List<CellData>> dictionaryOfCellDataOfSelectedWells = new Dictionary<string, List<CellData>>();
+            [Description("PermeabilityFromModel", "The permeability from the 3D model")]
+            public Property PermeabilityFromModel
+            {
+                internal get { return this.permeabilityFromModel; }
+                set { this.permeabilityFromModel = value; }
+            }
 
             //[Description("wellsSelected", "A list of the selected wells")]
             //public List<Borehole> WellsSelected
@@ -124,6 +166,19 @@ namespace ModifiedKh
                 set { this.listOfWellKh = value; }
             }
 
+            [Description("listOfCellDataDictionaries", "A list of the WellKh Objects")]
+            public List<Dictionary<int, List<CellData>>> ListOfCellDataDictionaries
+            { 
+                get { return this.listOfCellDataDictionaries; }
+                set { this.listOfCellDataDictionaries = value; }
+            }
+
+            //[Description("dictionaryOfCellDataOfSelectedWells", "A dictionary with UWI for keys and list of cell data objects with information about the selected cells")]
+            //Dictionary<string, List<CellData>> DictionaryOfCellDataOfSelectedWells
+            //{
+            //    get { return this.dictionaryOfCellDataOfSelectedWells; }
+            //    set { this.dictionaryOfCellDataOfSelectedWells = value; }
+            //}
 
         }
     

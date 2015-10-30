@@ -56,9 +56,13 @@ namespace ModifiedKh
         private double bottom;
         private double khWellTesting;
         private List<string> listOfNamesOfIntersectedZones = new List<string>();
+        private List<Index3> listOfSelectedGridCells = new List<Index3>();
         private List<int> listOfSelectedZoneIndeces = new List<int>();
-        private List<Index3> ListOfIntersectedGridCells = new List<Index3>();
-        private List<int> ListOfZoneIndexCorrespondingToIntersectedCells = new List<int>();
+        private List<Index3> listOfIntersectedGridCells = new List<Index3>();
+        private List<int> listOfZoneIndexCorrespondingToIntersectedCells = new List<int>();
+        //private Dictionary<Index3, double> DictionaryOfCellData = new Dictionary<Index3, double>();
+       // private Dictionary<Index3, double> DictionaryOfSelectedCells = new Dictionary<Index3, double>();
+
         public static double FactorToConvert_mdft_To_m3 = (9.869233E-16) * (0.3048);
         
 
@@ -88,7 +92,7 @@ namespace ModifiedKh
         public ColorTableRoot Root
         {
             get { return this.root; }
-            set { this.root = value; }
+            internal set { this.root = value; }
         }
 
         [Description("top", "Depth (ft) corresponding to the top of the section of KhWellTesting")]
@@ -116,26 +120,29 @@ namespace ModifiedKh
         public List<string> ListOfNamesOfIntersectedZones
         {
             get { return this.listOfNamesOfIntersectedZones; }
-            set { this.listOfNamesOfIntersectedZones = value; }
+           internal set { this.listOfNamesOfIntersectedZones = value; }
         }
 
-
-        public bool GetListOfNamesOfIntersectedZones(bool PerforatedZonesOnly)
+        //Method used to set the ListOfNamesOfIntersectedZones property. This is used to see which zones are intersected. 
+        public bool SetListOfNamesOfIntersectedZones(bool PerforatedZonesOnly)
         {
             this.ListOfNamesOfIntersectedZones.Clear();
             if (this.zoneIndex != null && this.permeability != null && this.well != null)
             {
-                //Getting the indeces of the cells that are intersected by the selected borehole.
-                ListOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(this.permeability.Grid, this.well, PerforatedZonesOnly);
+                //Getting the indeces of the cells that are intersected by the selected borehole.If PerforatedZonesOnly is set to true then it gets only
+                //those cells which are perforated.
+                listOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(this.permeability.Grid, this.well, PerforatedZonesOnly);
 
                 //Getting the Zone Indeces corresponding to the cells that are intersected by the borehole.
-                ListOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(this.permeability,
-                                                                                     ListOfIntersectedGridCells, this.zoneIndex);
+                //listOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(this.permeability,
+                //                                                                     listOfIntersectedGridCells, this.zoneIndex);
+                listOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(
+                                                                                    listOfIntersectedGridCells, this.zoneIndex);
                
                 DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(this.ZoneIndex);
                 DictionaryColorTableEntry ColorTableEntry;
 
-                foreach (int i in ListOfZoneIndexCorrespondingToIntersectedCells)
+                foreach (int i in listOfZoneIndexCorrespondingToIntersectedCells)
                 {
                     if (i > -1)
                     {
@@ -153,10 +160,23 @@ namespace ModifiedKh
     
         }
 
+
+        //Method used to check wether there is any in-between Zones in the ListOfSelectedZoneNames that is not listed. If that is the case then it returns
+        //false so that the user knows that some zones are missing. It also returns false in other cases such as when the ZoneIndex property has not been set
+        //or when one of the names in the ListOfSelectedNames does not match any zone in the Zonde Index table.
         public bool VerticalContinuity(List<string> ListOfSelectedZoneNames)
-        {   DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(this.ZoneIndex);
+        {   if(this.ZoneIndex == null) {MessageBox.Show("Please define a zone index property"); return false;}
+            DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(this.ZoneIndex);
             DictionaryColorTableEntry ColorTableEntry;
-            this.listOfSelectedZoneIndeces.Clear();
+
+            if (this.listOfSelectedZoneIndeces != null)
+            {
+                this.listOfSelectedZoneIndeces.Clear();
+            }
+            else 
+            {
+                this.listOfSelectedZoneIndeces = new List<int>();
+            }
             int count = 0;
             //Getting the zone indices corresponding to the selected zone names
             foreach(string NameOfZone in ListOfSelectedZoneNames)
@@ -202,6 +222,68 @@ namespace ModifiedKh
             //If everything has proceeded as expected then return true
             return true;
         }
+
+        //Method to get all the grid cells that are either in the zones selected by the user (if Depth_or_Zones is set to false) or between the two depth values 
+        //(Top and Bottom) given by the user (if Depth_or_Zones is set to true). The information of the grid cells is contained in a CellData object which has to be 
+        //associated to a grid (as there is no grid property in a CellData object).
+        public Dictionary<int, List<CellData>> GetKhDictionaryOfSelectedGridCells(bool Depth_or_Zones, bool PerforatedZonesOnly, bool Vertical_only)
+        {  //True for Depth
+           //False for Zones
+
+            if (this.permeability != null && this.well != null && this.listOfIntersectedGridCells != null && this.listOfZoneIndexCorrespondingToIntersectedCells != null)
+            {
+                if (Depth_or_Zones)
+                {
+                    Dictionary<int, List<CellData>> DictionaryOfCellData = new Dictionary<int, List<CellData>>();
+                    return DictionaryOfCellData;
+                }
+
+                else
+                {
+                    Dictionary<int, List<CellData>> DictionaryOfCellData = new Dictionary<int, List<CellData>>(listOfSelectedZoneIndeces.Count);
+                    List<double> Heights = KandaIntersectionService.GetListOfPenetratedCellDistances(this.permeability.Grid, this.well, this.listOfIntersectedGridCells,
+                                                                                                      PerforatedZonesOnly, Vertical_only);
+
+
+                    foreach (int index in this.listOfSelectedZoneIndeces)
+                    {
+                        for (int i = 0; i < this.listOfIntersectedGridCells.Count; i++)
+                        {
+                            if (this.listOfZoneIndexCorrespondingToIntersectedCells[i] == index)
+                            {
+                                if (!DictionaryOfCellData.ContainsKey(index)) { DictionaryOfCellData.Add(index, new List<CellData>()); }
+                                CellData CellDataObj = new CellData();
+                                CellDataObj.CellIndex = this.listOfIntersectedGridCells[i];
+                                CellDataObj.Perm = this.permeability[listOfIntersectedGridCells[i]];
+                                CellDataObj.Height = Heights[i];
+                                CellDataObj.Kh_wt = this.khWellTesting;
+
+                                DictionaryOfCellData[index].Add(CellDataObj);
+
+                                //  this.listOfSelectedGridCells.Add(this.listOfIntersectedGridCells[i]);
+                            }
+
+                        }
+
+                    }
+                    return DictionaryOfCellData;
+                }
+            }
+            else 
+            {
+                return null;
+            }
+            
+        }
+
+        //Returns a dictionary containing the Index3 of the selected cell as the key of the dictionary. It also returns the "height" property
+        //corresponding to that cell as the first element of the list corresponding to the given key. The second property is the permeability value and the
+        //third property corresponds to the ratio Kh_wt/Kh_average. 
+        //public bool SetKhDictionaryValuesOfSelectedCells(bool Depth_orZones)
+        //{ 
+            
+        //}
+
 
     
     }

@@ -83,6 +83,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CellData.cs" />
     <Compile Include="KandaIntersectionService.cs" />
     <Compile Include="ModifiedKh.cs" />
     <Compile Include="ModifiedKhModule.cs" />
@@ -94,6 +95,7 @@
     </Compile>
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quadrilateral.cs" />
     <Compile Include="WellKh.cs" />
   </ItemGroup>
   <ItemGroup>
