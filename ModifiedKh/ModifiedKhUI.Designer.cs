@@ -50,6 +50,7 @@ namespace ModifiedKh
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.WellTestingIntervalCheckBox = new System.Windows.Forms.CheckBox();
+            this.Apply = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // PermeabilityDropTarget
@@ -247,10 +248,21 @@ namespace ModifiedKh
             this.WellTestingIntervalCheckBox.UseVisualStyleBackColor = true;
             this.WellTestingIntervalCheckBox.CheckedChanged += new System.EventHandler(this.WellTestingIntervalCheckBox_CheckedChanged);
             // 
+            // Apply
+            // 
+            this.Apply.Location = new System.Drawing.Point(101, 555);
+            this.Apply.Name = "Apply";
+            this.Apply.Size = new System.Drawing.Size(75, 23);
+            this.Apply.TabIndex = 23;
+            this.Apply.Text = "Apply";
+            this.Apply.UseVisualStyleBackColor = true;
+            this.Apply.Click += new System.EventHandler(this.Apply_Click);
+            // 
             // ModifiedKhUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.Apply);
             this.Controls.Add(this.WellTestingIntervalCheckBox);
             this.Controls.Add(this.textBox9);
             this.Controls.Add(this.textBox6);
@@ -304,5 +316,6 @@ namespace ModifiedKh
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.CheckBox WellTestingIntervalCheckBox;
+        private System.Windows.Forms.Button Apply;
     }
 }

@@ -134,19 +134,20 @@ namespace ModifiedKh
                 listOfIntersectedGridCells = KandaIntersectionService.GetTheGridCellsIntersectedByWell(this.permeability.Grid, this.well, PerforatedZonesOnly);
 
                 //Getting the Zone Indeces corresponding to the cells that are intersected by the borehole.
-                //listOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(this.permeability,
-                //                                                                     listOfIntersectedGridCells, this.zoneIndex);
-                listOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(
-                                                                                    listOfIntersectedGridCells, this.zoneIndex);
+                listOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(this.permeability,
+                                                                                     listOfIntersectedGridCells, this.zoneIndex);
+                //listOfZoneIndexCorrespondingToIntersectedCells = KandaIntersectionService.GetThePropertyValueCorrespondingToTheCells(
+                //                                                                    listOfIntersectedGridCells, this.zoneIndex);
+                DictionaryColorTableEntry ColorTableEntry;
                
                 DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(this.ZoneIndex);
-                DictionaryColorTableEntry ColorTableEntry;
+                
 
                 foreach (int i in listOfZoneIndexCorrespondingToIntersectedCells)
                 {
                     if (i > -1)
                     {
-                        ColorTableEntry = TableAccess.GetEntryAt(i);
+                       ColorTableEntry = TableAccess.GetEntryAt(i);
                         this.ListOfNamesOfIntersectedZones.Add(ColorTableEntry.Name);
                         //PetrelLogger.InfoOutputWindow(ColorTableEntry.Name);
                     }
@@ -257,6 +258,8 @@ namespace ModifiedKh
                                 CellDataObj.Perm = this.permeability[listOfIntersectedGridCells[i]];
                                 CellDataObj.Height = Heights[i];
                                 CellDataObj.Kh_wt = this.khWellTesting;
+                                CellDataObj.Well = this.Well;
+                                CellDataObj.PerforatedZonesOnly = PerforatedZonesOnly;
 
                                 DictionaryOfCellData[index].Add(CellDataObj);
 

@@ -142,30 +142,30 @@ namespace ModifiedKh
                
         //}
 
-        public static List<int> GetThePropertyValueCorrespondingToTheCells( List<Index3> CellIndeces, DictionaryProperty Property)
+        public static List<int> GetThePropertyValueCorrespondingToTheCells(Property CheckProperty, List<Index3> CellIndeces, DictionaryProperty Property)
         {
             NoBoundaryCheckDictionaryPropertyIndexer MyDictionaryPropertyIndexer = Property.SpecializedAccess.OpenNoBoundaryCheckDictionaryPropertyIndexer();
-          //  NoBoundaryCheckPropertyIndexer CheckPropertyIndexer = CheckProperty.SpecializedAccess.OpenNoBoundaryCheckPropertyIndexer();
+           NoBoundaryCheckPropertyIndexer CheckPropertyIndexer = CheckProperty.SpecializedAccess.OpenNoBoundaryCheckPropertyIndexer();
             List<int> ListOfPropertieValuesCorrespondingToCellIndices = new List<int>();
 
             foreach (Index3 cell in CellIndeces)
             {
-               // if (!double.IsNaN(CheckPropertyIndexer[cell])) //checking if it is Nan or not
-               // {
+                if (!double.IsNaN(CheckPropertyIndexer[cell])) //checking if it is Nan or not
+                {
                     ListOfPropertieValuesCorrespondingToCellIndices.Add(MyDictionaryPropertyIndexer[cell]);
 
-                //}
-                //else
-                //{
-                //    ListOfPropertieValuesCorrespondingToCellIndices.Add(-1);
-                //    PetrelLogger.InfoOutputWindow("One of the intersected cells has an undefined Check property");
-                //}
+                }
+                else
+                {
+                    ListOfPropertieValuesCorrespondingToCellIndices.Add(-1);
+                    PetrelLogger.InfoOutputWindow("One of the intersected cells has an undefined Check property");
+                }
 
             }
             MyDictionaryPropertyIndexer.Close();
             MyDictionaryPropertyIndexer.Dispose();
-            //CheckPropertyIndexer.Close();
-            //CheckPropertyIndexer.Dispose();
+            CheckPropertyIndexer.Close();
+            CheckPropertyIndexer.Dispose();
             return ListOfPropertieValuesCorrespondingToCellIndices;
 
 
@@ -208,7 +208,7 @@ namespace ModifiedKh
         //}
 
         //Method to get all the CellSides from which the well entered the selected grid cells. The selected grid cells must intersect the well in order for the method to work.
-        private static List<CellSide> GetListOfEnteringSidesOfIntersectedCells(IPillarGridIntersectionService pgiservice, Grid gridInContext, Borehole bh, List<Index3> ListOfSelectedIntersectingGridCells, bool PerforatedZonesOnly)
+        public static List<CellSide> GetListOfEnteringSidesOfIntersectedCells(IPillarGridIntersectionService pgiservice, Grid gridInContext, Borehole bh, List<Index3> ListOfSelectedIntersectingGridCells, bool PerforatedZonesOnly)
         {
             bool indx3_LeavingCell;
             List<CellSide> ListOfEnteringSides = new List<CellSide>();
@@ -228,7 +228,7 @@ namespace ModifiedKh
                         {
                             indx3_LeavingCell = false;
                         }
-                        else
+                        else 
                         {
                             indx3 = sci.LeavingCell;
                             indx3_LeavingCell = true;
@@ -294,38 +294,34 @@ namespace ModifiedKh
             }
             else 
             {
-                List<IPolyline3> plineList = CreatingPolyLineListWhenWellHasPerforations(bh);
+                IPolyline3 pline = bh.Trajectory.Polyline;
 
-                foreach (IPolyline3 poly in plineList)
+                IEnumerable<SegmentCellIntersection> intersectionSegments;
+                intersectionSegments = pgiservice.GetPillarGridPolylineIntersections(gridInContext, pline);
+                foreach (SegmentCellIntersection sci in intersectionSegments)
                 {
-                    IEnumerable<SegmentCellIntersection> intersectionSegments;
-                    intersectionSegments = pgiservice.GetPillarGridPolylineIntersections(gridInContext, poly);
-
-                    foreach (SegmentCellIntersection sci in intersectionSegments)
+                    Index3 indx3 = sci.EnteringCell;
+                    if (indx3 != null)
                     {
-                        Index3 indx3 = sci.EnteringCell;
-                        if (indx3 != null)
-                        {
-                            indx3_LeavingCell = false;
-                        }
-                        else
-                        {
-                            indx3 = sci.LeavingCell;
-                            indx3_LeavingCell = true;
-                        }
+                        indx3_LeavingCell = false;
+                    }
+                    else
+                    {
+                        indx3 = sci.LeavingCell;
+                        indx3_LeavingCell = true;
+                    }
 
-                        foreach (Index3 cell in ListOfSelectedIntersectingGridCells)
+                    foreach (Index3 cell in ListOfSelectedIntersectingGridCells)
+                    {
+                        if (cell == indx3)
                         {
-                            if (cell == indx3)
+                            if (!indx3_LeavingCell)
                             {
-                                if (!indx3_LeavingCell)
-                                {
-                                    ListOfEnteringSides.Add(sci.EnteringCellSide);
-                                }
-                                else
-                                {
-                                    ListOfEnteringSides.Add(sci.LeavingCellSide);
-                                }
+                                ListOfEnteringSides.Add(sci.EnteringCellSide);
+                            }
+                            else
+                            {
+                                ListOfEnteringSides.Add(sci.LeavingCellSide);
                             }
                         }
                     }
@@ -342,13 +338,82 @@ namespace ModifiedKh
           }
 
 
+        public static Point3 GetIntersectingPoint(IPillarGridIntersectionService pgiservice, Grid GridInContext,Borehole bh, Index3 CellIndex, bool PerforatedZonesOnly)
+        {
+            Point3 IntersectionPoint;
+
+            if (PerforatedZonesOnly) //if the user wants only perforated zones
+            {
+                if (bh.Completions.PerforationCount <= 0)
+                {
+                    IPolyline3 pline = bh.Trajectory.Polyline;
+
+                    IEnumerable<SegmentCellIntersection> intersectionsegments;
+                    intersectionsegments = pgiservice.GetPillarGridPolylineIntersections(GridInContext, pline);
+                    foreach (SegmentCellIntersection sci in intersectionsegments)
+                    {
+                        if (CellIndex == sci.EnteringCell || CellIndex == sci.LeavingCell)
+                        {
+                            IntersectionPoint = sci.IntersectionPoint;
+                            return IntersectionPoint;
+                        }
+                      
+                    }
+
+                }
+                else
+                {
+                    List<IPolyline3> plinelist = CreatingPolyLineListWhenWellHasPerforations(bh);
+
+                    foreach (IPolyline3 poly in plinelist)
+                    {
+                        IEnumerable<SegmentCellIntersection> intersectionsegments;
+                        intersectionsegments = pgiservice.GetPillarGridPolylineIntersections(GridInContext, poly);
+
+                        foreach (SegmentCellIntersection sci in intersectionsegments)
+                        {
+                            if (CellIndex == sci.EnteringCell || CellIndex == sci.LeavingCell)
+                            {
+                                IntersectionPoint = sci.IntersectionPoint;
+                                return IntersectionPoint;
+                            }
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                IPolyline3 pline = bh.Trajectory.Polyline;
+
+                IEnumerable<SegmentCellIntersection> IntersectionSegments;
+                IntersectionSegments = pgiservice.GetPillarGridPolylineIntersections(GridInContext, pline);
+                foreach (SegmentCellIntersection sci in IntersectionSegments)
+                {
+                    if (CellIndex == sci.EnteringCell || CellIndex == sci.LeavingCell)
+                    {
+                        IntersectionPoint = sci.IntersectionPoint;
+                        return IntersectionPoint;
+                    }
+                }
+
+            }
+
+
+            return null;
+        }
+
+
+
         public static List<double> GetListOfPenetratedCellDistances(Grid gridInContext, Borehole bh, List<Index3> ListOfSelectedIntersectingGridCells, bool PerforatedZonesOnly, bool Vertical_only) 
         {
             IPillarGridIntersectionService pgiservice = CoreSystem.GetService<IPillarGridIntersectionService>();
             Quadrilateral Face1;
             Quadrilateral Face2;
             CellCorner[] CellCorners = new CellCorner[4];
-            Point3[] CellCornerPoints = new Point3[4];
+            Point3[] CellCornerPoints1 = new Point3[4];
+            Point3[] CellCornerPoints2 = new Point3[4];
+            CellSide Side = new CellSide() ;
             //Dictionary<Index3,List<double>> DictionaryOfSelectedCells = new Dictionary<Index3,List<double>>(ListOfSelectedIntersectingGridCells.Count);
            // List<double> Distance = new List<double>(3); //This array will contain the Height of the cell for the kh calculation and two extra elements that will be empty;
             List<double> Distance = new List<double>();
@@ -360,198 +425,85 @@ namespace ModifiedKh
                 {
                     switch (ListOfEnteringSides[i])
                     {
-                        case CellSide.Up:
-                            CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.TopSouthWest;
-                            CellCorners[3] = CellCorner.TopSouthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                     case CellSide.Up:
+                        CellCornerPoints1 = KandaIntersectionService.GetCornerSet(ListOfEnteringSides[i], gridInContext, ListOfSelectedIntersectingGridCells[i]);
+                          
 
-                            try
-                            {
-                                Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face1 = null;
-                            }
-
-
-                            CellCorners[0] = CellCorner.BaseNorthWest; CellCorners[1] = CellCorner.BaseNorthEast; CellCorners[2] = CellCorner.BaseSouthWest;
-                            CellCorners[3] = CellCorner.BaseSouthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
-                            try
-                            {
-                                Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face2 = null;
-                            }
-
+                        Side = CellSide.Down;
+                        CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
 
                             break;
 
-                        case CellSide.East:
-                            CellCorners[0] = CellCorner.TopSouthEast; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.BaseSouthEast;
-                            CellCorners[3] = CellCorner.BaseNorthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                     case CellSide.East:
+                        CellCornerPoints1 = KandaIntersectionService.GetCornerSet(ListOfEnteringSides[i], gridInContext, ListOfSelectedIntersectingGridCells[i]);
+                          
 
-                            try
-                            {
-                                Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face1 = null;
-                            }
-
-
-                            CellCorners[0] = CellCorner.TopSouthWest; CellCorners[1] = CellCorner.TopNorthWest; CellCorners[2] = CellCorner.BaseSouthWest;
-                            CellCorners[3] = CellCorner.BaseNorthWest;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
-                            try
-                            {
-                                Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face2 = null;
-                            }
-
+                        Side = CellSide.West;
+                        CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
 
                             break;
 
-                        case CellSide.West:
-                            CellCorners[0] = CellCorner.TopSouthEast; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.BaseSouthEast;
-                            CellCorners[3] = CellCorner.BaseNorthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                      case CellSide.West:
+                           CellCornerPoints1 = KandaIntersectionService.GetCornerSet(ListOfEnteringSides[i], gridInContext, ListOfSelectedIntersectingGridCells[i]);
+                          
 
-                            try
-                            {
-                                Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face1 = null;
-                            }
-
-
-                            CellCorners[0] = CellCorner.TopSouthWest; CellCorners[1] = CellCorner.TopNorthWest; CellCorners[2] = CellCorner.BaseSouthWest;
-                            CellCorners[3] = CellCorner.BaseNorthWest;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
-                            try
-                            {
-                                Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face2 = null;
-                            }
-
+                        Side = CellSide.East;
+                        CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
 
                             break;
 
-                        case CellSide.South:
-                            CellCorners[0] = CellCorner.TopSouthWest; CellCorners[1] = CellCorner.TopSouthEast; CellCorners[2] = CellCorner.BaseSouthWest;
-                            CellCorners[3] = CellCorner.BaseSouthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                      case CellSide.South:
+                           CellCornerPoints1 = KandaIntersectionService.GetCornerSet(ListOfEnteringSides[i], gridInContext, ListOfSelectedIntersectingGridCells[i]);
+                          
 
-                            try
-                            {
-                                Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face1 = null;
-                            }
-
-
-                            CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.BaseNorthWest;
-                            CellCorners[3] = CellCorner.BaseNorthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
-                            try
-                            {
-                                Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face2 = null;
-                            }
-
+                            Side = CellSide.North;
+                            CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
 
                             break;
 
-                        case CellSide.North:
-                            CellCorners[0] = CellCorner.TopSouthWest; CellCorners[1] = CellCorner.TopSouthEast; CellCorners[2] = CellCorner.BaseSouthWest;
-                            CellCorners[3] = CellCorner.BaseSouthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                      case CellSide.North:
+                           CellCornerPoints1 = KandaIntersectionService.GetCornerSet(ListOfEnteringSides[i], gridInContext, ListOfSelectedIntersectingGridCells[i]);
+                          
 
-                            try
-                            {
-                                Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face1 = null;
-                            }
-
-
-                            CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.BaseNorthWest;
-                            CellCorners[3] = CellCorner.BaseNorthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
-                            try
-                            {
-                                Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face2 = null;
-                            }
-
+                        Side = CellSide.South;
+                        CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
 
                             break;
 
                         case CellSide.Down:
-                            CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.TopSouthWest;
-                            CellCorners[3] = CellCorner.TopSouthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                            CellCornerPoints1 = KandaIntersectionService.GetCornerSet(ListOfEnteringSides[i], gridInContext, ListOfSelectedIntersectingGridCells[i]);
+                          
 
-                            try
-                            {
-                                Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face1 = null;
-                            }
-
-
-                            CellCorners[0] = CellCorner.BaseNorthWest; CellCorners[1] = CellCorner.BaseNorthEast; CellCorners[2] = CellCorner.BaseSouthWest;
-                            CellCorners[3] = CellCorner.BaseSouthEast;
-                            CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
-                            try
-                            {
-                                Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
-                            }
-                            catch
-                            {
-                                Face2 = null;
-                            }
-
-
-
+                        Side = CellSide.Up;
+                        CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
+ 
                             break;
                         default:
 
-                            Face1 = null;
-                            Face2 = null;
+                            CellCornerPoints1 = null;
+                            CellCornerPoints2= null;
                             break;
                     }
+                   
+
+                    try
+                    {
+                        Face1 = new Quadrilateral(CellCornerPoints1[0], CellCornerPoints1[1], CellCornerPoints1[2], CellCornerPoints1[3]);
+                    }
+                    catch
+                    {
+                        Face1 = null;
+                    }
+
+                    try
+                    {
+                        Face2 = new Quadrilateral(CellCornerPoints2[0], CellCornerPoints2[1], CellCornerPoints2[2], CellCornerPoints2[3]);
+                    }
+                    catch
+                    {
+                        Face2 = null;
+                    }
+
                     try
                     {
                         // Distance[0] = Face1.Centroid.Distance(Face2.Centroid);
@@ -570,26 +522,27 @@ namespace ModifiedKh
             {
                 for (int i = 0; i < ListOfSelectedIntersectingGridCells.Count; i++)
                 {
-                    CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.TopSouthWest;
-                    CellCorners[3] = CellCorner.TopSouthEast;
-                    CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                    //CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.TopSouthWest;
+                    //CellCorners[3] = CellCorner.TopSouthEast;
+                    //CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
+                    Side = CellSide.Up;
+                    CellCornerPoints1 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
+
+                    Side = CellSide.Down;
+                    CellCornerPoints2 = KandaIntersectionService.GetCornerSet(Side, gridInContext, ListOfSelectedIntersectingGridCells[i]);
 
                     try
                     {
-                        Face1 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
+                        Face1 = new Quadrilateral(CellCornerPoints1[0], CellCornerPoints1[1], CellCornerPoints1[2], CellCornerPoints1[3]);
                     }
                     catch
                     {
                         Face1 = null;
                     }
 
-                    CellCorners[0] = CellCorner.BaseNorthWest; CellCorners[1] = CellCorner.BaseNorthEast; CellCorners[2] = CellCorner.BaseSouthWest;
-                    CellCorners[3] = CellCorner.BaseSouthEast;
-                    CellCornerPoints = gridInContext.GetCellCorners(ListOfSelectedIntersectingGridCells[i], CellCorners);
-
                     try
                     {
-                        Face2 = new Quadrilateral(CellCornerPoints[0], CellCornerPoints[1], CellCornerPoints[2], CellCornerPoints[3]);
+                        Face2 = new Quadrilateral(CellCornerPoints2[0], CellCornerPoints2[1], CellCornerPoints2[2], CellCornerPoints2[3]);
                     }
                     catch
                     {
@@ -608,8 +561,11 @@ namespace ModifiedKh
                         Distance.Add(-1);
                         //DictionaryOfSelectedCells.Add(ListOfSelectedIntersectingGridCells[i], null);
                     }
+                  
                 }
             }
+
+            
 
             return Distance;
             //return DictionaryOfSelectedCells;
@@ -648,6 +604,68 @@ namespace ModifiedKh
         //    }
  
         //}
+
+        public static Point3[] GetCornerSet(CellSide SideOfCell, Grid gridInContext, Index3 CellIndex)
+        {
+            CellCorner[] CellCorners = new CellCorner[4];
+            Point3[] CellCornerPoints = new Point3[4];
+            
+            switch (SideOfCell)
+            {
+                case CellSide.Up:
+                    CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.TopSouthWest;
+                    CellCorners[3] = CellCorner.TopSouthEast;
+                    CellCornerPoints = gridInContext.GetCellCorners(CellIndex, CellCorners);
+
+                    break;
+
+                case CellSide.East:
+                    CellCorners[0] = CellCorner.TopSouthEast; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.BaseSouthEast;
+                    CellCorners[3] = CellCorner.BaseNorthEast;
+                    CellCornerPoints = gridInContext.GetCellCorners(CellIndex, CellCorners);
+
+                    break;
+
+                case CellSide.West:
+
+                    CellCorners[0] = CellCorner.TopSouthWest; CellCorners[1] = CellCorner.TopNorthWest; CellCorners[2] = CellCorner.BaseSouthWest;
+                    CellCorners[3] = CellCorner.BaseNorthWest;
+                    CellCornerPoints = gridInContext.GetCellCorners(CellIndex, CellCorners);
+
+
+                    break;
+
+                case CellSide.South:
+                    CellCorners[0] = CellCorner.TopSouthWest; CellCorners[1] = CellCorner.TopSouthEast; CellCorners[2] = CellCorner.BaseSouthWest;
+                    CellCorners[3] = CellCorner.BaseSouthEast;
+                    CellCornerPoints = gridInContext.GetCellCorners(CellIndex, CellCorners);
+              
+                    break;
+
+                case CellSide.North:
+
+                    CellCorners[0] = CellCorner.TopNorthWest; CellCorners[1] = CellCorner.TopNorthEast; CellCorners[2] = CellCorner.BaseNorthWest;
+                    CellCorners[3] = CellCorner.BaseNorthEast;
+                    CellCornerPoints = gridInContext.GetCellCorners(CellIndex, CellCorners);
+
+                    break;
+
+                case CellSide.Down:
+                  
+                    CellCorners[0] = CellCorner.BaseNorthWest; CellCorners[1] = CellCorner.BaseNorthEast; CellCorners[2] = CellCorner.BaseSouthWest;
+                    CellCorners[3] = CellCorner.BaseSouthEast;
+                    CellCornerPoints = gridInContext.GetCellCorners(CellIndex, CellCorners);
+
+                    break;
+                default:
+
+                    CellCornerPoints = null;
+                    break;
+            }
+
+            return CellCornerPoints;
+        }
+
     }
 
    

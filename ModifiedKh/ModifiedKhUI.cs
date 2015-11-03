@@ -106,7 +106,7 @@ namespace ModifiedKh
             }
 
             if (WellKhObj.SetListOfNamesOfIntersectedZones(true))
-            {
+            {    
                 if (!ListOfDroppedWells.Contains(WellKhObj.Well))
                 {
                     ListOfDroppedWells.Add(WellKhObj.Well);
@@ -292,6 +292,15 @@ namespace ModifiedKh
                 Depth_or_Zones = false;
                 Top.Visible = false;
                 Base.Visible = false;
+            }
+        }
+
+        private void Apply_Click(object sender, EventArgs e)
+        {
+            if (context is WorkstepProcessWrapper.Context)
+            {
+                Executor executor = workstep.GetExecutor(args, null);
+                executor.ExecuteSimple();
             }
         }
 

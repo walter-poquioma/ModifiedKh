@@ -23,5 +23,7 @@ namespace ModifiedKh
         public double Kh_wt;
         public double Perm;
         public double Height;
+        public Borehole Well;
+        public bool PerforatedZonesOnly;
     }
 }
