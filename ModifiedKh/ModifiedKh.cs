@@ -91,18 +91,28 @@ namespace ModifiedKh
                 double Kh_ave; double Kh_wt = 0;
                 double x_ave;
                 double y_ave;
-                double counter;
+                int TotalCellsCounter; int CellsPerZoneCounter;
                 double MD1x; double MD1y; double MD1z; double MD1;
                 double MD2x; double MD2y; double MD2z; double MD2;
                 Borehole SelectedWell = null;
                 double MiddlePointx; double MiddlePointy; double MiddlePointz;
+                Dictionary<Index3, double> DictionaryOfRatios = new Dictionary<Index3,double>();
 
                 int max_i = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.I;
                 int max_j = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.J;
                 int max_k = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.K;
+                int ave_i; int ave_j; 
+                List<Index3> ListOfCellsWithProperty = new List<Index3>();
+                List<PerforatedCell> ListOfPerforatedCells = new List<PerforatedCell>();
+                double KhRatio;
+     
                // double[] arrayOfProperty = new double[max_i * max_j* max_k];
                 List<double> ListOfProperty = Enumerable.Repeat(0.0/0.0, max_i * max_j * max_k).ToList();
                 Template TemplateOfProperty = PetrelProject.WellKnownTemplates.PetrophysicalGroup.Permeability;
+               
+                
+
+
                 Point3 MiddlePoint;
                 Point3 IntersectingPoint;
                 Index3 MiddleCell;
@@ -110,130 +120,150 @@ namespace ModifiedKh
 
                 //List<CellSide> Side;
                 IPillarGridIntersectionService pgiservice = CoreSystem.GetService<IPillarGridIntersectionService>();
-                PropertyCollection pc = this.arguments.PermeabilityFromModel.Grid.PropertyCollection;
+                PropertyCollection pc1 = this.arguments.OneLayerPerZoneGrid.PropertyCollection;
+                PropertyCollection pc2 = this.arguments.PermeabilityFromModel.Grid.PropertyCollection;
 
-                
-                
-                
 
-                foreach (Dictionary<int, List<CellData>> dict in this.arguments.ListOfCellDataDictionaries)
+
+                using (ITransaction trans = DataManager.NewTransaction())
                 {
-                    Kh_ave = 0.0;
-                    foreach (int ind in dict.Keys)
-                    {
-                        x_ave = 0.0;
-                        y_ave = 0.0;
-                        counter = 0;
-                        MD1 = -1;
-                        MD2 = -2;
+                    trans.Lock(pc1);
+                    Property p = pc1.CreateProperty(TemplateOfProperty);
+                    p.Name = "Kh_ratio";
 
-                        foreach (CellData cell in dict[ind])
-                        {
-                            counter = counter + 1;
+                    foreach (Dictionary<int, List<CellData>> dict in this.arguments.ListOfCellDataDictionaries)  //Looping through all Dictionaries that contain the information associated to a particular well test.
+                {                                                       
+                    Kh_ave = 0.0;
+                    TotalCellsCounter = 0;
+                     
+
+                    foreach (int ind in dict.Keys) //Looping through all Zones belonging to that particular well test
+                    {
+                        //x_ave = 0.0;
+                        //y_ave = 0.0;
+                        //MD1 = -1;
+                        //MD2 = -2;
+                        ave_i = 0;
+                        ave_j = 0;
+                        CellsPerZoneCounter = 0;
+
+
+                        foreach (CellData cell in dict[ind])  //Looping through all the CellData objects in a particular zone.
+                        { 
+                            CellsPerZoneCounter = CellsPerZoneCounter + 1;
                             Kh_ave = cell.Perm * cell.Height + Kh_ave;
+                            ave_i = ave_i + cell.CellIndex.I;
+                            ave_j = ave_j + cell.CellIndex.J;
+                            PerforatedCell PerforatedCellObj =  new PerforatedCell(); 
+                            PerforatedCellObj.CellIndex.I = cell.CellIndex.I;
+                            PerforatedCellObj.CellIndex.J = cell.CellIndex.J;
+                            PerforatedCellObj.CellIndex.K = cell.CellIndex.K;
+
+                            ListOfPerforatedCells.Add(PerforatedCellObj);
                            // cell_center = this.arguments.PermeabilityFromModel.Grid.GetCellCenter(cell.CellIndex);
                             
                             
 
-                            if(counter ==1)
-                            {
-                                SelectedWell = cell.Well;
-                                Kh_wt = cell.Kh_wt;
-                                IntersectingPoint = KandaIntersectionService.GetIntersectingPoint(pgiservice, this.arguments.PermeabilityFromModel.Grid, 
-                                                                                                        cell.Well, cell.CellIndex, cell.PerforatedZonesOnly);
-                                // MD1x = cell.Well.Transform(Domain.X, IntersectingPoint.X, Domain.MD);
-                                // MD1y = cell.Well.Transform(Domain.Y, IntersectingPoint.Y, Domain.MD);
-                                MD1 = cell.Well.Transform(Domain.ELEVATION_DEPTH, IntersectingPoint.Z, Domain.MD);
-                              
-
-                                //if( Math.Abs(MD1x- MD1y)<0.01 && Math.Abs(MD1x- MD1z)<0.01)
-                                //{
-                                //    MD1 = MD1x;
-                                //}
-
-                            }
-                            else if(counter == dict[ind].Count)
-                            {
-                                IntersectingPoint = KandaIntersectionService.GetIntersectingPoint(pgiservice, this.arguments.PermeabilityFromModel.Grid,
-                                                                                                            cell.Well, cell.CellIndex, cell.PerforatedZonesOnly);
-                                //MD2x = cell.Well.Transform(Domain.X, IntersectingPoint.X, Domain.MD);
-                                //MD2y = cell.Well.Transform(Domain.Y, IntersectingPoint.Y, Domain.MD);
-                                MD2 = cell.Well.Transform(Domain.ELEVATION_DEPTH, IntersectingPoint.Z, Domain.MD);
-
-                                //if (Math.Abs(MD2x - MD2y) < 0.01 && Math.Abs(MD2x - MD2z) < 0.01)
-                                //{
-                                //    MD2 = MD2x;
-                                //}
-                            }
-                            
+                            //if(counter ==1)
+                            //{
+                            //    SelectedWell = cell.Well;
+                            //    Kh_wt = cell.Kh_wt;
+                            //    IntersectingPoint = KandaIntersectionService.GetIntersectingPoint(pgiservice, this.arguments.PermeabilityFromModel.Grid, 
+                            //                                                                            cell.Well, cell.CellIndex, cell.PerforatedZonesOnly);
+                            //    MD1 = cell.Well.Transform(Domain.ELEVATION_DEPTH, IntersectingPoint.Z, Domain.MD);
 
 
-                           // x_ave = x_ave + cell_center.X;
-                           // y_ave = y_ave + cell_center.Y;
+                            //}
+                            //else if(counter == dict[ind].Count)
+                            //{
+                            //    IntersectingPoint = KandaIntersectionService.GetIntersectingPoint(pgiservice, this.arguments.PermeabilityFromModel.Grid,
+                            //                                                                                cell.Well, cell.CellIndex, cell.PerforatedZonesOnly);
+                            //      MD2 = cell.Well.Transform(Domain.ELEVATION_DEPTH, IntersectingPoint.Z, Domain.MD);
+                            //}
+                            Kh_wt = cell.Kh_wt;
                         }
+                        ave_i = ave_i / CellsPerZoneCounter;
+                        ave_j = ave_j / CellsPerZoneCounter;
 
-                        //x_ave = x_ave / counter;
-                        //y_ave = y_ave / counter;
-                        if (MD1 >= 0 && MD2 >= 0 && SelectedWell !=null)
-                        {
-                            MiddlePointx = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.X);
-                            MiddlePointy = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.Y);
-                            MiddlePointz = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.ELEVATION_DEPTH);
-                            MiddlePoint = new Point3(MiddlePointx, MiddlePointy, MiddlePointz);
+                        ListOfCellsWithProperty.Add(new Index3(ave_i, ave_j, ind));
+
+                        TotalCellsCounter = CellsPerZoneCounter + TotalCellsCounter;
+                       
+                        //if (MD1 >= 0 && MD2 >= 0 && SelectedWell !=null)
+                        //{
+                        //    MiddlePointx = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.X);
+                        //    MiddlePointy = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.Y);
+                        //    MiddlePointz = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.ELEVATION_DEPTH);
+                        //    MiddlePoint = new Point3(MiddlePointx, MiddlePointy, MiddlePointz);
                             
-                             MiddleCell = this.arguments.PermeabilityFromModel.Grid.GetCellAtPoint(MiddlePoint);
-
-
-                              Kh_ave = Kh_ave / counter;
-
-                            if(Kh_wt>0)
-                            {
-                                PetrelLogger.InfoOutputWindow("The ratio of the selected zones is " + System.Convert.ToString(Kh_wt / Kh_ave));
-                                ListOfProperty[MiddleCell.I + MiddleCell.J * max_i + MiddleCell.K * max_i * max_j] = Kh_wt / Kh_ave;
-                             }
-                            else
-                            {
-                                MessageBox.Show("The Kh of Well Testing corresponding to Well " + SelectedWell.Name + " has not been set to a valid value.");
-                                return;
-                            }
-
-                            
-                        }
-
-                      
-                        
-
+                        //     MiddleCell = this.arguments.PermeabilityFromModel.Grid.GetCellAtPoint(MiddlePoint);
+     
+                        //}
+                       
                     }
-                }
+                   
+                    Kh_ave = Kh_ave / TotalCellsCounter; //Average of all Kh of all cells corresponding to the same kh_wt
+                    KhRatio = Kh_wt / Kh_ave;
 
-                //Setting the property value. In this case the property is the ratio kh_wt/Kh_ave.
-                using (ITransaction trans = DataManager.NewTransaction())
-                {
-                    trans.Lock(pc);
-                    Property p = pc.CreateProperty(TemplateOfProperty);
-                    p.Name = "Kh_ratio";
-
-                    for (int i = 0; i < max_i; i++)
+                    foreach (Index3 index in ListOfCellsWithProperty) //Looping through all cells which are assigned a KhRatio property in the one layer per zone grid.
                     {
-                        for (int j = 0; j < max_j; j++)
-                        {
-                            for (int k = 0; k < max_k; k++)
-                            {
-                                p[i, j, k] = (float)ListOfProperty[i + j * max_i + k * max_i * max_j];
-                                Index3 DummyInd = new Index3(i,j,k);
-                                DummyInd =  ModelingUnitSystem.ConvertIndexToUI(this.arguments.PermeabilityFromModel.Grid,DummyInd);
-                                if (!double.IsNaN(p[i, j, k]))
-                                {
-                                PetrelLogger.InfoOutputWindow("The grid cell " + System.Convert.ToString(DummyInd.I) + ", " +
-                                                                  System.Convert.ToString(DummyInd.J) + ", " + System.Convert.ToString(DummyInd.K) + ", " +
-                                                                   "has a Kh ratio value of " + System.Convert.ToString(p[i, j, k]));
-                                }
-                            }
-                        }
-                    }
+                        p[index] = (float)KhRatio; //Assigning the KhRatio property value
 
-                    trans.Commit();
+                    //#if Debug
+                        if (Kh_wt > 0)
+                        {
+                            PetrelLogger.InfoOutputWindow("The ratio of the selected zones is " + System.Convert.ToString(KhRatio));
+                            PetrelLogger.InfoOutputWindow("The corresponding index is: " + System.Convert.ToString(index.I) + ", " +
+                                                          System.Convert.ToString(index.J) + ", " + System.Convert.ToString(index.K));
+                            //  ListOfProperty[MiddleCell.I + MiddleCell.J * max_i + MiddleCell.K * max_i * max_j] = Kh_wt / Kh_ave;
+                        }
+                        else
+                        {
+                            MessageBox.Show("The Kh of Well Testing corresponding to Well " + SelectedWell.Name + " has not been set to a valid value.");
+                            return;
+                        }
+                     //#endif
+                    }
+                    p.SetCellsUpscaled(ListOfCellsWithProperty);
+
+                    //Saving all the cell indices corresponding to the wells belong to the same Kh_wt and their corresponding KhRatio value so that they can be used when
+                    // the KhRatio property is set in the grid that has multiple layers per zone.
+                    for (int i = ListOfPerforatedCells.Count - TotalCellsCounter; i < ListOfPerforatedCells.Count; i++) { ListOfPerforatedCells[i].KhRatio= KhRatio; }
+                    
+
+
                 }
+
+
+               
+                //Setting the property value. In this case the property is the ratio kh_wt/Kh_ave.
+                //using (ITransaction trans = DataManager.NewTransaction())
+                //{
+                //    trans.Lock(pc2);
+                //    Property p2 = pc2.CreateProperty(TemplateOfProperty);
+                //    p.Name = "Kh_ratio";
+
+                //    for (int i = 0; i < max_i; i++)
+                //    {
+                //        for (int j = 0; j < max_j; j++)
+                //        {
+                //            for (int k = 0; k < max_k; k++)
+                //            {
+                //                p2[i, j, k] = (float)ListOfProperty[i + j * max_i + k * max_i * max_j];
+                //                Index3 DummyInd = new Index3(i,j,k);
+                //                DummyInd =  ModelingUnitSystem.ConvertIndexToUI(this.arguments.PermeabilityFromModel.Grid,DummyInd);
+                //                if (!double.IsNaN(p2[i, j, k]))
+                //                {
+                //                PetrelLogger.InfoOutputWindow("The grid cell " + System.Convert.ToString(DummyInd.I) + ", " +
+                //                                                  System.Convert.ToString(DummyInd.J) + ", " + System.Convert.ToString(DummyInd.K) + ", " +
+                //                                                   "has a Kh ratio value of " + System.Convert.ToString(p[i, j, k]));
+                //                }
+                //            }
+                //        }
+                //    }
+
+                //    trans.Commit();
+                //}
 
 
                 #endregion
@@ -241,11 +271,21 @@ namespace ModifiedKh
                 #region Kriging 
 
                 //Getting the maximum vertical range in order to ensure that it exists a high vertical correlation of the cells within the same zone
-                double GridHeight = this.arguments.PermeabilityFromModel.Grid.BoundingBox.Height;
-               // ModelVariogramArguments VariogramArgs = new ModelVariogramArguments(this.arguments.VariogramType, this.arguments.Nugget, 
-                                                                             //      this.arguments.MajorRange, this.arguments.MinorRange,GridHeight * 10) ;
+                ModelVariogramArguments VariogramArgs = new ModelVariogramArguments();
+                // ModelVariogramArguments VariogramArgs = new ModelVariogramArguments(this.arguments.VariogramType, this.arguments.Nugget, 
+                //      this.arguments.MajorRange, this.arguments.MinorRange,GridHeight * 10) ;
+                KrigingArguments KrigingArgs = new KrigingArguments(VariogramArgs);
 
-                
+
+                this.arguments.ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(this.arguments.OneLayerPerZoneGrid.Zones);
+                //KrigingAlgorithm KriggingAlg = new KrigingAlgorithm();
+                //    foreach(Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone z in this.arguments.ListOfZones)
+                //    {
+                //        KriggingAlg.Invoke(p, z, KrigingArgs);
+              
+                //    }
+                    trans.Commit();
+                }
                
                 
 
@@ -277,11 +317,13 @@ namespace ModifiedKh
            // private Property permeabilityFromModel;
            // private List<Borehole> wellsSelected;
             private List<WellKh> listOfWellKh;
+            public List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZones = new List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>();
             public List<Dictionary<Index3, List<double>>> listOfKhDictionaries;
             private List<double> Kh_ave;
             private List<double> Kh_wt;
             private List<Dictionary<int, List<CellData>>> listOfCellDataDictionaries = new List<Dictionary<int, List<CellData>>>();
             private Property permeabilityFromModel;
+            private Grid oneLayerPerZoneGrid;
             public  ModelVariogramType VariogramType = ModelVariogramType.Spherical;
             public double Nugget = 2;
             public double MajorRange = 10;
@@ -313,6 +355,13 @@ namespace ModifiedKh
             { 
                 get { return this.listOfCellDataDictionaries; }
                 set { this.listOfCellDataDictionaries = value; }
+            }
+
+            [Description("oneLayerPerZoneGrid", "The grid dropped by the user that has one layer per zone only")]
+            public Grid OneLayerPerZoneGrid
+            {
+                get { return this.oneLayerPerZoneGrid; }
+                set { this.oneLayerPerZoneGrid = value; }
             }
 
             //[Description("dictionaryOfCellDataOfSelectedWells", "A dictionary with UWI for keys and list of cell data objects with information about the selected cells")]
@@ -431,5 +480,18 @@ namespace ModifiedKh
                 return new ModifiedKhUI((ModifiedKh)workstep, (Arguments)argumentPackage, context);
             }
         }
+    }
+    
+    public class PerforatedCell
+    {
+      public PerforatedCell() 
+        {
+            CellIndex = new Index3();
+            KhRatio = 0.0 / 0.0;
+        }
+       public Index3 CellIndex;
+       public double KhRatio;
+
+    
     }
 }

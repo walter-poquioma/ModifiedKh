@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="CellData.cs" />
     <Compile Include="KandaIntersectionService.cs" />
+    <Compile Include="KandaPropertyCreator.cs" />
     <Compile Include="ModifiedKh.cs" />
     <Compile Include="ModifiedKhModule.cs" />
     <Compile Include="ModifiedKhUI.cs">

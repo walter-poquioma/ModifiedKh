@@ -38,8 +38,6 @@ namespace ModifiedKh
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
-            this.ZoneIndexDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
-            this.ZoneIndexPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.Add = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -51,12 +49,14 @@ namespace ModifiedKh
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.WellTestingIntervalCheckBox = new System.Windows.Forms.CheckBox();
             this.Apply = new System.Windows.Forms.Button();
+            this.OneLayerGridDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
+            this.OneLayerGridPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
             this.SuspendLayout();
             // 
             // PermeabilityDropTarget
             // 
             this.PermeabilityDropTarget.AllowDrop = true;
-            this.PermeabilityDropTarget.Location = new System.Drawing.Point(166, 48);
+            this.PermeabilityDropTarget.Location = new System.Drawing.Point(176, 48);
             this.PermeabilityDropTarget.Name = "PermeabilityDropTarget";
             this.PermeabilityDropTarget.Size = new System.Drawing.Size(26, 23);
             this.PermeabilityDropTarget.TabIndex = 0;
@@ -65,7 +65,7 @@ namespace ModifiedKh
             // WellDropTarget
             // 
             this.WellDropTarget.AllowDrop = true;
-            this.WellDropTarget.Location = new System.Drawing.Point(166, 223);
+            this.WellDropTarget.Location = new System.Drawing.Point(176, 220);
             this.WellDropTarget.Name = "WellDropTarget";
             this.WellDropTarget.Size = new System.Drawing.Size(26, 23);
             this.WellDropTarget.TabIndex = 1;
@@ -139,30 +139,14 @@ namespace ModifiedKh
             this.textBox5.TabIndex = 9;
             this.textBox5.Text = "Well Test Kh";
             // 
-            // ZoneIndexDropTarget
-            // 
-            this.ZoneIndexDropTarget.AllowDrop = true;
-            this.ZoneIndexDropTarget.Location = new System.Drawing.Point(166, 133);
-            this.ZoneIndexDropTarget.Name = "ZoneIndexDropTarget";
-            this.ZoneIndexDropTarget.Size = new System.Drawing.Size(26, 23);
-            this.ZoneIndexDropTarget.TabIndex = 10;
-            this.ZoneIndexDropTarget.DragDrop += new System.Windows.Forms.DragEventHandler(this.ZoneIndexDropTarget_DragDrop);
-            // 
-            // ZoneIndexPresentationBox
-            // 
-            this.ZoneIndexPresentationBox.Location = new System.Drawing.Point(237, 136);
-            this.ZoneIndexPresentationBox.Name = "ZoneIndexPresentationBox";
-            this.ZoneIndexPresentationBox.Size = new System.Drawing.Size(156, 22);
-            this.ZoneIndexPresentationBox.TabIndex = 11;
-            // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(34, 133);
+            this.textBox1.Location = new System.Drawing.Point(30, 133);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.Size = new System.Drawing.Size(126, 20);
             this.textBox1.TabIndex = 12;
-            this.textBox1.Text = "Zone Index";
+            this.textBox1.Text = "One Layer per Zone grid";
             // 
             // Add
             // 
@@ -258,10 +242,28 @@ namespace ModifiedKh
             this.Apply.UseVisualStyleBackColor = true;
             this.Apply.Click += new System.EventHandler(this.Apply_Click);
             // 
+            // OneLayerGridDropTarget
+            // 
+            this.OneLayerGridDropTarget.AllowDrop = true;
+            this.OneLayerGridDropTarget.Location = new System.Drawing.Point(175, 129);
+            this.OneLayerGridDropTarget.Name = "OneLayerGridDropTarget";
+            this.OneLayerGridDropTarget.Size = new System.Drawing.Size(26, 23);
+            this.OneLayerGridDropTarget.TabIndex = 24;
+            this.OneLayerGridDropTarget.DragDrop += new System.Windows.Forms.DragEventHandler(this.OneLayerGridDropTarget_DragDrop);
+            // 
+            // OneLayerGridPresentationBox
+            // 
+            this.OneLayerGridPresentationBox.Location = new System.Drawing.Point(237, 133);
+            this.OneLayerGridPresentationBox.Name = "OneLayerGridPresentationBox";
+            this.OneLayerGridPresentationBox.Size = new System.Drawing.Size(156, 22);
+            this.OneLayerGridPresentationBox.TabIndex = 25;
+            // 
             // ModifiedKhUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.OneLayerGridPresentationBox);
+            this.Controls.Add(this.OneLayerGridDropTarget);
             this.Controls.Add(this.Apply);
             this.Controls.Add(this.WellTestingIntervalCheckBox);
             this.Controls.Add(this.textBox9);
@@ -273,8 +275,6 @@ namespace ModifiedKh
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.Add);
             this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.ZoneIndexPresentationBox);
-            this.Controls.Add(this.ZoneIndexDropTarget);
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.textBox3);
@@ -304,8 +304,6 @@ namespace ModifiedKh
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.TextBox textBox5;
-        private Slb.Ocean.Petrel.UI.DropTarget ZoneIndexDropTarget;
-        private Slb.Ocean.Petrel.UI.Controls.PresentationBox ZoneIndexPresentationBox;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button Add;
         private System.Windows.Forms.CheckBox checkBox1;
@@ -317,5 +315,7 @@ namespace ModifiedKh
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.CheckBox WellTestingIntervalCheckBox;
         private System.Windows.Forms.Button Apply;
+        private Slb.Ocean.Petrel.UI.DropTarget OneLayerGridDropTarget;
+        private Slb.Ocean.Petrel.UI.Controls.PresentationBox OneLayerGridPresentationBox;
     }
 }

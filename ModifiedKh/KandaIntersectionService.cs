@@ -55,18 +55,32 @@ namespace ModifiedKh
         {            
             IEnumerable<SegmentCellIntersection> intersectionSegments;
             intersectionSegments = pgiservice.GetPillarGridPolylineIntersections(gridInContext, pline);
-            foreach (SegmentCellIntersection sci in intersectionSegments)
+
+            if (intersectionSegments != null)
             {
-                Index3 indx3 = sci.EnteringCell;
-                if (indx3 != null)
+                foreach (SegmentCellIntersection sci in intersectionSegments)
                 {
-                    ListOfIntersectingGridCells.Add(indx3);
+                    Index3 indx3 = sci.EnteringCell;
+                    if (indx3 != null)
+                    {
+                        ListOfIntersectingGridCells.Add(indx3);
+                    }
+                    else
+                    {
+                        indx3 = sci.LeavingCell;
+                        ListOfIntersectingGridCells.Add(indx3);
+                    }
                 }
-                else 
+            }
+            else
+            {         IEnumerator<Point3> Point3Enumerator = pline.GetEnumerator();
+               
+                while (Point3Enumerator.MoveNext())
                 {
-                    indx3 = sci.LeavingCell;
-                    ListOfIntersectingGridCells.Add(indx3);
+                    Index3 indx3 = gridInContext.GetCellAtPoint(Point3Enumerator.Current);
+                    break;
                 }
+                
             }
         }
   
@@ -574,24 +588,7 @@ namespace ModifiedKh
 
 
 
-        //Recursive Loop to get all the low level zones
-        //public static List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> GetAllLowLevelZones(IEnumerable<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> TopZones)
-        //{
-        //    List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfLowestLevelZones = new  List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>(); 
-        //    foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone zone in TopZones) 
-        //    {
-        //        if (zone.ZoneCount > 0)
-        //        {
-        //            ListOfLowestLevelZones.AddRange(GetAllLowLevelZones(zone.Zones));
-        //        }
-        //        else 
-        //        {
-        //            ListOfLowestLevelZones.Add(zone);
-        //        }
-
-        //    }
-        //    return ListOfLowestLevelZones;
-        //}
+       
 
         //public static Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone GetZone(Index3 cellIndex, List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> Zones)//List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> TopZone)
         //{

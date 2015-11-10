@@ -33,12 +33,14 @@ namespace ModifiedKh
         private WorkflowContext context;
 
         List<string> ListOfNamesOfIntersectedZones = new List<string>();
+        List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZones = new List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>();
         List<string> ListOfSelectedWellZones = new List<string>();
         List<Borehole> ListOfDroppedWells = new List<Borehole>();
         WellKh WellKhObj = new WellKh();
         bool Depth_or_Zones = false;
         bool PerforatedZonesOnly = true;
 
+        //DictionaryProperty ZoneIndexing;
        
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace ModifiedKh
         public ModifiedKhUI(ModifiedKh workstep, ModifiedKh.Arguments args, WorkflowContext context)
         {
             InitializeComponent();
-
+         
             this.workstep = workstep;
             this.args = args;
             this.context = context;
@@ -85,6 +87,15 @@ namespace ModifiedKh
                 e.Effect = DragDropEffects.All;
                 PermeabilityPresentationBox.Text = WellKhObj.Permeability.Name;
                 this.args.PermeabilityFromModel = WellKhObj.Permeability;
+
+               ListOfZones  = KandaPropertyCreator.GetAllLowLevelZones(WellKhObj.Permeability.Grid.Zones);
+
+               foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone lzone in ListOfZones) 
+               {   
+                   PetrelLogger.InfoOutputWindow(lzone.Name);
+               }
+
+               WellKhObj.ZoneIndex = KandaPropertyCreator.CreateZoneIndex(WellKhObj.Permeability.Grid);
 
             }
             else
@@ -133,33 +144,55 @@ namespace ModifiedKh
           
         }
 
-        private void ZoneIndexDropTarget_DragDrop(object sender, DragEventArgs e)
-        {
-               WellKhObj.ZoneIndex = e.Data.GetData(typeof(DictionaryProperty)) as DictionaryProperty;
+        //private void ZoneIndexDropTarget_DragDrop(object sender, DragEventArgs e)
+        //{
+        //       WellKhObj.ZoneIndex = e.Data.GetData(typeof(DictionaryProperty)) as DictionaryProperty;
 
 
-               if (WellKhObj.ZoneIndex == null)
-                {
-                    MessageBox.Show("A Zone Index property needs to be dropped");
-                    return;
-                }
+        //       if (WellKhObj.ZoneIndex == null)
+        //        {
+        //            MessageBox.Show("A Zone Index property needs to be dropped");
+        //            return;
+        //        }
 
-            if (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesSubHierarchy) ||
-                 (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesMain)) ||
-                (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesSub)) ||
-                 (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesAllK)))           
-            {
+        //    if (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesSubHierarchy) ||
+        //         (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesMain)) ||
+        //        (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesSub)) ||
+        //         (WellKhObj.ZoneIndex.DictionaryTemplate.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.ZonesAllK)))           
+        //    {
 
-                e.Effect = DragDropEffects.All;
-                ZoneIndexPresentationBox.Text = WellKhObj.ZoneIndex.Name;
+        //        e.Effect = DragDropEffects.All;
+        //        ZoneIndexPresentationBox.Text = WellKhObj.ZoneIndex.Name;
+
+        //        /////
+        //        for (int i = 0; i < WellKhObj.Permeability.Grid.NumCellsIJK.I; i++)
+        //        {
+        //            for (int j = 0; j < WellKhObj.Permeability.Grid.NumCellsIJK.J; j++)
+        //            {
+        //                for (int k = 0; k < WellKhObj.Permeability.Grid.NumCellsIJK.K; k++)
+        //                {
+        //                    if (WellKhObj.ZoneIndex[i, j, k] != ZoneIndexing[i, j, k] && WellKhObj.ZoneIndex[i, j, k] == WellKhObj.ZoneIndex[i, j, k])
+        //                    {
+        //                        if (WellKhObj.ZoneIndex[i, j, k] != ZoneIndexing[i, j, k] + 1 && WellKhObj.ZoneIndex[i, j, k]  != ZoneIndexing[i, j, k] + 2)
+        //                        { PetrelLogger.InfoOutputWindow("The following cell does not match Zone Index: " + 
+        //                                               System.Convert.ToString(i) + ", " +  System.Convert.ToString(j) + ", " +
+        //                                                 System.Convert.ToString(k) + "the two indeces are: " + System.Convert.ToString(WellKhObj.ZoneIndex[i, j, k])+
+        //                                                "and " + ZoneIndexing[i, j, k]);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        ////
              
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
+        //    }
+        //    else
+        //    {
+        //        e.Effect = DragDropEffects.None;
               
-            }
-        }
+        //    }
+        //}
 
         private void Add_Click(object sender, EventArgs e)
         {
@@ -301,6 +334,22 @@ namespace ModifiedKh
             {
                 Executor executor = workstep.GetExecutor(args, null);
                 executor.ExecuteSimple();
+            }
+        }
+
+        private void OneLayerGridDropTarget_DragDrop(object sender, DragEventArgs e)
+        {
+            this.args.OneLayerPerZoneGrid = e.Data.GetData(typeof(Grid)) as Grid;
+
+
+            if (this.args.OneLayerPerZoneGrid == null)
+            {
+                MessageBox.Show("A Grid needs to be dropped");
+                return;
+            }
+            else
+            {
+                OneLayerGridPresentationBox.Text = this.args.OneLayerPerZoneGrid.Name;
             }
         }
 

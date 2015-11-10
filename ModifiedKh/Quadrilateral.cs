@@ -27,12 +27,22 @@ namespace ModifiedKh
             this.BottomRight = BottomRightIn;
 
             Plane3 plane = new Plane3(this.TopLeft, this.TopRight, this.BottomLeft);
+            //Vector3 ab = new Vector3(new Segment3(this.BottomLeft, this.TopLeft));
+            //Vector3 ac = new Vector3(new Segment3(this.BottomLeft, this.BottomRight));
+            //Vector3 normal = Vector3.Cross(ab, ac);
+            //Vector3 ad = new Vector3(new Segment3(this.BottomLeft, this.TopRight));
+            //double dotp = Vector3.Dot(ad, normal);
+
+            //PetrelLogger.InfoOutputWindow("The dot product of this cell's face is " + System.Convert.ToString(dotp));
+
             if (Plane3Extensions.Contains(plane,this.BottomRight, 1E-7))
             {
                 LeftSegment = new Segment3(this.TopLeft, this.BottomLeft);
                 RightSegment = new Segment3(this.TopRight, this.BottomRight);
                 BottomSegment = new Segment3(this.BottomLeft, this.BottomRight);
                 TopSegment = new Segment3(this.TopLeft, this.TopRight);
+                
+
                 CalculateCentroid();
             }
             else 
