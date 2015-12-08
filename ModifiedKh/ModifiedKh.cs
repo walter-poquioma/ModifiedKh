@@ -24,8 +24,35 @@ namespace ModifiedKh
     /// This class contains all the methods and subclasses of the ModifiedKh.
     /// Worksteps are displayed in the workflow editor.
     /// </summary>
+    /// 
+    
+
     class ModifiedKh : Workstep<ModifiedKh.Arguments>, IExecutorSource, IAppearance, IDescriptionSource
     {
+        internal static readonly Droid ArgsDroid = new Droid(CONNECTModifiedKhDataSourceFactory.DataSourceId, "ModifiedKh.SaveableArguments");
+
+        private SaveableArguments saveableSettings;
+
+        public SaveableArguments SaveableSettings 
+        {
+            get 
+            {
+                saveableSettings = (SaveableArguments) DataManager.Resolve(ArgsDroid);
+
+                if (saveableSettings == null)
+                {
+                    saveableSettings = new SaveableArguments();
+                }
+                
+                return saveableSettings;
+            }
+             set    
+            {
+                saveableSettings = value;
+            }
+        }
+
+
         #region Overridden Workstep methods
 
         /// <summary>
@@ -76,6 +103,7 @@ namespace ModifiedKh
         {
             Arguments arguments;
             WorkflowRuntimeContext context;
+            private KrigingAlgorithm kgf;
 
             public Executor(Arguments arguments, WorkflowRuntimeContext context)
             {
@@ -85,213 +113,247 @@ namespace ModifiedKh
 
             public override void ExecuteSimple()
             {
-
-                #region Creating and Setting the ratio Kh_wt/ SumKh as a Property
-
-                double Kh_ave; double Kh_wt = 0;
-                double x_ave;
-                double y_ave;
-                int TotalCellsCounter; int CellsPerZoneCounter;
-                double MD1x; double MD1y; double MD1z; double MD1;
-                double MD2x; double MD2y; double MD2z; double MD2;
-                Borehole SelectedWell = null;
-                double MiddlePointx; double MiddlePointy; double MiddlePointz;
-                Dictionary<Index3, double> DictionaryOfRatios = new Dictionary<Index3,double>();
-
-                int max_i = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.I;
-                int max_j = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.J;
-                int max_k = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.K;
-                int ave_i; int ave_j; 
-                List<Index3> ListOfCellsWithProperty = new List<Index3>();
-                List<PerforatedCell> ListOfPerforatedCells = new List<PerforatedCell>();
-                double KhRatio;
-     
-               // double[] arrayOfProperty = new double[max_i * max_j* max_k];
-                List<double> ListOfProperty = Enumerable.Repeat(0.0/0.0, max_i * max_j * max_k).ToList();
-                Template TemplateOfProperty = PetrelProject.WellKnownTemplates.PetrophysicalGroup.Permeability;
-               
-                
-
-
-                Point3 MiddlePoint;
-                Point3 IntersectingPoint;
-                Index3 MiddleCell;
-                
-
-                //List<CellSide> Side;
-                IPillarGridIntersectionService pgiservice = CoreSystem.GetService<IPillarGridIntersectionService>();
-                PropertyCollection pc1 = this.arguments.OneLayerPerZoneGrid.PropertyCollection;
-                PropertyCollection pc2 = this.arguments.PermeabilityFromModel.Grid.PropertyCollection;
-
-
-
-                using (ITransaction trans = DataManager.NewTransaction())
+                try
                 {
-                    trans.Lock(pc1);
-                    Property p = pc1.CreateProperty(TemplateOfProperty);
-                    p.Name = "Kh_ratio";
+                    #region Normal Score Transformation of kh ratio data
 
-                    foreach (Dictionary<int, List<CellData>> dict in this.arguments.ListOfCellDataDictionaries)  //Looping through all Dictionaries that contain the information associated to a particular well test.
-                {                                                       
-                    Kh_ave = 0.0;
-                    TotalCellsCounter = 0;
-                     
+                    arguments.ListOfRatios.Clear();
+                    arguments.mean = 0;
+                    arguments.std = 0;
 
-                    foreach (int ind in dict.Keys) //Looping through all Zones belonging to that particular well test
+                    //getting the mean
+                    foreach (KhTableRowInfoContainer ri in arguments.ListOfModellingData)
                     {
-                        //x_ave = 0.0;
-                        //y_ave = 0.0;
-                        //MD1 = -1;
-                        //MD2 = -2;
-                        ave_i = 0;
-                        ave_j = 0;
-                        CellsPerZoneCounter = 0;
-
-
-                        foreach (CellData cell in dict[ind])  //Looping through all the CellData objects in a particular zone.
-                        { 
-                            CellsPerZoneCounter = CellsPerZoneCounter + 1;
-                            Kh_ave = cell.Perm * cell.Height + Kh_ave;
-                            ave_i = ave_i + cell.CellIndex.I;
-                            ave_j = ave_j + cell.CellIndex.J;
-                            PerforatedCell PerforatedCellObj =  new PerforatedCell(); 
-                            PerforatedCellObj.CellIndex.I = cell.CellIndex.I;
-                            PerforatedCellObj.CellIndex.J = cell.CellIndex.J;
-                            PerforatedCellObj.CellIndex.K = cell.CellIndex.K;
-
-                            ListOfPerforatedCells.Add(PerforatedCellObj);
-                           // cell_center = this.arguments.PermeabilityFromModel.Grid.GetCellCenter(cell.CellIndex);
-                            
-                            
-
-                            //if(counter ==1)
-                            //{
-                            //    SelectedWell = cell.Well;
-                            //    Kh_wt = cell.Kh_wt;
-                            //    IntersectingPoint = KandaIntersectionService.GetIntersectingPoint(pgiservice, this.arguments.PermeabilityFromModel.Grid, 
-                            //                                                                            cell.Well, cell.CellIndex, cell.PerforatedZonesOnly);
-                            //    MD1 = cell.Well.Transform(Domain.ELEVATION_DEPTH, IntersectingPoint.Z, Domain.MD);
-
-
-                            //}
-                            //else if(counter == dict[ind].Count)
-                            //{
-                            //    IntersectingPoint = KandaIntersectionService.GetIntersectingPoint(pgiservice, this.arguments.PermeabilityFromModel.Grid,
-                            //                                                                                cell.Well, cell.CellIndex, cell.PerforatedZonesOnly);
-                            //      MD2 = cell.Well.Transform(Domain.ELEVATION_DEPTH, IntersectingPoint.Z, Domain.MD);
-                            //}
-                            Kh_wt = cell.Kh_wt;
-                        }
-                        ave_i = ave_i / CellsPerZoneCounter;
-                        ave_j = ave_j / CellsPerZoneCounter;
-
-                        ListOfCellsWithProperty.Add(new Index3(ave_i, ave_j, ind));
-
-                        TotalCellsCounter = CellsPerZoneCounter + TotalCellsCounter;
-                       
-                        //if (MD1 >= 0 && MD2 >= 0 && SelectedWell !=null)
-                        //{
-                        //    MiddlePointx = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.X);
-                        //    MiddlePointy = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.Y);
-                        //    MiddlePointz = SelectedWell.Transform(Domain.MD, (MD1 + MD2) / 2, Domain.ELEVATION_DEPTH);
-                        //    MiddlePoint = new Point3(MiddlePointx, MiddlePointy, MiddlePointz);
-                            
-                        //     MiddleCell = this.arguments.PermeabilityFromModel.Grid.GetCellAtPoint(MiddlePoint);
-     
-                        //}
-                       
+                        arguments.ListOfRatios.Add(ri.Ratio);
+                        arguments.mean = ri.Ratio + arguments.mean;
                     }
-                   
-                    Kh_ave = Kh_ave / TotalCellsCounter; //Average of all Kh of all cells corresponding to the same kh_wt
-                    KhRatio = Kh_wt / Kh_ave;
 
-                    foreach (Index3 index in ListOfCellsWithProperty) //Looping through all cells which are assigned a KhRatio property in the one layer per zone grid.
+                    arguments.mean = arguments.mean / arguments.ListOfRatios.Count;
+
+                    //getting the standard deviation
+                    foreach (double value in arguments.ListOfRatios)
                     {
-                        p[index] = (float)KhRatio; //Assigning the KhRatio property value
-
-                    //#if Debug
-                        if (Kh_wt > 0)
-                        {
-                            PetrelLogger.InfoOutputWindow("The ratio of the selected zones is " + System.Convert.ToString(KhRatio));
-                            PetrelLogger.InfoOutputWindow("The corresponding index is: " + System.Convert.ToString(index.I) + ", " +
-                                                          System.Convert.ToString(index.J) + ", " + System.Convert.ToString(index.K));
-                            //  ListOfProperty[MiddleCell.I + MiddleCell.J * max_i + MiddleCell.K * max_i * max_j] = Kh_wt / Kh_ave;
-                        }
-                        else
-                        {
-                            MessageBox.Show("The Kh of Well Testing corresponding to Well " + SelectedWell.Name + " has not been set to a valid value.");
-                            return;
-                        }
-                     //#endif
+                        arguments.std = Math.Pow(value - arguments.mean, 2) + arguments.std;
                     }
-                    p.SetCellsUpscaled(ListOfCellsWithProperty);
 
-                    //Saving all the cell indices corresponding to the wells belong to the same Kh_wt and their corresponding KhRatio value so that they can be used when
-                    // the KhRatio property is set in the grid that has multiple layers per zone.
-                    for (int i = ListOfPerforatedCells.Count - TotalCellsCounter; i < ListOfPerforatedCells.Count; i++) { ListOfPerforatedCells[i].KhRatio= KhRatio; }
-                    
+                    arguments.std = Math.Sqrt(arguments.std / arguments.ListOfRatios.Count);
+
+                    //Normal transformation of data
+                    foreach (double ra in arguments.ListOfRatios)
+                    {
+                        arguments.ListOfNormalTransformData.Add(Normal_Transform(arguments.mean, arguments.std, ra));
+                    }
+
+                    #endregion
 
 
+
+                    double Kh_ave; double Kh_wt = 0;
+                    double x_ave;
+                    double y_ave;
+                    int TotalCellsCounter; int CellsPerZoneCounter;
+                    double MD1x; double MD1y; double MD1z; double MD1;
+                    double MD2x; double MD2y; double MD2z; double MD2;
+                    Borehole SelectedWell = null;
+                    double MiddlePointx; double MiddlePointy; double MiddlePointz;
+                    Dictionary<Index3, double> DictionaryOfRatios = new Dictionary<Index3, double>();
+
+                    int max_i = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.I;
+                    int max_j = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.J;
+                    int max_k = this.arguments.PermeabilityFromModel.Grid.NumCellsIJK.K;
+                    int ave_i; int ave_j;
+                    List<Index3> ListOfCellsWithProperty = new List<Index3>();
+                    List<PerforatedCell> ListOfPerforatedCells = new List<PerforatedCell>();
+                    double KhRatio;
+
+                    // double[] arrayOfProperty = new double[max_i * max_j* max_k];
+                    List<double> ListOfProperty = Enumerable.Repeat(0.0 / 0.0, max_i * max_j * max_k).ToList();
+                    Template TemplateOfProperty = PetrelProject.WellKnownTemplates.PetrophysicalGroup.Permeability;
+
+
+
+
+                    Point3 MiddlePoint;
+                    Point3 IntersectingPoint;
+                    Index3 MiddleCell;
+
+
+                    //List<CellSide> Side;
+                    IPillarGridIntersectionService pgiservice = CoreSystem.GetService<IPillarGridIntersectionService>();
+                    PropertyCollection pc1 = this.arguments.OneLayerPerZoneGrid.PropertyCollection;
+                    PropertyCollection pc2 = this.arguments.PermeabilityFromModel.Grid.PropertyCollection;
+                    List<Index3> ListOfSelectedCellsInOneLayerGrid = new List<Index3>();
+
+                    //Creating a new transaction
+
+                    using (ITransaction trans = DataManager.NewTransaction())
+                    {
+                        //trans.Lock(PetrelProject.PrimaryProject);
+                        //List<PropertyCollection> ListOfLockingObj = new List<PropertyCollection>();
+                        //ListOfLockingObj.Add(pc1);
+                        //ListOfLockingObj.Add(pc2);
+
+                        //trans.LockCollection(ListOfLockingObj);
+                        trans.Lock(pc1);
+
+                        #region Creating and Setting the Kh ratio as a Property
+                        Property p = pc1.CreateProperty(PetrelProject.WellKnownTemplates.LogTypes2DGroup.RelativePermeability);
+                        p.Name = "Kh_ratio Of Single Layer Model";
+
+                        //Assigning normal-transformed kh ratio values to their corresponding cells in the One Layer per Grid property "p".
+                        for (int i = 0; i < arguments.ListOfRatios.Count; i++)
+                        {
+                            p[arguments.ListOfModellingData[i].AvgIJK] = (float)arguments.ListOfNormalTransformData[i];
+
+                            ListOfSelectedCellsInOneLayerGrid.Add(arguments.ListOfModellingData[i].AvgIJK);
+
+
+                            PetrelLogger.InfoOutputWindow("The ratio of the selected zones is " + System.Convert.ToString(arguments.ListOfRatios[i]) + " and its normalized value is " +
+                                                               System.Convert.ToString(arguments.ListOfNormalTransformData[i]));
+                            PetrelLogger.InfoOutputWindow("The corresponding index is: " + System.Convert.ToString(arguments.ListOfModellingData[i].AvgIJK.I) + ", " +
+                                                          System.Convert.ToString(arguments.ListOfModellingData[i].AvgIJK.J) + ", " + System.Convert.ToString(arguments.ListOfModellingData[i].AvgIJK.K));
+
+                        }
+
+                        p.SetCellsUpscaled(ListOfSelectedCellsInOneLayerGrid);
+
+
+
+                        #endregion
+
+
+                        #region Kriging the normalized property kh ratio
+
+                        //Setting of the Model Variogram parameters and Kriging Arguments. The values are obtained from the arguments variable set in the ModifiedKhUI section.
+                        KrigingArguments KrigingArgs = null;
+                        kgf = WellKnownPetrophysicalAlgorithms.Kriging;
+                        KrigingArgs = kgf.CreateArgumentPackage(p);
+                        KrigingArgs.ModelVariogram.MajorRange = arguments.VarArg.MajorRange;
+                        KrigingArgs.ModelVariogram.MinorRange = arguments.VarArg.MinorRange;
+                        KrigingArgs.ModelVariogram.Nugget = arguments.VarArg.Nugget;
+                        KrigingArgs.ModelVariogram.ModelVariogramType = arguments.VarArg.ModelVariogramType;
+                        KrigingArgs.ModelVariogram.Dip = new Angle(0);
+                        KrigingArgs.ModelVariogram.MajorDirection = arguments.VarArg.MajorDirection;
+                        KrigingArgs.Expert.KrigingType = arguments.KrigType;
+                        ModelVariogramArguments argval = new ModelVariogramArguments();
+
+                        arguments.ListOfZonesOfOneLayerPerZoneGrid = KandaPropertyCreator.GetAllLowLevelZones(arguments.OneLayerPerZoneGrid.Zones);
+
+                        //Kriging the property by zones. First we check for those zones that have Kh ratio values and then we krig that zone using the previously defined Kriging Arguments.
+                        foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone zone in arguments.ListOfZonesOfOneLayerPerZoneGrid)
+                        {
+                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name))
+                            {
+                                kgf.Invoke(p, zone, KrigingArgs);
+                                PetrelLogger.InfoOutputWindow("The " + zone.Name + " zone of the " + p.Name + " property with grid " + p.Grid.Name + " was kriged.");
+                            }
+                        }
+
+                        #endregion
+
+                        arguments.CopyOfp = p;
+
+                        trans.Commit();
+                    }
+
+                    using (ITransaction trans = DataManager.NewTransaction())
+                    {
+
+                        trans.Lock(pc2);
+                        #region Multiplying the Permeability property of Original Grid with the krigged ratio of Kh and storing in a newly created Property.
+
+                        //Creating New K property
+                        Property p2 = pc2.CreateProperty(TemplateOfProperty);
+                        p2.Name = "Updated K";
+
+                        //Multiplying the previous K values contained in arguments.PermeabilityFromModel by their corresponding unnormalized Kh ratio.      
+                        int counter = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        int top_k;
+                        int base_k;
+
+                        //TODO: put an if statement to check for stairstep grid
+                        foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone zone in arguments.ListOfAllZones)
+                        {
+                            if (zone.BaseK < zone.TopK)
+                            {
+                                base_k = zone.BaseK;
+                                top_k = zone.TopK;
+                            }
+                            else
+                            {
+                                top_k = zone.BaseK;
+                                base_k = zone.TopK;
+                            }
+                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name)) //If it is a kriged zone then use multiply the unnormalized ratio property with the original K property
+                            {
+
+                                for (int i = 0; i < max_i; i++)
+                                {
+                                    for (int j = 0; j < max_j; j++)
+                                    {
+                                        for (int k = base_k; k <= top_k; k++)
+                                        {
+                                            if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))
+                                            {
+                                                p2[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)arguments.CopyOfp[i, j, counter]) * arguments.PermeabilityFromModel[i, j, k];
+                                                counter2 = counter2 + 1;
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                            else       //If it is not a kriged zone then just make sure that the k value of the original K property is given to p2
+                            {
+                                for (int i = 0; i < max_i; i++)
+                                {
+                                    for (int j = 0; j < max_j; j++)
+                                    {
+                                        for (int k = base_k; k <= top_k; k++)
+                                        {
+                                            if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))
+                                            {
+                                                p2[i, j, k] = arguments.PermeabilityFromModel[i, j, k];
+                                                counter3 = counter3 + 1;
+
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                            counter = counter + 1;
+                        }
+
+                        //Multiplying the cells that were penetrated by a well by their corresponding Kh ratio. 
+                        //We use the original k (contained in arguments.PermeabilityFromModel) and multiply it by the ratio corresponding to their corresponding
+                        //hard data kh ratio.
+
+                        for (int i = 0; i < arguments.ListOfRatios.Count; i++)
+                        {
+                            foreach (Index3 ind in arguments.ListOfModellingData[i].ListOfCellInd)
+                            {
+                                //p2[ind] = arguments.PermeabilityFromModel[ind] * (float)arguments.ListOfRatios[i]; 
+                                p2[ind] = arguments.PermeabilityFromModel[ind] * (float)arguments.ListOfModellingData[i].Ratio;
+                            }
+                        }
+
+                        #endregion
+
+                        trans.Commit();
+                    }
+
+                    arguments.Successful = true;
                 }
+                catch 
+                {
 
-
-               
-                //Setting the property value. In this case the property is the ratio kh_wt/Kh_ave.
-                //using (ITransaction trans = DataManager.NewTransaction())
-                //{
-                //    trans.Lock(pc2);
-                //    Property p2 = pc2.CreateProperty(TemplateOfProperty);
-                //    p.Name = "Kh_ratio";
-
-                //    for (int i = 0; i < max_i; i++)
-                //    {
-                //        for (int j = 0; j < max_j; j++)
-                //        {
-                //            for (int k = 0; k < max_k; k++)
-                //            {
-                //                p2[i, j, k] = (float)ListOfProperty[i + j * max_i + k * max_i * max_j];
-                //                Index3 DummyInd = new Index3(i,j,k);
-                //                DummyInd =  ModelingUnitSystem.ConvertIndexToUI(this.arguments.PermeabilityFromModel.Grid,DummyInd);
-                //                if (!double.IsNaN(p2[i, j, k]))
-                //                {
-                //                PetrelLogger.InfoOutputWindow("The grid cell " + System.Convert.ToString(DummyInd.I) + ", " +
-                //                                                  System.Convert.ToString(DummyInd.J) + ", " + System.Convert.ToString(DummyInd.K) + ", " +
-                //                                                   "has a Kh ratio value of " + System.Convert.ToString(p[i, j, k]));
-                //                }
-                //            }
-                //        }
-                //    }
-
-                //    trans.Commit();
-                //}
-
-
-                #endregion
-
-                #region Kriging 
-
-                //Getting the maximum vertical range in order to ensure that it exists a high vertical correlation of the cells within the same zone
-                ModelVariogramArguments VariogramArgs = new ModelVariogramArguments();
-                // ModelVariogramArguments VariogramArgs = new ModelVariogramArguments(this.arguments.VariogramType, this.arguments.Nugget, 
-                //      this.arguments.MajorRange, this.arguments.MinorRange,GridHeight * 10) ;
-                KrigingArguments KrigingArgs = new KrigingArguments(VariogramArgs);
-
-
-                this.arguments.ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(this.arguments.OneLayerPerZoneGrid.Zones);
-                //KrigingAlgorithm KriggingAlg = new KrigingAlgorithm();
-                //    foreach(Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone z in this.arguments.ListOfZones)
-                //    {
-                //        KriggingAlg.Invoke(p, z, KrigingArgs);
-              
-                //    }
-                    trans.Commit();
+                    arguments.Successful = false;
                 }
-               
-                
+             
 
-
-
-                #endregion
             }
         }
 
@@ -317,16 +379,37 @@ namespace ModifiedKh
            // private Property permeabilityFromModel;
            // private List<Borehole> wellsSelected;
             private List<WellKh> listOfWellKh;
-            public List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZones = new List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>();
+            public List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfAllZones = new List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>();
             public List<Dictionary<Index3, List<double>>> listOfKhDictionaries;
             private List<double> Kh_ave;
             private List<double> Kh_wt;
             private List<Dictionary<int, List<CellData>>> listOfCellDataDictionaries = new List<Dictionary<int, List<CellData>>>();
             private Property permeabilityFromModel;
             private Grid oneLayerPerZoneGrid;
-            public  ModelVariogramType VariogramType = ModelVariogramType.Spherical;
-            public double Nugget = 2;
-            public double MajorRange = 10;
+            public ModelVariogramArguments VarArg = new ModelVariogramArguments();
+            public  ModelVariogramType VariogramType;
+            public List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZonesOfOneLayerPerZoneGrid = new List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>();
+            //public double Nugget = 0.0;
+            //public double MajorRange;
+            //public double MinorRange;
+            //public Angle MajorDirection;
+            //public Angle MinorDirection;
+            public KrigingType KrigType;
+
+            public double VerticalRange;
+            public List<String> ListOfPenetratedZoneNames = new List<string>();
+            public Property CopyOfp;
+            public bool Successful = false;
+
+
+            public List<KhTableRowInfoContainer> ListOfModellingData = new List<KhTableRowInfoContainer>();
+            public List<int> ListOfModellingKhwtIndices = new List<int>();
+            public double mean;
+            public double std;
+            public List<double> ListOfNormalTransformData = new List<double>();
+            public List<double> ListOfRatios = new List<double>();
+
+            
            
             //private Dictionary<string, List<CellData>> dictionaryOfCellDataOfSelectedWells = new Dictionary<string, List<CellData>>();
             [Description("PermeabilityFromModel", "The permeability from the 3D model")]
@@ -480,6 +563,55 @@ namespace ModifiedKh
                 return new ModifiedKhUI((ModifiedKh)workstep, (Arguments)argumentPackage, context);
             }
         }
+
+        public static List<Borehole> GetAllBoreholesInProject(BoreholeCollection TopBhCollection)
+        {
+
+            List<Borehole> ListOfBoreholes = new List<Borehole>();
+
+            foreach (Borehole bh in TopBhCollection)
+            {
+                ListOfBoreholes.Add(bh);
+            }
+
+            foreach (BoreholeCollection BhCollection in TopBhCollection.BoreholeCollections)
+            {
+                    ListOfBoreholes.AddRange(GetAllBoreholesInProject(BhCollection));
+            }
+            return ListOfBoreholes;
+
+        
+        }
+
+        public static double Normal_Transform(double mean, double std, double OriginalData)
+        {
+            double TransformedData = -999.0;
+
+            if (std >0) 
+            {
+                TransformedData = (OriginalData - mean) / (std);
+
+            }
+            else if (std == 0)
+            {
+                TransformedData = 0;
+            }
+            return TransformedData;
+
+        }
+
+        public static double Normal_Transform_Reverse(double mean, double std, double OriginalData)
+        {
+           double BackTransformedData = -999.0;
+
+              if (std >=0)
+             {
+               BackTransformedData = (OriginalData * std) + mean; 
+             }
+                 
+                return BackTransformedData;
+
+        }
     }
     
     public class PerforatedCell
@@ -494,4 +626,6 @@ namespace ModifiedKh
 
     
     }
+
+    
 }

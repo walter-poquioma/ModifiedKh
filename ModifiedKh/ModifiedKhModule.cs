@@ -47,9 +47,10 @@ namespace ModifiedKh
             // Register ModifiedKh
             ModifiedKh modifiedkhInstance = new ModifiedKh();
             PetrelSystem.WorkflowEditor.AddUIFactory<ModifiedKh.Arguments>(new ModifiedKh.UIFactory());
-            PetrelSystem.WorkflowEditor.Add(modifiedkhInstance);
+            //PetrelSystem.WorkflowEditor.Add(modifiedkhInstance);
             m_modifiedkhInstance = new Slb.Ocean.Petrel.Workflow.WorkstepProcessWrapper(modifiedkhInstance);
             PetrelSystem.ProcessDiagram.Add(m_modifiedkhInstance, "Plug-ins");
+            PetrelSystem.AddDataSourceFactory( new CONNECTModifiedKhDataSourceFactory());
         }
 
         /// <summary>

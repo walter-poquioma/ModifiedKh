@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OceanDeployList>
+  <CopyList>
+    <Project source="../ModifiedKh/ModifiedKh.csproj" />
+  </CopyList>
+</OceanDeployList>

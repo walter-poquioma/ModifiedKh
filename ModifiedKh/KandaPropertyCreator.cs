@@ -116,6 +116,7 @@ namespace ModifiedKh
 
                  DictionaryTemplate TemplateOfProperty = PetrelProject.WellKnownTemplates.FaciesGroup.ZonesMain;
                  DictionaryProperty ZoneIndex = pc.CreateDictionaryProperty(TemplateOfProperty);
+                 ZoneIndex.Name = "Zone Index";
                  ColorTableRoot Root = ColorTableRoot.Get(PetrelProject.PrimaryProject);
                  DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(ZoneIndex);
                  Slb.Ocean.Petrel.DomainObject.ColorTables.DictionaryColorTableEntry ColorTableEntry = new Slb.Ocean.Petrel.DomainObject.ColorTables.DictionaryColorTableEntry();

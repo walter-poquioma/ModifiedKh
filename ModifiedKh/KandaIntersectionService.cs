@@ -568,7 +568,15 @@ namespace ModifiedKh
                     {
                         // Distance[0] = Face1.Centroid.Distance(Face2.Centroid);
                         //DictionaryOfSelectedCells.Add(ListOfSelectedIntersectingGridCells[i], Distance);
-                        Distance.Add(Face1.Centroid.Distance(Face2.Centroid));
+                       
+                        if (!Double.IsNaN(Face1.Centroid.Distance(Face2.Centroid)))
+                        {
+                            Distance.Add(Face1.Centroid.Distance(Face2.Centroid));
+                        }
+                        else
+                        {
+                            Distance.Add(-1);
+                        }
                     }
                     catch
                     {

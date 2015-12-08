@@ -57,13 +57,14 @@ namespace ModifiedKh
         private double khWellTesting;
         private List<string> listOfNamesOfIntersectedZones = new List<string>();
         private List<Index3> listOfSelectedGridCells = new List<Index3>();
-        private List<int> listOfSelectedZoneIndeces = new List<int>();
+        public List<int> listOfSelectedZoneIndeces = new List<int>();
         private List<Index3> listOfIntersectedGridCells = new List<Index3>();
         private List<int> listOfZoneIndexCorrespondingToIntersectedCells = new List<int>();
         //private Dictionary<Index3, double> DictionaryOfCellData = new Dictionary<Index3, double>();
        // private Dictionary<Index3, double> DictionaryOfSelectedCells = new Dictionary<Index3, double>();
 
         public static double FactorToConvert_mdft_To_m3 = (9.869233E-16) * (0.3048);
+        public static double FactorToConvert_mdm_To_m3 = 9.869233E-16;
         
 
         [Description("permeability", "The permeability given by the user")]
@@ -113,7 +114,7 @@ namespace ModifiedKh
         public double KhWellTesting
         {
             get { return this.khWellTesting; }
-            set { this.khWellTesting= value; }
+            set { this.khWellTesting = value; }
         }
 
         [Description("listOfNamesOfIntersectedZones", "The list of names of the zones intersected by the well")]
@@ -213,7 +214,7 @@ namespace ModifiedKh
             {
                 if (this.listOfSelectedZoneIndeces[i] + 1 != this.listOfSelectedZoneIndeces[i+1] )
                 {
-                    this.listOfSelectedZoneIndeces = null;
+                   // this.listOfSelectedZoneIndeces = null;
                     return false;
                     
                 }
@@ -241,7 +242,8 @@ namespace ModifiedKh
 
                 else
                 {
-                    Dictionary<int, List<CellData>> DictionaryOfCellData = new Dictionary<int, List<CellData>>(listOfSelectedZoneIndeces.Count);
+                    //Dictionary<int, List<CellData>> DictionaryOfCellData = new Dictionary<int, List<CellData>>(this.listOfSelectedZoneIndeces.Count);
+                    Dictionary<int, List<CellData>> DictionaryOfCellData = new Dictionary<int, List<CellData>>();
                     List<double> Heights = KandaIntersectionService.GetListOfPenetratedCellDistances(this.permeability.Grid, this.well, this.listOfIntersectedGridCells,
                                                                                                       PerforatedZonesOnly, Vertical_only);
 
@@ -260,8 +262,12 @@ namespace ModifiedKh
                                 CellDataObj.Kh_wt = this.khWellTesting;
                                 CellDataObj.Well = this.Well;
                                 CellDataObj.PerforatedZonesOnly = PerforatedZonesOnly;
-
-                                DictionaryOfCellData[index].Add(CellDataObj);
+                                
+                                if (CellDataObj.Height >= 0 && !Double.IsNaN(CellDataObj.Perm))
+                                {
+                                    DictionaryOfCellData[index].Add(CellDataObj);   
+                                }
+                                
 
                                 //  this.listOfSelectedGridCells.Add(this.listOfIntersectedGridCells[i]);
                             }

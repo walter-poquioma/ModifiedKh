@@ -16,7 +16,7 @@ using Slb.Ocean.Petrel.DomainObject.ColorTables;
 
 namespace ModifiedKh
 {
-    class CellData
+   public class CellData
     {
         public Index3 CellIndex;
         //public int ZoneIndex;

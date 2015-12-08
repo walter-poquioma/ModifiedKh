@@ -104,7 +104,7 @@ namespace ModifiedKh
             Segment3 LeftRightBimedian = new Segment3(this.LeftSegment.MidPoint, this.RightSegment.MidPoint);
             Segment3 TopBottomBimedian = new Segment3(this.BottomSegment.MidPoint, this.TopSegment.MidPoint);
 
-            this.Centroid = LeftRightBimedian.Intersect(TopBottomBimedian);
+            this.Centroid = LeftRightBimedian.Intersect(TopBottomBimedian,1E-4);
         }
 
     }
