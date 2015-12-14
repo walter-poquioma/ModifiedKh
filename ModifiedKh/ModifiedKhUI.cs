@@ -21,6 +21,7 @@ using Slb.Ocean.Petrel.DomainObject.Shapes;
 using Slb.Ocean.Petrel.Well;
 using Slb.Ocean.Petrel.DomainObject.ColorTables;
 using Slb.Ocean.Petrel.UI.Controls;
+using System.Text.RegularExpressions;
 
 namespace ModifiedKh
 {
@@ -60,7 +61,7 @@ namespace ModifiedKh
         bool FirstTimeEditingRatio = true;
         double SumOfRatios = 0;
         int OldIndex;
-        double MaxRatio = 0; double MinRatio = 0;
+        double MaxRatio = 0; double MinRatio = 0;    
         bool FirstTimeTruncating = true;
 
         private SaveableArguments SaveArgs;
@@ -77,13 +78,14 @@ namespace ModifiedKh
         public ModifiedKhUI(ModifiedKh workstep, ModifiedKh.Arguments args, WorkflowContext context)
         {
             InitializeComponent();
-         
+
             this.workstep = workstep;
             this.args = args;
             this.context = context;
  
         }
 
+ 
 
         private void UpdateArgs(WellKh WellKhObj)
         { 
@@ -140,8 +142,12 @@ namespace ModifiedKh
                                cell.Value = false;
                                break;
 
-                              default:
+                              case 6:
                                cell.Value = B1;
+                               break;
+
+                              case 7:
+                               cell.Value = true;
                                break;
 
                           }
@@ -157,20 +163,20 @@ namespace ModifiedKh
                         if (FieldUnitsFlag)
                             WellKhDataGridView.Rows.Add(ri.WellName, ri.ZoneName, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Kh_sim * (1 / WellKh.FactorToConvert_mdft_To_m3),SignificantDigits)),
                                                     System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3),SignificantDigits)), 
-                                                    System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio,SignificantDigits)),false, B1);
+                                                    System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio,SignificantDigits)),false, B1,true);
                         else
                             WellKhDataGridView.Rows.Add(ri.WellName, ri.ZoneName, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Kh_sim * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits)),
                                                      System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits)),
-                                                     System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio, SignificantDigits)), false, B1);
+                                                     System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio, SignificantDigits)), false, B1,true);
                     }
                     else
                     {
                         if (FieldUnitsFlag)
                             WellKhDataGridView.Rows.Add(ri.WellName, ri.ZoneName, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Kh_sim * (1 / WellKh.FactorToConvert_mdft_To_m3),SignificantDigits)),
-                                                     String.Empty, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio, SignificantDigits)), false, B1);
+                                                     String.Empty, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio, SignificantDigits)), false, B1,true);
                         else
                             WellKhDataGridView.Rows.Add(ri.WellName, ri.ZoneName, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Kh_sim * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits)),
-                                                     String.Empty, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio, SignificantDigits)), false, B1);
+                                                     String.Empty, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ri.Ratio, SignificantDigits)), false, B1,true);
                     }
                     WellKhDataGridView.Rows[counter].Tag = ri;
                 }
@@ -216,6 +222,8 @@ namespace ModifiedKh
                 Truncate2NormalDist.Enabled = true;
                 WellKhDataGridView.Columns[5].ReadOnly = false;
                 WellKhDataGridView.Columns[3].ReadOnly = false;
+                WellKhDataGridView.Columns[4].ReadOnly = false;
+                WellKhDataGridView.Columns[7].ReadOnly = false;
 
                 MajorRangeTextBox.ReadOnly = false;
                 MinorRangeTextBox.ReadOnly = false;
@@ -575,12 +583,37 @@ namespace ModifiedKh
             DataGridView senderGrid = (DataGridView)sender;
             if (e.ColumnIndex == 5 && e.RowIndex >=0)
             {
-            Global_Individual_Check(senderGrid,(bool)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue, e.RowIndex, e.ColumnIndex);
+            Global_Individual_Check(ref senderGrid,(bool)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue, e.RowIndex, e.ColumnIndex);
+            }
+            else if (e.ColumnIndex == 7 && e.RowIndex >=0)
+            {
+                Include_Check(ref senderGrid, (bool)senderGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].EditedFormattedValue, e.RowIndex, e.ColumnIndex);
             }
            
         }
 
-        private void Global_Individual_Check(DataGridView senderGrid, bool Global, int RowIndex, int ColumnIndex)
+        private void Include_Check(ref DataGridView senderGrid, bool Included, int RowIndex, int ColumnIndex)
+        {
+            if (!Included)
+            {
+                senderGrid.Rows[RowIndex].ReadOnly = true;
+                senderGrid.Rows[RowIndex].Cells[ColumnIndex].ReadOnly = false;
+                ExcludeKhFromTotalRatio(ref senderGrid, RowIndex);
+                ListOfRowInfo[RowIndex].Include = false;
+ 
+            }
+            else
+            {
+                senderGrid.Rows[RowIndex].ReadOnly = false;
+                ListOfRowInfo[RowIndex].Include = true;
+                ListOfFilledKhwtIndices.Add(RowIndex);
+
+
+
+            }
+        }
+
+        private void Global_Individual_Check(ref DataGridView senderGrid, bool Global, int RowIndex, int ColumnIndex)
         { 
         
          double KhTotal = 0;
@@ -600,23 +633,40 @@ namespace ModifiedKh
                 if (Global)
                 {
                     if (!Entry.Equals(String.Empty) && Double.TryParse(Entry, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
-                    // if (!Entry.Equals(String.Empty)  &&  UpdateSpecificRowInfoObject(e.RowIndex, Entry))
                     {
-                        if (DoubleValue>0)
+                        if (DoubleValue>0) //If Value of Kh_wt is positive
                         {
                             if (FieldUnitsFlag)
                             { KhwtIn = System.Convert.ToDouble(Entry) * WellKh.FactorToConvert_mdft_To_m3; }
                             else
                             { KhwtIn = System.Convert.ToDouble(Entry) * WellKh.FactorToConvert_mdm_To_m3; }
 
-                            if (FirstTimeEditingRatio)
-                            {
+                            //if (FirstTimeEditingRatio)
+                            //{  
+                            //    foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
+                            //    {  //TODO: Add the condition to check for Included flag.
+                            //        if (ri.WellName.Equals(ListOfRowInfo[RowIndex].WellName))
+                            //        {
+                            //            KhTotal = KhTotal + ri.Kh_sim;
+                            //            ListOfIndeces.Add(counter);
+                            //        }
+                            //        counter = counter + 1;
+                            //    }
+
+
+
+                            //    RatioTotal = KhwtIn / KhTotal;
+                            //}
+                            //else
+                            //{
+                            //    RatioTotal = ListOfRowInfo[RowIndex].Ratio;
+                            //}
+
                                 foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
-                                {
-                                    if (ri.WellName.Equals(ListOfRowInfo[RowIndex].WellName))
+                                {  //TODO: Add the condition to check for Included flag.
+                                    if (ri.WellName.Equals(ListOfRowInfo[RowIndex].WellName) && ri.Include)
                                     {
                                         KhTotal = KhTotal + ri.Kh_sim;
-                                        //WellKhDataGridView.Rows[counter].Cells[e.ColumnIndex].Value = true;
                                         ListOfIndeces.Add(counter);
                                     }
                                     counter = counter + 1;
@@ -625,11 +675,7 @@ namespace ModifiedKh
 
 
                                 RatioTotal = KhwtIn / KhTotal;
-                            }
-                            else
-                            {
-                                RatioTotal = ListOfRowInfo[RowIndex].Ratio;
-                            }
+
 
                             foreach (int index in ListOfIndeces)
                             {
@@ -675,25 +721,33 @@ namespace ModifiedKh
 
                 else
                 {
-                    foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
-                    {
-                        if (ri.WellName.Equals(ListOfRowInfo[RowIndex].WellName))
-                        {
-                            UpdateSpecificRowInfoObject(counter, ColumnIndex ,System.Convert.ToString(senderGrid.Rows[counter].Cells[ColumnIndex - 2].Value));
-                            senderGrid.Rows[counter].Cells[ColumnIndex - 2].ReadOnly = false;
+                    //foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
+                    //{
+                    //    if (ri.WellName.Equals(ListOfRowInfo[RowIndex].WellName))
+                    //    {
+                    //        UpdateSpecificRowInfoObject(counter, ColumnIndex ,System.Convert.ToString(senderGrid.Rows[counter].Cells[ColumnIndex - 2].Value));
+                    //        senderGrid.Rows[counter].Cells[ColumnIndex - 2].ReadOnly = false;
 
-                            WellKhDataGridView.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                    //        WellKhDataGridView.CellValueChanged -= WellKhDataGridView_CellValueChanged;
 
-                                senderGrid.Rows[counter].Cells[ColumnIndex].Value = false;
-                                ri.Global = false;
+                    //            senderGrid.Rows[counter].Cells[ColumnIndex].Value = false;
+                    //            ri.Global = false;
 
                                 
-                            WellKhDataGridView.CellValueChanged += WellKhDataGridView_CellValueChanged;
-                            //  senderGrid.RefreshEdit();
+                    //        WellKhDataGridView.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                    //        //  senderGrid.RefreshEdit();
 
-                        }
-                        counter = counter + 1;
-                    }
+                    //    }
+                    //    counter = counter + 1;
+                    //}
+
+                    ExcludeKhFromTotalRatio(ref senderGrid, RowIndex);
+
+                    ListOfFilledKhwtIndices.Add(RowIndex);
+                    senderGrid.Rows[RowIndex].Cells[ColumnIndex - 2].ReadOnly = false;
+
+
+                           
 
                 }
 
@@ -798,7 +852,7 @@ namespace ModifiedKh
 
               if (FirstTimeEditingRatio)
               {
-                  if (MessageBox.Show("Do you want the current data to be saved as the core data and start editing ratios?\n If not then input all the well testing data first.",
+                  if (MessageBox.Show("Do you want the current data to be saved as the Orginal data and start editing ratios?\n If not then input all the well testing data first.",
                        "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                   {
                       // user clicked yes
@@ -817,6 +871,8 @@ namespace ModifiedKh
 
                       WellKhDataGridView.Columns[6].ReadOnly = false;
 
+  
+
                   }
                   else
                   {
@@ -834,8 +890,18 @@ namespace ModifiedKh
                   {
                       if (DoubleValue>0)
                       {
+                          ExcludeKhFromTotalRatio(ref WellKhDataGridView, RowInd);
+
                           ListOfRowInfo[RowInd].Ratio = DoubleValue;
-                          WellKhDataGridView.Rows[RowInd].Cells[4].Value = RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits);
+
+                          if (ListOfFilledKhwtIndices.Any(ind => ind == RowInd))
+                          {
+                              ListOfFilledKhwtIndices.Add(RowInd);
+                          }
+                         
+
+
+                          WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
                           return true; 
                       }
                       else
@@ -875,8 +941,6 @@ namespace ModifiedKh
             UpdateRowsInDataGridWithNewWells(ListOfBoreholes); 
 
             WellKhDataGridView.AllowUserToAddRows = false;
-            WellKhDataGridView.Columns[5].ReadOnly = true;
-            WellKhDataGridView.Columns[5].ReadOnly = true;
            
             IUnitServiceSettings uss;
             uss = CoreSystem.GetService<IUnitServiceSettings>();
@@ -964,7 +1028,8 @@ namespace ModifiedKh
                 }
                 else
                 {
-                    WellKhDataGridView.Rows.Add(bh.Name, "", "", "", "", false);
+                    Button B1 = new Button();
+                    WellKhDataGridView.Rows.Add(bh.Name, "", "", "", "", false,B1,true);
                     WellKhDataGridView.Rows[counter].Cells[0].Tag = bh;
                 }
                 counter++;
@@ -1040,23 +1105,84 @@ namespace ModifiedKh
             var senderGrid = (DataGridView)sender;
 
             if (senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn &&
-                e.RowIndex >= 0 && ListOfOriginalRowDataInfo != null)
+                e.RowIndex >= 0 && ListOfOriginalRowDataInfo.Count > 0)
             {
-                if (e.ColumnIndex==6)
+                if (e.ColumnIndex==6 && ListOfRowInfo[e.RowIndex].Include)
                 {
                     if ((bool)senderGrid.Rows[e.RowIndex].Cells[5].Value)
                     {
-                        senderGrid.Rows[e.RowIndex].Cells[5].Value = false;
+
+                        ExcludeKhFromTotalRatio(ref WellKhDataGridView, e.RowIndex);
+                      
+                        ListOfRowInfo[e.RowIndex].Global = false;
+                        WellKhDataGridView.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                        WellKhDataGridView.Rows[e.RowIndex].Cells[5].Value = false;
+                        WellKhDataGridView.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                        
+                        
+                    }
+
+                    if (ListOfFilledKhwtIndices.Any(ind => ind == e.RowIndex))
+                    {
+                        var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == e.RowIndex);
+                        ListOfFilledKhwtIndices.Remove(itemToRemove);
                     }
 
                     ListOfRowInfo[e.RowIndex] = ListOfOriginalRowDataInfo[e.RowIndex].CreateCopy();
-                    senderGrid.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt, SignificantDigits));
-                    senderGrid.Rows[e.RowIndex].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Ratio, SignificantDigits)); 
+                    ListOfFilledKhwtIndices.Add(e.RowIndex);
+
+                    WellKhDataGridView.Rows[e.RowIndex].Cells[4].Value = ListOfRowInfo[e.RowIndex].Ratio;
+
+                    if (FieldUnitsFlag)
+                    { WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));}
+                    else
+                    { WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits)); }
+                    
+
                 }
                     
 
             }
         }
+
+        private void ExcludeKhFromTotalRatio(ref DataGridView senderGrid, int RowIndex)
+        {
+            double NewRatio = 1.0 / (1.0 /(ListOfRowInfo[RowIndex].Ratio) - ListOfRowInfo[RowIndex].Kh_sim / ListOfRowInfo[RowIndex].Kh_wt);
+
+            for (int i = 0; i < senderGrid.Rows.Count; i++)
+            {
+                if (ListOfRowInfo[RowIndex].WellName.Equals(ListOfRowInfo[i].WellName) && RowIndex != i && (bool)senderGrid.Rows[i].Cells[5].Value)
+                {
+                    if (ListOfFilledKhwtIndices.Any(ind => ind == i))
+                    {
+                        var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == i);
+                        ListOfFilledKhwtIndices.Remove(itemToRemove);
+                    }
+                    ListOfRowInfo[i].Ratio = NewRatio;
+                    senderGrid.Rows[i].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(NewRatio, SignificantDigits));
+                    ListOfFilledKhwtIndices.Add(i);
+                }
+
+            }
+
+            //Making sure that the previous ratio is removed from the List of Filled Khwt so that the calculation of the total average ratio of the datagridview is done without that number
+            //If the new ratio (kh_wt/kh_sim) needs to be taken into account for the calculation of the new average then you need to use ListofFilledKhwtIndices.Add() outside of the method.
+            if (ListOfFilledKhwtIndices.Any(ind => ind == RowIndex))
+            {
+                var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == RowIndex);
+                ListOfFilledKhwtIndices.Remove(itemToRemove);
+            }
+
+            //Updating DatagridView and ListOfRowInfo
+            senderGrid.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+            senderGrid.Rows[RowIndex].Cells[5].Value = false;
+            ListOfRowInfo[RowIndex].Global = false;
+            senderGrid.CellValueChanged += WellKhDataGridView_CellValueChanged;
+            ListOfRowInfo[RowIndex].Ratio = ListOfRowInfo[RowIndex].Kh_wt / ListOfRowInfo[RowIndex].Kh_sim; //New ratio (kh_wt/kh_sim)
+            senderGrid.Rows[RowIndex].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowIndex].Ratio, SignificantDigits));
+
+        }
+
 
         private void WellKhDataGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -1769,12 +1895,10 @@ namespace ModifiedKh
                     ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
                 }
 
-               // ListOfRowInfo = SaveArgs.ListOfRowInfo;
-
                ListOfOriginalFilledKhwtIndices = SaveArgs.ListOfOriginalKhwtIndices;
                 ListOfFilledKhwtIndices = SaveArgs.ListOfKhwtIndices;
                 UpdateDataGridViewWithListOfRowInfoObj(ListOfRowInfo, ref WellKhDataGridView);
-            //    SetListOfModellingDataAndDataGridView(); 
+    
             }
             if (SaveArgs.MajorRange>0.0)
             {
@@ -1935,6 +2059,155 @@ namespace ModifiedKh
 
             }
         }
+
+
+
+         private void LoadClipBoardData(ref DataGridView senderGrid)
+        {
+            DataObject o = (DataObject)Clipboard.GetDataObject();
+            if (o.GetDataPresent(DataFormats.Text))
+            {  
+                int rowOfInterest = senderGrid.CurrentCell.RowIndex;
+                int leftMostColumn = senderGrid.CurrentCell.ColumnIndex;
+
+                string[] selectedRows = Regex.Split(o.GetData(DataFormats.Text).ToString().TrimEnd("\r\n".ToCharArray()), "\r\n");
+
+                if (selectedRows == null || selectedRows.Length == 0)
+                    return;
+
+                if (selectedRows.Length > (senderGrid.Rows.Count - (rowOfInterest - 1)))
+                {
+                    MessageBox.Show("The number of rows of the data in the clipboard is bigger than the available amount of rows. \n" +
+                        "Please make sure that the selected row in the table is correct.");
+                    return;
+                }
+                if (leftMostColumn!= 3 && leftMostColumn!= 4 )
+                {
+                    MessageBox.Show("The selected cell does not belong to the Kh (wt) or Ratio column. \n Please make sure that the selected column is correct");
+                    return;
+                    
+                }
+                else if (leftMostColumn== 3)
+                {
+                    try
+                    {
+                        foreach (string row in selectedRows)
+                        {
+                            string[] cols = Regex.Split(row, "\t");
+
+                            if (cols.Length > 2)
+                            {
+                                MessageBox.Show("The number of columns that you are trying to paste is bigger than 2. \n Please note that you can only paste in the Kh(wt) and Ratio columns.");
+                                return;
+                            }
+                        }
+
+                        foreach (string row in selectedRows)
+                        {
+                            if (rowOfInterest >= senderGrid.Rows.Count)
+                                break;
+
+                            try
+                            {
+                                string[] data = Regex.Split(row, "\t");
+                                int col = senderGrid.CurrentCell.ColumnIndex;
+
+                                foreach (string ob in data)
+                                {
+                                    if (col >= senderGrid.Columns.Count)
+                                        break;
+                                    if (ob != null)
+                                    { //senderGrid[col, rowOfInterest].Value = Convert.ChangeType(ob, senderGrid[col, rowOfInterest].ValueType); 
+                                        senderGrid[col, rowOfInterest].Value = ob;
+                                        UpdateSpecificRowInfoObject(rowOfInterest, col, ob);
+                                    }
+                                    col++;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                //do something here 
+                            }
+                            rowOfInterest++;
+                        }
+                    }
+                    catch (Exception e)
+                    {                       
+                    }
+                   
+                }
+                else if (leftMostColumn == 4)
+                {
+                    try
+                    {
+                        foreach (string row in selectedRows)
+                        {
+                            string[] cols = Regex.Split(row, "\t");
+
+                            if (cols.Length > 1)
+                            {
+                                MessageBox.Show("The number of columns that you are trying to paste is bigger than 1. \n Please note that you can only paste in the Kh(wt) and Ratio columns.");
+                                return;
+                            }
+                        }
+
+
+                        foreach (string row in selectedRows)
+                        {
+                            if (rowOfInterest >= senderGrid.Rows.Count)
+                                break;
+
+                            try
+                            {
+                                string[] data = Regex.Split(row, "\t");
+                                int col = senderGrid.CurrentCell.ColumnIndex;
+
+                                foreach (string ob in data)
+                                {
+                                    if (col >= senderGrid.Columns.Count)
+                                        break;
+                                    if (ob != null)
+                                    { //senderGrid[col, rowOfInterest].Value = Convert.ChangeType(ob, senderGrid[col, rowOfInterest].ValueType); 
+                                        senderGrid[col, rowOfInterest].Value = ob;
+                                        UpdateSpecificRowInfoObject(rowOfInterest, col, ob);
+                                    }
+                                    col++;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                //do something here 
+                            }
+                            rowOfInterest++;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                  
+                }
+               
+            }
+        }
+
+         private void WellKhDataGridView_KeyDown(object sender, KeyEventArgs e)
+         {
+             DataGridView senderGrid = sender as DataGridView;
+
+             if (e.Control && e.KeyCode == Keys.V)
+             {
+                 if (args.PermeabilityFromModel != null)
+	            {
+		             LoadClipBoardData(ref senderGrid);
+	            }
+                 else
+                 {
+                     MessageBox.Show("Please drop a peremability model before copying any data into the table");
+                 }
+                
+             }
+
+         }
     }
 
     static class RoundingClass

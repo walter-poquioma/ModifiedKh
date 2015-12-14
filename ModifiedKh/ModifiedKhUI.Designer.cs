@@ -28,6 +28,7 @@ namespace ModifiedKh
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PermeabilityDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.WellDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.PermeabilityPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
@@ -50,6 +51,14 @@ namespace ModifiedKh
             this.OneLayerGridDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.OneLayerGridPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
             this.WellKhDataGridView = new System.Windows.Forms.DataGridView();
+            this.ColumnWell = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnZones = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.KhSim = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Khwt = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Ratio = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Global = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Estimate = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.IncludeRow = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SelectedWellsCheckBox = new System.Windows.Forms.CheckBox();
             this.HistogramButton = new System.Windows.Forms.Button();
             this.DistributionCheckBox = new System.Windows.Forms.CheckBox();
@@ -82,13 +91,6 @@ namespace ModifiedKh
             this.MajorDirectionTextBox = new System.Windows.Forms.TextBox();
             this.OK = new System.Windows.Forms.Button();
             this.Cancel = new System.Windows.Forms.Button();
-            this.ColumnWell = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnZones = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.KhSim = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Khwt = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Ratio = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Global = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Estimate = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.WellKhDataGridView)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.KhRatioTab.SuspendLayout();
@@ -292,15 +294,75 @@ namespace ModifiedKh
             this.Khwt,
             this.Ratio,
             this.Global,
-            this.Estimate});
+            this.Estimate,
+            this.IncludeRow});
             this.WellKhDataGridView.Location = new System.Drawing.Point(30, 145);
             this.WellKhDataGridView.Name = "WellKhDataGridView";
-            this.WellKhDataGridView.Size = new System.Drawing.Size(837, 325);
+            this.WellKhDataGridView.Size = new System.Drawing.Size(867, 325);
             this.WellKhDataGridView.TabIndex = 26;
             this.WellKhDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellContentClick);
             this.WellKhDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellEndEdit);
             this.WellKhDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.WellKhDataGridView_CellMouseUp);
             this.WellKhDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellValueChanged);
+            this.WellKhDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WellKhDataGridView_KeyDown);
+            // 
+            // ColumnWell
+            // 
+            this.ColumnWell.HeaderText = "Well";
+            this.ColumnWell.Name = "ColumnWell";
+            this.ColumnWell.ReadOnly = true;
+            // 
+            // ColumnZones
+            // 
+            this.ColumnZones.HeaderText = "Zones";
+            this.ColumnZones.Name = "ColumnZones";
+            this.ColumnZones.ReadOnly = true;
+            // 
+            // KhSim
+            // 
+            this.KhSim.HeaderText = "Kh(sim) md-ft";
+            this.KhSim.Name = "KhSim";
+            this.KhSim.ReadOnly = true;
+            // 
+            // Khwt
+            // 
+            this.Khwt.HeaderText = "Kh(wt) md-ft";
+            this.Khwt.Name = "Khwt";
+            this.Khwt.ReadOnly = true;
+            // 
+            // Ratio
+            // 
+            this.Ratio.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Ratio.HeaderText = "Ratio: Kh(wt)/Kh(sim)";
+            this.Ratio.Name = "Ratio";
+            this.Ratio.ReadOnly = true;
+            // 
+            // Global
+            // 
+            this.Global.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Global.HeaderText = "Global/Individual Kh";
+            this.Global.Name = "Global";
+            this.Global.ReadOnly = true;
+            // 
+            // Estimate
+            // 
+            this.Estimate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Estimate.HeaderText = "Estimate";
+            this.Estimate.Name = "Estimate";
+            this.Estimate.ReadOnly = true;
+            this.Estimate.Text = "";
+            this.Estimate.UseColumnTextForButtonValue = true;
+            // 
+            // IncludeRow
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.NullValue = "True";
+            this.IncludeRow.DefaultCellStyle = dataGridViewCellStyle1;
+            this.IncludeRow.HeaderText = "Include";
+            this.IncludeRow.Name = "IncludeRow";
+            this.IncludeRow.ReadOnly = true;
+            this.IncludeRow.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.IncludeRow.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // SelectedWellsCheckBox
             // 
@@ -370,7 +432,7 @@ namespace ModifiedKh
             // 
             // MinimumRatioValue
             // 
-            this.MinimumRatioValue.Location = new System.Drawing.Point(517, 62);
+            this.MinimumRatioValue.Location = new System.Drawing.Point(517, 50);
             this.MinimumRatioValue.Name = "MinimumRatioValue";
             this.MinimumRatioValue.ReadOnly = true;
             this.MinimumRatioValue.Size = new System.Drawing.Size(100, 20);
@@ -472,7 +534,7 @@ namespace ModifiedKh
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(435, 62);
+            this.label4.Location = new System.Drawing.Point(435, 50);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(76, 13);
             this.label4.TabIndex = 41;
@@ -490,20 +552,20 @@ namespace ModifiedKh
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(27, 67);
+            this.label2.Location = new System.Drawing.Point(18, 72);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(122, 13);
+            this.label2.Size = new System.Drawing.Size(131, 13);
             this.label2.TabIndex = 39;
-            this.label2.Text = "One Layer per Zone grid";
+            this.label2.Text = "One Layer Per Zone Grid :";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(41, 21);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 13);
+            this.label1.Size = new System.Drawing.Size(114, 13);
             this.label1.TabIndex = 38;
-            this.label1.Text = "Selected Permeability";
+            this.label1.Text = "Selected Permeability :";
             // 
             // KrigingParametersTab
             // 
@@ -655,50 +717,6 @@ namespace ModifiedKh
             this.Cancel.UseVisualStyleBackColor = true;
             this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
             // 
-            // ColumnWell
-            // 
-            this.ColumnWell.HeaderText = "Well";
-            this.ColumnWell.Name = "ColumnWell";
-            this.ColumnWell.ReadOnly = true;
-            // 
-            // ColumnZones
-            // 
-            this.ColumnZones.HeaderText = "Zones";
-            this.ColumnZones.Name = "ColumnZones";
-            this.ColumnZones.ReadOnly = true;
-            // 
-            // KhSim
-            // 
-            this.KhSim.HeaderText = "Kh(sim) md-ft";
-            this.KhSim.Name = "KhSim";
-            this.KhSim.ReadOnly = true;
-            // 
-            // Khwt
-            // 
-            this.Khwt.HeaderText = "Kh(wt) md-ft";
-            this.Khwt.Name = "Khwt";
-            // 
-            // Ratio
-            // 
-            this.Ratio.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Ratio.HeaderText = "Ratio: Kh(wt)/Kh(sim)";
-            this.Ratio.Name = "Ratio";
-            // 
-            // Global
-            // 
-            this.Global.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Global.HeaderText = "Global/Individual Kh";
-            this.Global.Name = "Global";
-            // 
-            // Estimate
-            // 
-            this.Estimate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Estimate.HeaderText = "Estimate";
-            this.Estimate.Name = "Estimate";
-            this.Estimate.ReadOnly = true;
-            this.Estimate.Text = "";
-            this.Estimate.UseColumnTextForButtonValue = true;
-            // 
             // ModifiedKhUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -801,5 +819,6 @@ namespace ModifiedKh
         private System.Windows.Forms.DataGridViewTextBoxColumn Ratio;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Global;
         private System.Windows.Forms.DataGridViewButtonColumn Estimate;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn IncludeRow;
     }
 }

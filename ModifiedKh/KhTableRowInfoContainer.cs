@@ -64,6 +64,7 @@ namespace ModifiedKh
             WellName = DictOfCellData[DictOfCellData.Keys.First()][0].Well.Name;
             this.PropertyChanged += HandlePropertyChanged;
             Global = false;
+            include = true;
 
             Kh_wt = -1.0;
             
@@ -106,6 +107,7 @@ namespace ModifiedKh
             ri.zoneIndex = this.zoneIndex;
             ri.ratio = this.ratio;
             ri.global = this.global;
+            ri.include = this.include;
             return ri;
 
         }
@@ -171,7 +173,8 @@ namespace ModifiedKh
         private double ratio;
         private List<Index3> listOfCellInd = new List<Index3>();
         private Index3 avgIJK;
-        private bool global; 
+        private bool global;
+        private bool include; 
 
         [Archived(FromVersion = 1)]
         public Index3 AvgIJK
@@ -191,6 +194,17 @@ namespace ModifiedKh
             set
             {
                 global = value;
+                //SetDataSourceToDirty();
+            }
+        }
+
+        [Archived(FromVersion = 1)]
+        public bool Include
+        {
+            get { return include; }
+            set
+            {
+                include = value;
                 //SetDataSourceToDirty();
             }
         }

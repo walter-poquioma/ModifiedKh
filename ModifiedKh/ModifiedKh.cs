@@ -115,6 +115,22 @@ namespace ModifiedKh
             {
                 try
                 {
+                    #region Get All "Included" KhTableRowInfoContainer Object References into one list
+
+                    List<KhTableRowInfoContainer> ListOfIncludedModellingData = new List<KhTableRowInfoContainer>();
+
+                    foreach (KhTableRowInfoContainer ri in arguments.ListOfModellingData)
+                    {
+                        if (ri.Include)
+	                    {
+                            ListOfIncludedModellingData.Add(ri);
+	                    }
+
+                    }
+
+
+                    #endregion
+
                     #region Normal Score Transformation of kh ratio data
 
                     arguments.ListOfRatios.Clear();
@@ -122,10 +138,13 @@ namespace ModifiedKh
                     arguments.std = 0;
 
                     //getting the mean
-                    foreach (KhTableRowInfoContainer ri in arguments.ListOfModellingData)
+                    foreach (KhTableRowInfoContainer ri in ListOfIncludedModellingData)
                     {
-                        arguments.ListOfRatios.Add(ri.Ratio);
-                        arguments.mean = ri.Ratio + arguments.mean;
+
+                            arguments.ListOfRatios.Add(ri.Ratio);
+                            arguments.mean = ri.Ratio + arguments.mean;
+
+                     
                     }
 
                     arguments.mean = arguments.mean / arguments.ListOfRatios.Count;
@@ -203,15 +222,15 @@ namespace ModifiedKh
                         //Assigning normal-transformed kh ratio values to their corresponding cells in the One Layer per Grid property "p".
                         for (int i = 0; i < arguments.ListOfRatios.Count; i++)
                         {
-                            p[arguments.ListOfModellingData[i].AvgIJK] = (float)arguments.ListOfNormalTransformData[i];
+                            p[ListOfIncludedModellingData[i].AvgIJK] = (float)arguments.ListOfNormalTransformData[i];
 
-                            ListOfSelectedCellsInOneLayerGrid.Add(arguments.ListOfModellingData[i].AvgIJK);
+                            ListOfSelectedCellsInOneLayerGrid.Add(ListOfIncludedModellingData[i].AvgIJK);
 
 
                             PetrelLogger.InfoOutputWindow("The ratio of the selected zones is " + System.Convert.ToString(arguments.ListOfRatios[i]) + " and its normalized value is " +
                                                                System.Convert.ToString(arguments.ListOfNormalTransformData[i]));
-                            PetrelLogger.InfoOutputWindow("The corresponding index is: " + System.Convert.ToString(arguments.ListOfModellingData[i].AvgIJK.I) + ", " +
-                                                          System.Convert.ToString(arguments.ListOfModellingData[i].AvgIJK.J) + ", " + System.Convert.ToString(arguments.ListOfModellingData[i].AvgIJK.K));
+                            PetrelLogger.InfoOutputWindow("The corresponding index is: " + System.Convert.ToString(ListOfIncludedModellingData[i].AvgIJK.I) + ", " +
+                                                          System.Convert.ToString(ListOfIncludedModellingData[i].AvgIJK.J) + ", " + System.Convert.ToString(ListOfIncludedModellingData[i].AvgIJK.K));
 
                         }
 
@@ -333,10 +352,10 @@ namespace ModifiedKh
 
                         for (int i = 0; i < arguments.ListOfRatios.Count; i++)
                         {
-                            foreach (Index3 ind in arguments.ListOfModellingData[i].ListOfCellInd)
+                            foreach (Index3 ind in ListOfIncludedModellingData[i].ListOfCellInd)
                             {
                                 //p2[ind] = arguments.PermeabilityFromModel[ind] * (float)arguments.ListOfRatios[i]; 
-                                p2[ind] = arguments.PermeabilityFromModel[ind] * (float)arguments.ListOfModellingData[i].Ratio;
+                                p2[ind] = arguments.PermeabilityFromModel[ind] * (float)ListOfIncludedModellingData[i].Ratio;
                             }
                         }
 
