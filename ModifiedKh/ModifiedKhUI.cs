@@ -229,10 +229,14 @@ namespace ModifiedKh
                 //    return false;
                 //}
                 #region Enabling and Disabling certain UI objects
+                
                 SelectedWellsCheckBox.Enabled = false;
                 HistogramButton.Enabled = true;
                 //Missing2Mean.Enabled = true;
                 Truncate2NormalDist.Enabled = true;
+                UseOriginalData.Enabled = true;
+                KeepMissingRatio1.Enabled = true;
+
                 WellKhDataGridView.Columns[5].ReadOnly = false;
                 WellKhDataGridView.Columns[3].ReadOnly = false;
                 WellKhDataGridView.Columns[4].ReadOnly = false;
@@ -246,6 +250,7 @@ namespace ModifiedKh
                 KrigingAlgComboBox.Enabled = true;
                 MaximumRatioValue.ReadOnly = false;
                 MinimumRatioValue.ReadOnly = false;
+               
                 #endregion
 
                 #region Setting the default Variogram parameters
@@ -1694,21 +1699,25 @@ namespace ModifiedKh
 
         private void KeepMissingRatio1_CheckedChanged(object sender, EventArgs e)
         {
-             for (int i = 0; i <WellKhDataGridView.Rows.Count; i++)
+            if (ListOfRowInfo.Count>0)
             {
-                if (String.IsNullOrEmpty(WellKhDataGridView.Rows[i].Cells[3].Value as String))
+                for (int i = 0; i < WellKhDataGridView.Rows.Count; i++)
                 {
-                    if (!KeepMissingRatio1.Checked && ListOfFilledKhwtIndices.Count()>0)
+                    if (String.IsNullOrEmpty(WellKhDataGridView.Rows[i].Cells[3].Value as String))
                     {
-                        ListOfRowInfo[i].Ratio = SumOfRatios / ListOfFilledKhwtIndices.Count();
+                        if (!KeepMissingRatio1.Checked && ListOfFilledKhwtIndices.Count() > 0)
+                        {
+                            ListOfRowInfo[i].Ratio = SumOfRatios / ListOfFilledKhwtIndices.Count();
+                        }
+                        else
+                        {
+                            ListOfRowInfo[i].Ratio = 1.0;
+                        }
+                        WellKhDataGridView.Rows[i].Cells[4].Value = RoundingClass.RoundToSignificantDigits(ListOfRowInfo[i].Ratio, SignificantDigits);
                     }
-                    else 
-                    {
-                        ListOfRowInfo[i].Ratio = 1.0;  
-                    }
-                  WellKhDataGridView.Rows[i].Cells[4].Value = RoundingClass.RoundToSignificantDigits(ListOfRowInfo[i].Ratio, SignificantDigits);
-                }
+                }   
             }
+            
 
         }
 

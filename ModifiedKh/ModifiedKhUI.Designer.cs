@@ -382,6 +382,7 @@ namespace ModifiedKh
             // KeepMissingRatio1
             // 
             this.KeepMissingRatio1.AutoSize = true;
+            this.KeepMissingRatio1.Enabled = false;
             this.KeepMissingRatio1.Location = new System.Drawing.Point(22, 70);
             this.KeepMissingRatio1.Name = "KeepMissingRatio1";
             this.KeepMissingRatio1.Size = new System.Drawing.Size(139, 17);
@@ -425,6 +426,7 @@ namespace ModifiedKh
             // UseOriginalData
             // 
             this.UseOriginalData.AutoSize = true;
+            this.UseOriginalData.Enabled = false;
             this.UseOriginalData.Location = new System.Drawing.Point(22, 95);
             this.UseOriginalData.Name = "UseOriginalData";
             this.UseOriginalData.Size = new System.Drawing.Size(172, 17);
@@ -525,7 +527,7 @@ namespace ModifiedKh
             this.groupBox2.Controls.Add(this.Truncate2NormalDist);
             this.groupBox2.Controls.Add(this.KeepMissingRatio1);
             this.groupBox2.Controls.Add(this.UseOriginalData);
-            this.groupBox2.Location = new System.Drawing.Point(416, 12);
+            this.groupBox2.Location = new System.Drawing.Point(401, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(281, 142);
             this.groupBox2.TabIndex = 104;
@@ -595,7 +597,7 @@ namespace ModifiedKh
             this.groupBox1.Controls.Add(this.OneLayerGridPresentationBox);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.OneLayerGridDropTarget);
-            this.groupBox1.Location = new System.Drawing.Point(19, 12);
+            this.groupBox1.Location = new System.Drawing.Point(3, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(374, 142);
             this.groupBox1.TabIndex = 103;
