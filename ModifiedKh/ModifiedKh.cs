@@ -291,6 +291,47 @@ namespace ModifiedKh
 
                         #endregion
 
+                        #region Transforming back the ratio property to its original scale
+
+
+                        int top_k;
+                        int base_k;
+
+                        foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone zone in arguments.ListOfZonesOfOneLayerPerZoneGrid)
+                        {
+                            if (zone.BaseK < zone.TopK)
+                            {
+                                base_k = zone.BaseK;
+                                top_k = zone.TopK;
+                            }
+                            else
+                            {
+                                top_k = zone.BaseK;
+                                base_k = zone.TopK;
+                            }
+                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name)) //If it is a kriged zone then multiply the unnormalized ratio property with the original K property
+                            {
+
+                                for (int i = 0; i < max_i; i++)
+                                {
+                                    for (int j = 0; j < max_j; j++)
+                                    {
+                                        for (int k = base_k; k <= top_k; k++)
+                                        {
+                                            if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))
+                                            {
+                                                p[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)p[i, j, k]);
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                        #endregion
+
                         arguments.CopyOfp = p;
 
                         trans.Commit();
@@ -342,7 +383,8 @@ namespace ModifiedKh
                                         {
                                             if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))
                                             {
-                                                p2[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)arguments.CopyOfp[i, j, counter]) * arguments.PermeabilityFromModel[i, j, k];
+                                               // p2[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)arguments.CopyOfp[i, j, counter]) * arguments.PermeabilityFromModel[i, j, k];
+                                                p2[i, j, k] = arguments.CopyOfp[i, j, counter] * arguments.PermeabilityFromModel[i, j, k];
                                                 counter2 = counter2 + 1;
                                             }
 

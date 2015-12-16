@@ -232,6 +232,7 @@ namespace ModifiedKh
                 
                 SelectedWellsCheckBox.Enabled = false;
                 HistogramButton.Enabled = true;
+                SaveOriginalData.Enabled = true;
                 //Missing2Mean.Enabled = true;
                 Truncate2NormalDist.Enabled = true;
                 UseOriginalData.Enabled = true;
@@ -241,6 +242,7 @@ namespace ModifiedKh
                 WellKhDataGridView.Columns[3].ReadOnly = false;
                 WellKhDataGridView.Columns[4].ReadOnly = false;
                 WellKhDataGridView.Columns[7].ReadOnly = false;
+                WellKhDataGridView.Columns[6].ReadOnly = false;
 
                 MajorRangeTextBox.ReadOnly = false;
                 MinorRangeTextBox.ReadOnly = false;
@@ -591,9 +593,9 @@ namespace ModifiedKh
                     {
                         PetrelLogger.InfoOutputWindow("The program finished running. \n" +
                             "The new Permeability property can be found in the same Properties Folder from where the original Permeability was taken. \n" +
-                             "The new Perbility property is named Updated K. \n" +
-                              "A ratio property called: Kh_ratio Of Single Layer Model. \n" +
-                            "The ratio property can be found in the Properties folder corresponding to the one layer per zone grid ");
+                             "The new Permeability property is named Updated K. \n" +
+                              "A property called Kh_ratio Of Single Layer Model was created. \n" +
+                            "The new property can be found in the Properties folder of the one layer per zone grid.");
                     }
                     else
                     {
@@ -828,22 +830,10 @@ namespace ModifiedKh
                     { ListOfRowInfo[RowInd].Kh_wt = DoubleValue * WellKh.FactorToConvert_mdft_To_m3; }
                     else
                     { ListOfRowInfo[RowInd].Kh_wt = DoubleValue * WellKh.FactorToConvert_mdm_To_m3; }
-                    //ListOfRowInfo[RowInd].Ratio = ListOfRowInfo[RowInd].Kh_wt / ListOfRowInfo[RowInd].Kh_sim;
+
                     WellKhDataGridView.Rows[RowInd].Cells[4].Value = RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits);
                     ListOfFilledKhwtIndices.Add(RowInd);
-                    //if (!ListOfFilledKhwtIndices.Any(ind => ind == RowInd))
-                    //{
-                    //    ListOfFilledKhwtIndices.Add(RowInd);
-
-                    //}
-                    //else
-                    //{
-
-                    //    var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == RowInd);
-                    //    ListOfFilledKhwtIndices.Remove(itemToRemove);
-
-                    //    ListOfFilledKhwtIndices.Add(RowInd);
-                    //}
+           
                     return true;  
                 }
                 else
@@ -896,41 +886,41 @@ namespace ModifiedKh
               //Editing the ratio column
 
 
-              if (FirstTimeEditingRatio)
-              {
-                  if (MessageBox.Show("Do you want the current data to be saved as the Orginal data and start editing ratios?\n If not then input all the well testing data first.",
-                       "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                  {
-                      // user clicked yes
-                      FirstTimeEditingRatio = false;
-                      ListOfOriginalRowDataInfo.Clear();
-                      foreach (KhTableRowInfoContainer ri in  ListOfRowInfo)
-                      {
-                          ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
-                      }
+              //if (FirstTimeEditingRatio)
+              //{
+              //    if (MessageBox.Show("Do you want the current data to be saved as the Orginal data and start editing ratios?\n If not then input all the well testing data first.",
+              //         "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+              //    {
+              //        // user clicked yes
+              //        FirstTimeEditingRatio = false;
+              //        ListOfOriginalRowDataInfo.Clear();
+              //        foreach (KhTableRowInfoContainer ri in  ListOfRowInfo)
+              //        {
+              //            ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
+              //        }
   
-                      ListOfOriginalFilledKhwtIndices.Clear();
-                      foreach (int ind in ListOfFilledKhwtIndices.ToList())
-                      {
-                          ListOfOriginalFilledKhwtIndices.Add(ind);
-                      }
+              //        ListOfOriginalFilledKhwtIndices.Clear();
+              //        foreach (int ind in ListOfFilledKhwtIndices.ToList())
+              //        {
+              //            ListOfOriginalFilledKhwtIndices.Add(ind);
+              //        }
 
-                      WellKhDataGridView.Columns[6].ReadOnly = false;
+              //        WellKhDataGridView.Columns[6].ReadOnly = false;
 
   
 
-                  }
-                  else
-                  {
+              //    }
+              //    else
+              //    {
 
-                      WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
-                      return false;
-                  }
+              //        WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
+              //        return false;
+              //    }
 
-              }
+              //}
 
-              if (!FirstTimeEditingRatio)
-              {
+              //if (!FirstTimeEditingRatio)
+              //{
 
                   if (Double.TryParse(Entry, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue)) //
                   {
@@ -965,9 +955,9 @@ namespace ModifiedKh
                       return false;
                   }
 
-              }
-              else
-              { return false; }
+              //}
+              //else
+              //{ return false; }
           }
           else
           {
@@ -976,6 +966,162 @@ namespace ModifiedKh
 
         }
 
+        //private bool UpdateSpecificRowInfoObject(int RowInd, int ColInd, string Entry)
+        //{
+        //    double DoubleValue;
+        //    OldIndex = RowInd;
+
+        //    if (ColInd == 3)
+        //    {
+        //        if (Double.TryParse(Entry, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue)) //
+        //        {
+        //            if (DoubleValue > 0)
+        //            {
+        //                if (ListOfFilledKhwtIndices.Any(ind => ind == RowInd))
+        //                {
+        //                    var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == RowInd);
+        //                    ListOfFilledKhwtIndices.Remove(itemToRemove);
+        //                }
+
+        //                if (FieldUnitsFlag)
+        //                { ListOfRowInfo[RowInd].Kh_wt = DoubleValue * WellKh.FactorToConvert_mdft_To_m3; }
+        //                else
+        //                { ListOfRowInfo[RowInd].Kh_wt = DoubleValue * WellKh.FactorToConvert_mdm_To_m3; }
+
+        //                WellKhDataGridView.Rows[RowInd].Cells[4].Value = RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits);
+        //                ListOfFilledKhwtIndices.Add(RowInd);
+
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas");
+        //                return false;
+        //            }
+
+
+        //        }
+        //        else
+        //        {
+        //            if (Entry.Equals(String.Empty))
+        //            {
+
+        //                try
+        //                {
+        //                    var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == RowInd);
+        //                    ListOfFilledKhwtIndices.Remove(itemToRemove);
+        //                }
+        //                catch
+        //                {
+
+        //                }
+        //                ListOfRowInfo[RowInd].Kh_wt = -1;
+        //                // WellKhDataGridView.Rows[RowInd].Cells[4].Value = RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits);
+        //                return true;
+
+        //            }
+        //            else
+        //            {
+        //                if (ListOfRowInfo[RowInd].Kh_wt > 0)
+        //                {
+        //                    if (FieldUnitsFlag)
+        //                        WellKhDataGridView.Rows[RowInd].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));
+        //                    else
+        //                        WellKhDataGridView.Rows[RowInd].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits));
+        //                }
+        //                else
+        //                {
+        //                    WellKhDataGridView.Rows[RowInd].Cells[3].Value = String.Empty;
+        //                }
+        //                MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas");
+        //                return false;
+        //            }
+        //        }
+        //    }
+        //    else if (ColInd == 4)
+        //    {
+        //        //Editing the ratio column
+
+
+        //        if (FirstTimeEditingRatio)
+        //        {
+        //            if (MessageBox.Show("Do you want the current data to be saved as the Orginal data and start editing ratios?\n If not then input all the well testing data first.",
+        //                 "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        //            {
+        //                // user clicked yes
+        //                FirstTimeEditingRatio = false;
+        //                ListOfOriginalRowDataInfo.Clear();
+        //                foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
+        //                {
+        //                    ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
+        //                }
+
+        //                ListOfOriginalFilledKhwtIndices.Clear();
+        //                foreach (int ind in ListOfFilledKhwtIndices.ToList())
+        //                {
+        //                    ListOfOriginalFilledKhwtIndices.Add(ind);
+        //                }
+
+        //                WellKhDataGridView.Columns[6].ReadOnly = false;
+
+
+
+        //            }
+        //            else
+        //            {
+
+        //                WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
+        //                return false;
+        //            }
+
+        //        }
+
+        //        if (!FirstTimeEditingRatio)
+        //        {
+
+        //            if (Double.TryParse(Entry, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue)) //
+        //            {
+        //                if (DoubleValue > 0)
+        //                {
+        //                    ExcludeKhFromTotalRatio(ref WellKhDataGridView, RowInd);
+
+        //                    ListOfRowInfo[RowInd].Ratio = DoubleValue;
+
+        //                    if (ListOfFilledKhwtIndices.Any(ind => ind == RowInd))
+        //                    {
+        //                        ListOfFilledKhwtIndices.Add(RowInd);
+        //                    }
+
+
+
+        //                    WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
+        //                    return true;
+        //                }
+        //                else
+        //                {
+        //                    WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
+        //                    MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas");
+        //                    return false;
+        //                }
+
+        //            }
+        //            else
+        //            {
+        //                WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
+        //                MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas");
+        //                return false;
+        //            }
+
+        //        }
+        //        else
+        //        { return false; }
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+
+        //}
         private void ModifiedKhUI_Load(object sender, EventArgs e)
         {  
             Project proj = PetrelProject.PrimaryProject;
@@ -2260,6 +2406,11 @@ namespace ModifiedKh
                             for (int i = 0; i < dgv.Rows.Count; i++)
                             {
                                dgv.Rows[i].Cells[5].Value  = ListOfRowInfo[i].Global;
+                               if (ListOfRowInfo[i].Global)
+                               {
+                                   dgv.Rows[i].ReadOnly = true;
+                                   dgv.Rows[i].Cells[5].ReadOnly = false;
+                               }
                             }
                             dgv.CellValueChanged += WellKhDataGridView_CellValueChanged;
                             break;
@@ -2451,6 +2602,30 @@ namespace ModifiedKh
                 
              }
 
+         }
+
+         private void SaveOriginalData_Click(object sender, EventArgs e)
+         {
+             if ( FirstTimeEditingRatio)
+             {
+                  FirstTimeEditingRatio = false;
+             }
+             if (ListOfRowInfo.Count >0)
+             {
+                 ListOfOriginalRowDataInfo.Clear();
+                 foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
+                 {
+                     ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
+                 }
+
+                 ListOfOriginalFilledKhwtIndices.Clear();
+                 foreach (int ind in ListOfFilledKhwtIndices.ToList())
+                 {
+                     ListOfOriginalFilledKhwtIndices.Add(ind);
+                 }
+             }
+                    
+             
          }
     }
 

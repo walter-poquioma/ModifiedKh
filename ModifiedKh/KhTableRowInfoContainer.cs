@@ -87,8 +87,8 @@ namespace ModifiedKh
         public KhTableRowInfoContainer CreateCopy()
         {
             KhTableRowInfoContainer ri = new KhTableRowInfoContainer();
-            ri.kh_sim = this.kh_sim;
-            ri.kh_wt = this.kh_wt;
+            ri.Kh_sim = this.Kh_sim;
+            ri.Kh_wt = this.Kh_wt;
 
             try 
 	       {
@@ -101,13 +101,14 @@ namespace ModifiedKh
 	       {
 	       }
 
-            ri.avgIJK = this.avgIJK;
-            ri.wellName = this.wellName;
-            ri.zoneName = this.zoneName;
-            ri.zoneIndex = this.zoneIndex;
-            ri.ratio = this.ratio;
-            ri.global = this.global;
-            ri.include = this.include;
+            ri.AvgIJK = this.AvgIJK;
+            ri.WellName = this.WellName;
+            ri.ZoneName = this.ZoneName;
+            ri.ZoneIndex = this.ZoneIndex;
+            ri.Ratio = this.Ratio;
+            ri.Global = this.Global;
+            ri.Include = this.Include;
+            ri.PropertyChanged += HandlePropertyChanged;
             return ri;
 
         }
@@ -147,10 +148,10 @@ namespace ModifiedKh
             if (e.PropertyName == "Kh_wt")
             {
                 // update Ratio here
-                if (kh_wt > 0)
-                    this.ratio = Kh_wt / Kh_sim;
-                else
-                    this.ratio = 1.0;
+                //if (kh_wt > 0)
+                //    this.ratio = Kh_wt / Kh_sim;
+                //else
+                //    this.ratio = 1.0;
 
             }
         }
@@ -272,6 +273,10 @@ namespace ModifiedKh
             set
             {
                     this.kh_wt = value; //* WellKh.FactorToConvert_mdft_To_m3;
+                    if (kh_wt > 0)
+                    { this.ratio = Kh_wt / Kh_sim; }
+                    else
+                    { this.ratio = 1.0; }
                     RaisePropertyChanged("Kh_wt");
                   //  SetDataSourceToDirty();
                 // Call OnPropertyChanged whenever the property is updated    
