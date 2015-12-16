@@ -22,6 +22,8 @@ using Slb.Ocean.Petrel.Well;
 using Slb.Ocean.Petrel.DomainObject.ColorTables;
 using Slb.Ocean.Petrel.UI.Controls;
 using System.Text.RegularExpressions;
+using Infragistics.Win.UltraWinChart;
+using Infragistics.UltraChart.Shared.Styles;
 
 namespace ModifiedKh
 {
@@ -31,11 +33,11 @@ namespace ModifiedKh
     /// </summary>
     partial class ModifiedKhUI : UserControl
     {
-        private ModifiedKh workstep;
+        private PermMatching workstep;
         /// <summary>
         /// The argument package instance being edited by the UI.
         /// </summary>
-        private ModifiedKh.Arguments args;
+        private PermMatching.Arguments args;
         /// <summary>
         /// Contains the actual underlaying context.
         /// </summary>
@@ -63,6 +65,8 @@ namespace ModifiedKh
         int OldIndex;
         double MaxRatio = 0; double MinRatio = 0;    
         bool FirstTimeTruncating = true;
+        Cursor c = Cursors.WaitCursor;
+        public IProgress PBar1;
 
         private SaveableArguments SaveArgs;
        
@@ -75,7 +79,7 @@ namespace ModifiedKh
         /// <param name="workstep">the workstep instance</param>
         /// <param name="args">the arguments</param>
         /// <param name="context">the underlying context in which this UI is being used</param>
-        public ModifiedKhUI(ModifiedKh workstep, ModifiedKh.Arguments args, WorkflowContext context)
+        public ModifiedKhUI(PermMatching workstep, PermMatching.Arguments args, WorkflowContext context)
         {
             InitializeComponent();
 
@@ -215,6 +219,15 @@ namespace ModifiedKh
             bool Success = false;
             if (WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.Perm))
             {
+
+
+                //PBar1 = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, c);
+                //PBar1.SetProgressText("Loading Permeability...");
+                //PBar1.ProgressStatus = 1;
+                //if (PBar1.IsCanceled == true)
+                //{
+                //    return false;
+                //}
                 #region Enabling and Disabling certain UI objects
                 SelectedWellsCheckBox.Enabled = false;
                 HistogramButton.Enabled = true;
@@ -258,6 +271,12 @@ namespace ModifiedKh
                 KrigingAlgComboBox.SelectedIndex = 0;
 
                 UpdateSillTextBox();
+
+                //PBar1.ProgressStatus = 10;
+                //if (PBar1.IsCanceled == true)
+                //{
+                //    return false;
+                //}
                 #endregion
 
                 #region Assigning the dropped permeability to argument object parameters
@@ -270,6 +289,7 @@ namespace ModifiedKh
                 #region Obtaining all the zones in the grid
                 ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(WellKhObj.Permeability.Grid.Zones);
                 args.ListOfAllZones = ListOfZones;
+         
 
                 ListOfSelectedWellZones.Clear();
                 foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone lzone in ListOfZones)
@@ -277,19 +297,40 @@ namespace ModifiedKh
                     //PetrelLogger.InfoOutputWindow(lzone.Name);
                     ListOfSelectedWellZones.Add(lzone.Name);
                 }
-
+                //PBar1.ProgressStatus = 20;
+                //if (PBar1.IsCanceled == true)
+                //{
+                //    return false;
+                //}
                 WellKhObj.ZoneIndex = KandaPropertyCreator.CreateZoneIndex(WellKhObj.Permeability.Grid);
+                //PBar1.ProgressStatus = 30;
+                //if (PBar1.IsCanceled == true)
+                //{
+                //    return false;
+                //}
                 #endregion
                 //WellKhObj.VerticalContinuity(this.ListOfNamesOfIntersectedZones);
 
                 #region Updating the DataGridView and ListOfRowInfo object
                 WellKhDataGridView.AllowUserToAddRows = true;
                 UpdateRowObjectsWithNewWells(ListOfBoreholes);
+                //PBar1.ProgressStatus = 75;
+                //if (PBar1.IsCanceled == true)
+                //{
+                //    return false;
+                //}
                 UpdateAllRows();
+                //PBar1.ProgressStatus = 90;
+                //if (PBar1.IsCanceled == true)
+                //{
+                //    return false;
+                //}
                 WellKhDataGridView.AllowUserToAddRows = false;
                 #endregion
 
                 WellKhDataGridView.Columns[6].ReadOnly = true;
+               // PBar1.ProgressStatus = 100;
+                //PBar1.Dispose();
             }
             else
             {
@@ -936,7 +977,7 @@ namespace ModifiedKh
             WellRoot wr = WellRoot.Get(proj);
 
             BoreholeCollection BhCollection = wr.BoreholeCollection;
-            ListOfBoreholes = ModifiedKh.GetAllBoreholesInProject(BhCollection);
+            ListOfBoreholes = PermMatching.GetAllBoreholesInProject(BhCollection);
 
             UpdateRowsInDataGridWithNewWells(ListOfBoreholes); 
 
@@ -974,6 +1015,8 @@ namespace ModifiedKh
                 FieldUnitsFlag = true;
                 MessageBox.Show("The project units were not identified. The units for the flow capacity values shown here will be displayed in Field units (md-ft)");
             }
+            HistogramChart1.Visible = false;
+            HistogramChart2.Visible = false;
             UpdateUIWithSaveableArgs();
         }
 
@@ -1229,7 +1272,7 @@ namespace ModifiedKh
                 WellRoot wr = WellRoot.Get(proj);
 
                 BoreholeCollection BhCollection = wr.BoreholeCollection;
-                ListOfBoreholes = ModifiedKh.GetAllBoreholesInProject(BhCollection);
+                ListOfBoreholes = PermMatching.GetAllBoreholesInProject(BhCollection);
                 if (ListOfBoreholes != null)
                 {
                     UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
@@ -1289,10 +1332,179 @@ namespace ModifiedKh
                     ptssetOriginal.Points = new Point3Set(pt3listOriginal);
                     trans.Commit();
                 }
+
+                
+
+                double[] arrayOfRatios =  new double[ListOfRatios.Count];
+                  for (int i = 0; i < ListOfRatios.Count; i++)
+                    {
+                        arrayOfRatios[i] = RoundingClass.RoundToSignificantDigits(ListOfRatios[i],4);
+                    }
+                double[] arrayOfOriginalRatios =  new double [ListOfOriginalRowDataInfo.Count];
+                  for (int i = 0; i < ListOfOriginalRowDataInfo.Count; i++)
+                    {
+                        arrayOfOriginalRatios[i] = RoundingClass.RoundToSignificantDigits(ListOfOriginalRowDataInfo[i].Ratio,4);
+                    } 
+
+                 int numberOfBins = 10;
+                 try
+                 {
+                     generateHistogramUI(arrayOfRatios, arrayOfOriginalRatios, numberOfBins);
+                 }
+                 catch (NullReferenceException)
+                 {
+                     PetrelLogger.InfoOutputWindow("An error ocurred while trying to plot the histograms. Please use the histogram data created in the Input pane in order to visualize the histograms.");
+                 } 
+                  //HistogramChart1.Data.DataSource = arrayOfRatios;
+                  //HistogramChart1.Data.DataBind();
+                  //HistogramChart1.Axis.X.RangeMax = arrayOfRatios.Max();
+                  //HistogramChart1.Axis.X.RangeMin = arrayOfRatios.Min();
+                  //HistogramChart1.Axis.X.TickmarkInterval = (arrayOfRatios.Max() - arrayOfRatios.Min()) / 10;
+                  
+
             }
             catch (NullReferenceException)
             {
                 throw;
+            }
+        }
+
+        private void generateHistogramUI(double[] arrayOfRatios, double[] arrayOfOriginalRatios, int numberOfBins)
+        {
+            try
+            {
+                UltraChart HistogramChart1 = new UltraChart();
+                this.HistogramChart1.ChartType = Infragistics.UltraChart.Shared.Styles.ChartType.HistogramChart;
+
+                this.HistogramChart1.HistogramChart.ColumnAppearance.StringAxis = false;
+                this.HistogramChart1.HistogramChart.ColumnAppearance.ShowInLegend = true;
+
+                this.HistogramChart1.Axis.X.NumericAxisType = Infragistics.UltraChart.Shared.Styles.NumericAxisType.Linear;
+                this.HistogramChart1.Axis.X.RangeMin = arrayOfRatios.Min();
+                this.HistogramChart1.Axis.X.RangeMax = arrayOfRatios.Max();
+                this.HistogramChart1.Axis.X.RangeType = AxisRangeType.Custom;
+                this.HistogramChart1.Axis.X.TickmarkStyle = Infragistics.UltraChart.Shared.Styles.AxisTickStyle.DataInterval;
+                //this.ultraChart2.Axis.X.TickmarkStyle = Infragistics.UltraChart.Shared.Styles.AxisTickStyle.Percentage;
+                this.HistogramChart1.Axis.X.TickmarkInterval = (arrayOfRatios.Max() - arrayOfRatios.Min()) / numberOfBins; ;// Infragistics.UltraChart.Shared.Styles.AxisTickStyle.Smart;
+                //this.ultraChart2.Axis.X.LogBase = 2.71;
+                this.HistogramChart1.HistogramChart.ColumnAppearance.ColumnSpacing = .1;
+                //this.ultraChart2.Axis.Y.NumericAxisType = Infragistics.UltraChart.Shared.Styles.NumericAxisType.Logarithmic;
+                this.HistogramChart1.Axis.Y2.Visible = false;
+               
+
+                this.HistogramChart1.Axis.X.Labels.ItemFormat = AxisItemLabelFormat.Custom;
+                this.HistogramChart1.Axis.X.Labels.VerticalAlign = System.Drawing.StringAlignment.Center;
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.Visible = false;
+                //this.ultraChart2.Axis.X.Labels.ItemFormatString = "Math.Pow(2.71,<DATA_VALUE:00.##>)";
+                //this.ultraChart2.Axis.X.Labels.SeriesLabels.Format = Infragistics.UltraChart.Shared.Styles.AxisSeriesLabelFormat.Custom;
+                //this.ultraChart2.Axis.X.Labels.SeriesLabels.FormatString = "Math.Pow(<ITEM_LABEL>,2.71)";//<DATA_VALUE:0#>
+                this.HistogramChart1.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near;
+                this.HistogramChart1.Axis.X.Labels.ItemFormatString = "<ITEM_LABEL>";
+                this.HistogramChart1.Axis.X.Labels.Layout.Behavior = Infragistics.UltraChart.Shared.Styles.AxisLabelLayoutBehaviors.Auto;
+                this.HistogramChart1.Axis.X.Labels.Orientation = Infragistics.UltraChart.Shared.Styles.TextOrientation.VerticalLeftFacing;
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.Font = new System.Drawing.Font("Verdana", 7F);
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.FontColor = System.Drawing.Color.Black;
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.FormatString = "";
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.HorizontalAlign = System.Drawing.StringAlignment.Near;
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.Layout.Behavior = Infragistics.UltraChart.Shared.Styles.AxisLabelLayoutBehaviors.Auto;
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.Orientation = Infragistics.UltraChart.Shared.Styles.TextOrientation.VerticalLeftFacing;
+                this.HistogramChart1.Axis.X.Labels.SeriesLabels.VerticalAlign = System.Drawing.StringAlignment.Center;
+
+                this.HistogramChart1.Axis.X.Labels.Orientation = TextOrientation.VerticalLeftFacing;
+
+                this.HistogramChart1.Legend.Visible = true;
+                this.HistogramChart1.Legend.BackgroundColor = System.Drawing.Color.Transparent;
+                this.HistogramChart1.Legend.BorderColor = System.Drawing.Color.Black;
+                this.HistogramChart1.Legend.Margins.Bottom = 50;
+                this.HistogramChart1.Legend.Margins.Left = 2;
+                this.HistogramChart1.Legend.Margins.Right = 2;
+                this.HistogramChart1.Legend.Margins.Top = 2;
+                this.HistogramChart1.Legend.Visible = false;
+
+                //new int[] { 1, 2, 4, 5, 6, 7, 8, 9, 9, 9, 12, 13, 14, 15, 16 };
+
+
+                this.HistogramChart1.Visible = true;
+                //this.ultraChart2.Axis.X.ScrollScale.Visible = true;
+                //this.ultraChart2.Axis.Y.ScrollScale.Visible = true;
+                this.HistogramChart1.HistogramChart.LineAppearance.Visible = false;
+                this.HistogramChart1.ColorModel.AlphaLevel = 255;
+                this.HistogramChart1.ColorModel.Grayscale = false;
+                this.HistogramChart1.Data.DataSource = arrayOfRatios;
+
+
+
+                this.HistogramChart1.Data.DataBind();
+                this.HistogramChart1.Refresh();
+
+                UltraChart HistogramChart2 = new UltraChart();
+                this.HistogramChart2.ChartType = Infragistics.UltraChart.Shared.Styles.ChartType.HistogramChart;
+
+                this.HistogramChart2.HistogramChart.ColumnAppearance.StringAxis = false;
+                this.HistogramChart2.HistogramChart.ColumnAppearance.ShowInLegend = true;
+
+                this.HistogramChart2.Axis.X.NumericAxisType = Infragistics.UltraChart.Shared.Styles.NumericAxisType.Linear;
+                this.HistogramChart2.Axis.X.RangeMin = arrayOfOriginalRatios.Min();
+                this.HistogramChart2.Axis.X.RangeMax = arrayOfOriginalRatios.Max();
+                this.HistogramChart2.Axis.X.RangeType = AxisRangeType.Custom;
+                this.HistogramChart2.Axis.X.TickmarkStyle = Infragistics.UltraChart.Shared.Styles.AxisTickStyle.DataInterval;
+                //this.ultraChart2.Axis.X.TickmarkStyle = Infragistics.UltraChart.Shared.Styles.AxisTickStyle.Percentage;
+                this.HistogramChart2.Axis.X.TickmarkInterval = (arrayOfOriginalRatios.Max() - arrayOfOriginalRatios.Min()) / numberOfBins;// Infragistics.UltraChart.Shared.Styles.AxisTickStyle.Smart;
+                //this.ultraChart2.Axis.X.LogBase = 2.71;
+                this.HistogramChart2.HistogramChart.ColumnAppearance.ColumnSpacing = .1;
+                //this.ultraChart2.Axis.Y.NumericAxisType = Infragistics.UltraChart.Shared.Styles.NumericAxisType.Logarithmic;
+                this.HistogramChart2.Axis.Y2.Visible = false;
+
+                this.HistogramChart2.Axis.X.Labels.ItemFormat = AxisItemLabelFormat.Custom;
+                this.HistogramChart2.Axis.X.Labels.VerticalAlign = System.Drawing.StringAlignment.Center;
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.Visible = false;
+                //this.ultraChart2.Axis.X.Labels.ItemFormatString = "Math.Pow(2.71,<DATA_VALUE:00.##>)";
+                //this.ultraChart2.Axis.X.Labels.SeriesLabels.Format = Infragistics.UltraChart.Shared.Styles.AxisSeriesLabelFormat.Custom;
+                //this.ultraChart2.Axis.X.Labels.SeriesLabels.FormatString = "Math.Pow(<ITEM_LABEL>,2.71)";//<DATA_VALUE:0#>
+                this.HistogramChart2.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near;
+                this.HistogramChart2.Axis.X.Labels.ItemFormatString = "<ITEM_LABEL>";
+                this.HistogramChart2.Axis.X.Labels.Layout.Behavior = Infragistics.UltraChart.Shared.Styles.AxisLabelLayoutBehaviors.Auto;
+                this.HistogramChart2.Axis.X.Labels.Orientation = Infragistics.UltraChart.Shared.Styles.TextOrientation.VerticalLeftFacing;
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.Font = new System.Drawing.Font("Verdana", 7F);
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.FontColor = System.Drawing.Color.Black;
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.FormatString = "";
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.HorizontalAlign = System.Drawing.StringAlignment.Near;
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.Layout.Behavior = Infragistics.UltraChart.Shared.Styles.AxisLabelLayoutBehaviors.Auto;
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.Orientation = Infragistics.UltraChart.Shared.Styles.TextOrientation.VerticalLeftFacing;
+                this.HistogramChart2.Axis.X.Labels.SeriesLabels.VerticalAlign = System.Drawing.StringAlignment.Center;
+
+                this.HistogramChart2.Axis.X.Labels.Orientation = TextOrientation.VerticalLeftFacing;
+
+                this.HistogramChart2.Legend.Visible = true;
+                this.HistogramChart2.Legend.BackgroundColor = System.Drawing.Color.Transparent;
+                this.HistogramChart2.Legend.BorderColor = System.Drawing.Color.Black;
+                this.HistogramChart2.Legend.Margins.Bottom = 50;
+                this.HistogramChart2.Legend.Margins.Left = 2;
+                this.HistogramChart2.Legend.Margins.Right = 2;
+                this.HistogramChart2.Legend.Margins.Top = 2;
+                this.HistogramChart2.Legend.Visible = false;
+
+                //new int[] { 1, 2, 4, 5, 6, 7, 8, 9, 9, 9, 12, 13, 14, 15, 16 };
+
+
+                this.HistogramChart2.Visible = true;
+                //this.ultraChart2.Axis.X.ScrollScale.Visible = true;
+                //this.ultraChart2.Axis.Y.ScrollScale.Visible = true;
+                this.HistogramChart2.HistogramChart.LineAppearance.Visible = false;
+                this.HistogramChart2.ColorModel.AlphaLevel = 255;
+                this.HistogramChart2.ColorModel.Grayscale = false;
+                this.HistogramChart2.Data.DataSource = arrayOfOriginalRatios;
+
+
+
+                this.HistogramChart2.Data.DataBind();
+                this.HistogramChart2.Refresh();
+              
+
+            }
+            catch (Exception e)
+            {
+                PetrelLogger.InfoBox(e.Message + "\n" + e.StackTrace);
             }
         }
 
@@ -1807,15 +2019,38 @@ namespace ModifiedKh
         private void UpdateSaveableArgs()
         {
             SaveArgs.Truncate2NormalDist = Truncate2NormalDist.Checked;
-            SaveArgs.PermDroid = args.PermeabilityFromModel.Droid;
-            SaveArgs.GridDroid = args.OneLayerPerZoneGrid.Droid;
+           
+            if (args.PermeabilityFromModel!=null)
+            {
+                SaveArgs.PermDroid = args.PermeabilityFromModel.Droid; 
+            }
+
+            if (args.OneLayerPerZoneGrid!= null)
+            {
+                SaveArgs.GridDroid = args.OneLayerPerZoneGrid.Droid;
+            }
+                     
             SaveArgs.SelectedWellsCheck = SelectedWellsCheckBox.Checked;
             SaveArgs.UseOriginalData = UseOriginalData.Checked;
             SaveArgs.FirstTimeEditingRatio = FirstTimeEditingRatio;
-            SaveArgs.ListOfRowInfo = ListOfRowInfo;
-            SaveArgs.ListOfOriginalData = ListOfOriginalRowDataInfo;
-            SaveArgs.ListOfKhwtIndices = ListOfFilledKhwtIndices;
-            SaveArgs.ListOfOriginalKhwtIndices = ListOfOriginalFilledKhwtIndices;
+            if (ListOfRowInfo.Count!=0)
+            {
+                SaveArgs.ListOfRowInfo = ListOfRowInfo;
+               
+            }
+            if (ListOfOriginalRowDataInfo.Count != 0)
+            {
+                SaveArgs.ListOfOriginalData = ListOfOriginalRowDataInfo;
+            }
+            if (ListOfFilledKhwtIndices.Count != 0)
+            {
+                SaveArgs.ListOfKhwtIndices = ListOfFilledKhwtIndices;
+            }
+            if (ListOfOriginalFilledKhwtIndices.Count != 0)
+            {
+                SaveArgs.ListOfOriginalKhwtIndices = ListOfOriginalFilledKhwtIndices;
+            }
+            
             SaveArgs.MaxRatio = MaxRatio;
             SaveArgs.MinRatio = MinRatio;
             SaveArgs.KeepMissingAs1 = KeepMissingRatio1.Checked;

@@ -55,7 +55,7 @@ namespace ModifiedKh
 
         public override string Name
         {
-            get { return "PermMatching"; }
+            get { return "CONNECT-PermMatch"; }
         }
 
         public override PluginIdentifier PluginId

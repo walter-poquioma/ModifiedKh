@@ -27,7 +27,7 @@ namespace ModifiedKh
     /// 
     
 
-    class ModifiedKh : Workstep<ModifiedKh.Arguments>, IExecutorSource, IAppearance, IDescriptionSource
+    class PermMatching : Workstep<PermMatching.Arguments>, IExecutorSource, IAppearance, IDescriptionSource
     {
         internal static readonly Droid ArgsDroid = new Droid(CONNECTModifiedKhDataSourceFactory.DataSourceId, "ModifiedKh.SaveableArguments");
 
@@ -60,7 +60,7 @@ namespace ModifiedKh
         /// </summary>
         /// <returns>New Argument instance.</returns>
 
-        protected override ModifiedKh.Arguments CreateArgumentPackageCore(IDataSourceManager dataSourceManager)
+        protected override PermMatching.Arguments CreateArgumentPackageCore(IDataSourceManager dataSourceManager)
         {
             return new Arguments(dataSourceManager);
         }
@@ -115,6 +115,16 @@ namespace ModifiedKh
             {
                 try
                 {
+                    //Cursor c = Cursors.WaitCursor;
+                    //this.arguments.PBar = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, c);
+
+
+                    //this.arguments.PBar.ProgressStatus = 0;
+                    //if (this.arguments.PBar.IsCanceled == true)
+                    //{
+                    //    return;
+                    //}
+
                     #region Get All "Included" KhTableRowInfoContainer Object References into one list
 
                     List<KhTableRowInfoContainer> ListOfIncludedModellingData = new List<KhTableRowInfoContainer>();
@@ -205,6 +215,12 @@ namespace ModifiedKh
 
                     //Creating a new transaction
 
+
+                     //this.arguments.PBar.ProgressStatus = 20;
+                     //if (this.arguments.PBar.IsCanceled == true)
+                     //{
+                     //    return;
+                     //}
                     using (ITransaction trans = DataManager.NewTransaction())
                     {
                         //trans.Lock(PetrelProject.PrimaryProject);
@@ -240,6 +256,11 @@ namespace ModifiedKh
 
                         #endregion
 
+                        //this.arguments.PBar.ProgressStatus = 50;
+                        //if (this.arguments.PBar.IsCanceled == true)
+                        //{
+                        //    return;
+                        //}
 
                         #region Kriging the normalized property kh ratio
 
@@ -273,6 +294,11 @@ namespace ModifiedKh
                         arguments.CopyOfp = p;
 
                         trans.Commit();
+                        //this.arguments.PBar.ProgressStatus = 80;
+                        //if (this.arguments.PBar.IsCanceled == true)
+                        //{
+                        //    return;
+                        //}
                     }
 
                     using (ITransaction trans = DataManager.NewTransaction())
@@ -305,7 +331,7 @@ namespace ModifiedKh
                                 top_k = zone.BaseK;
                                 base_k = zone.TopK;
                             }
-                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name)) //If it is a kriged zone then use multiply the unnormalized ratio property with the original K property
+                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name)) //If it is a kriged zone then multiply the unnormalized ratio property with the original K property
                             {
 
                                 for (int i = 0; i < max_i; i++)
@@ -362,6 +388,8 @@ namespace ModifiedKh
                         #endregion
 
                         trans.Commit();
+                        //this.arguments.PBar.ProgressStatus = 100;
+                        //this.arguments.PBar.Dispose();
                     }
 
                     arguments.Successful = true;
@@ -408,11 +436,7 @@ namespace ModifiedKh
             public ModelVariogramArguments VarArg = new ModelVariogramArguments();
             public  ModelVariogramType VariogramType;
             public List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZonesOfOneLayerPerZoneGrid = new List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone>();
-            //public double Nugget = 0.0;
-            //public double MajorRange;
-            //public double MinorRange;
-            //public Angle MajorDirection;
-            //public Angle MinorDirection;
+            private IProgress pBar;
             public KrigingType KrigType;
 
             public double VerticalRange;
@@ -431,6 +455,12 @@ namespace ModifiedKh
             
            
             //private Dictionary<string, List<CellData>> dictionaryOfCellDataOfSelectedWells = new Dictionary<string, List<CellData>>();
+            public IProgress PBar
+            {
+                get { return pBar; }
+                set { pBar = value; }
+            }
+
             [Description("PermeabilityFromModel", "The permeability from the 3D model")]
             public Property PermeabilityFromModel
             {
@@ -546,7 +576,7 @@ namespace ModifiedKh
             /// </summary>
             public string Name
             {
-                get { return "ModifiedKh"; }
+                get { return "CONNECT-PermMatch"; }
             }
             /// <summary>
             /// Gets the short description of ModifiedKh
@@ -579,7 +609,7 @@ namespace ModifiedKh
             /// <returns>a Windows.Forms.Control to edit the argument package with</returns>
             protected override System.Windows.Forms.Control CreateDialogUICore(Workstep workstep, object argumentPackage, WorkflowContext context)
             {
-                return new ModifiedKhUI((ModifiedKh)workstep, (Arguments)argumentPackage, context);
+                return new ModifiedKhUI((PermMatching)workstep, (Arguments)argumentPackage, context);
             }
         }
 

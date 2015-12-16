@@ -31,7 +31,7 @@ namespace ModifiedKh
 
             if (sADS != null)
             {
-                Droid = ModifiedKh.ArgsDroid;
+                Droid = PermMatching.ArgsDroid;
                 sADS.AddItem(Droid, this);
 
             }

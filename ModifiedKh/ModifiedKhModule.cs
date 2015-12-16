@@ -45,8 +45,8 @@ namespace ModifiedKh
             // TODO:  Add ModifiedKhModule.Integrate implementation
             
             // Register ModifiedKh
-            ModifiedKh modifiedkhInstance = new ModifiedKh();
-            PetrelSystem.WorkflowEditor.AddUIFactory<ModifiedKh.Arguments>(new ModifiedKh.UIFactory());
+            PermMatching modifiedkhInstance = new PermMatching();
+            PetrelSystem.WorkflowEditor.AddUIFactory<PermMatching.Arguments>(new PermMatching.UIFactory());
             //PetrelSystem.WorkflowEditor.Add(modifiedkhInstance);
             m_modifiedkhInstance = new Slb.Ocean.Petrel.Workflow.WorkstepProcessWrapper(modifiedkhInstance);
             PetrelSystem.ProcessDiagram.Add(m_modifiedkhInstance, "Plug-ins");
@@ -73,7 +73,7 @@ namespace ModifiedKh
         {
             // TODO:  Add ModifiedKhModule.Disintegrate implementation
             // Unregister ModifiedKh
-            PetrelSystem.WorkflowEditor.RemoveUIFactory<ModifiedKh.Arguments>();
+            PetrelSystem.WorkflowEditor.RemoveUIFactory<PermMatching.Arguments>();
             PetrelSystem.ProcessDiagram.Remove(m_modifiedkhInstance);
         }
 
