@@ -81,7 +81,7 @@ namespace ModifiedKh
         {
             get
             {
-                return "e5ce9eb3-0f59-4d54-b6e3-4b6b372e3599";
+                return "Kanda.CONNECT.PermMatch.Process";
             }
         }
         #endregion
@@ -115,16 +115,16 @@ namespace ModifiedKh
             {
                 try
                 {
-                    //Cursor c = Cursors.WaitCursor;
-                    //this.arguments.PBar = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, c);
 
+                    using(this.arguments.PBar = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, Cursors.WaitCursor))
 
-                    //this.arguments.PBar.ProgressStatus = 0;
-                    //if (this.arguments.PBar.IsCanceled == true)
-                    //{
-                    //    return;
-                    //}
-
+                    {
+                        this.arguments.PBar.ProgressStatus = 0;
+                        if (this.arguments.PBar.IsCanceled == true)
+                        {
+                            return;
+                        }
+                        this.arguments.PBar.SetProgressText("Normal Score Transformation Of Kh ratio Data");
                     #region Get All "Included" KhTableRowInfoContainer Object References into one list
 
                     List<KhTableRowInfoContainer> ListOfIncludedModellingData = new List<KhTableRowInfoContainer>();
@@ -216,11 +216,12 @@ namespace ModifiedKh
                     //Creating a new transaction
 
 
-                     //this.arguments.PBar.ProgressStatus = 20;
-                     //if (this.arguments.PBar.IsCanceled == true)
-                     //{
-                     //    return;
-                     //}
+                    this.arguments.PBar.ProgressStatus = 20;
+                    if (this.arguments.PBar.IsCanceled == true)
+                    {
+                        return;
+                    }
+                    this.arguments.PBar.SetProgressText("Creating and Setting the Kh Ratio Property");
                     using (ITransaction trans = DataManager.NewTransaction())
                     {
                         //trans.Lock(PetrelProject.PrimaryProject);
@@ -233,7 +234,7 @@ namespace ModifiedKh
 
                         #region Creating and Setting the Kh ratio as a Property
                         Property p = pc1.CreateProperty(PetrelProject.WellKnownTemplates.LogTypes2DGroup.RelativePermeability);
-                        p.Name = "Kh_ratio Of Single Layer Model";
+                        p.Name = "Kh Ratio Of One Layer Per Zone Grid";
 
                         //Assigning normal-transformed kh ratio values to their corresponding cells in the One Layer per Grid property "p".
                         for (int i = 0; i < arguments.ListOfRatios.Count; i++)
@@ -256,12 +257,12 @@ namespace ModifiedKh
 
                         #endregion
 
-                        //this.arguments.PBar.ProgressStatus = 50;
-                        //if (this.arguments.PBar.IsCanceled == true)
-                        //{
-                        //    return;
-                        //}
-
+                        this.arguments.PBar.ProgressStatus = 50;
+                        if (this.arguments.PBar.IsCanceled == true)
+                        {
+                            return;
+                        }
+                        this.arguments.PBar.SetProgressText("Kriging the Kh Ratio Property");
                         #region Kriging the normalized property kh ratio
 
                         //Setting of the Model Variogram parameters and Kriging Arguments. The values are obtained from the arguments variable set in the ModifiedKhUI section.
@@ -335,11 +336,12 @@ namespace ModifiedKh
                         arguments.CopyOfp = p;
 
                         trans.Commit();
-                        //this.arguments.PBar.ProgressStatus = 80;
-                        //if (this.arguments.PBar.IsCanceled == true)
-                        //{
-                        //    return;
-                        //}
+                        this.arguments.PBar.ProgressStatus = 80;
+                        if (this.arguments.PBar.IsCanceled == true)
+                        {
+                            return;
+                        }
+                        this.arguments.PBar.SetProgressText("Multiplying the Original Permeability with the Kh Ratio");
                     }
 
                     using (ITransaction trans = DataManager.NewTransaction())
@@ -383,7 +385,7 @@ namespace ModifiedKh
                                         {
                                             if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))
                                             {
-                                               // p2[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)arguments.CopyOfp[i, j, counter]) * arguments.PermeabilityFromModel[i, j, k];
+                                                // p2[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)arguments.CopyOfp[i, j, counter]) * arguments.PermeabilityFromModel[i, j, k];
                                                 p2[i, j, k] = arguments.CopyOfp[i, j, counter] * arguments.PermeabilityFromModel[i, j, k];
                                                 counter2 = counter2 + 1;
                                             }
@@ -430,8 +432,9 @@ namespace ModifiedKh
                         #endregion
 
                         trans.Commit();
-                        //this.arguments.PBar.ProgressStatus = 100;
-                        //this.arguments.PBar.Dispose();
+                        
+                        this.arguments.PBar.ProgressStatus = 100;
+                       }
                     }
 
                     arguments.Successful = true;
@@ -574,7 +577,7 @@ namespace ModifiedKh
 
         public System.Drawing.Bitmap Image
         {
-            get { return PetrelImages.Modules; }
+            get { return ModifiedKh.ResourcePermMatch.connect_logo_symbol; ; }
             private set 
             {
                 // TODO: implement set

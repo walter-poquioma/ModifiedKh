@@ -150,6 +150,15 @@
   <ItemGroup>
     <None Include="Resources\connect_logo_symbol.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\PermMatchConfig.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DynaRankLogoTransparent1616.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DynaRankLogoTransparent3232.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>del "$(ProjectDir)\plugin.xml"

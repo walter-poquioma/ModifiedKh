@@ -14,12 +14,12 @@ namespace ModifiedKh
 
         public override string Author
         {
-            get { return "BuildSlave1"; }
+            get { return "Walter Poquioma"; }
         }
 
         public override string Contact
         {
-            get { return "contact@company.info"; }
+            get { return "walter@kelkar-and-assoc.com"; }
         }
 
         public override IEnumerable<PluginIdentifier> Dependencies

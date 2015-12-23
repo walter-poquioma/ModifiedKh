@@ -121,4 +121,13 @@
   <data name="connect_logo_symbol" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\connect_logo_symbol.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="DynaRankLogoTransparent1616" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\DynaRankLogoTransparent1616.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DynaRankLogoTransparent3232" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\DynaRankLogoTransparent3232.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PermMatchConfig" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\PermMatchConfig.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

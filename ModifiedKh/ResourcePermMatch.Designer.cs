@@ -69,5 +69,42 @@ namespace ModifiedKh {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DynaRankLogoTransparent1616 {
+            get {
+                object obj = ResourceManager.GetObject("DynaRankLogoTransparent1616", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DynaRankLogoTransparent3232 {
+            get {
+                object obj = ResourceManager.GetObject("DynaRankLogoTransparent3232", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Configuration Type=&quot;Configuration.ConfigurationState&quot; Version=&quot;1.0.0.10&quot; Caption=&quot;CONNECT-PermMatchConfig&quot;&gt;
+        ///  &lt;Extensions Type=&quot;Extensibility.ExtensionCollection&quot;&gt;
+        ///    &lt;Workspaces.WorkspaceExtension EntityId=&quot;f473c60f-579a-4e0a-853d-73f13e1122b1&quot; /&gt;
+        ///  &lt;/Extensions&gt;
+        ///  &lt;Sections Type=&quot;Extesibility.ConfigurationSectionCollection&quot;&gt;
+        ///    &lt;Commands.CommandSection Version=&quot;1.0.0.4&quot;&gt;
+        ///      &lt;Extensions Type=&quot;Extensibility.ExtensionCollection&quot;&gt;
+        ///        &lt;Workspaces.Worksp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PermMatchConfig {
+            get {
+                return ResourceManager.GetString("PermMatchConfig", resourceCulture);
+            }
+        }
     }
 }

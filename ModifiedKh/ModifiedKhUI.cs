@@ -63,10 +63,10 @@ namespace ModifiedKh
         bool FirstTimeEditingRatio = true;
         double SumOfRatios = 0;
         int OldIndex;
-        double MaxRatio = 0; double MinRatio = 0;    
+        double MaxRatio = 1; double MinRatio = 1;    
         bool FirstTimeTruncating = true;
-        Cursor c = Cursors.WaitCursor;
-        public IProgress PBar1;
+       
+        
 
         private SaveableArguments SaveArgs;
        
@@ -221,123 +221,136 @@ namespace ModifiedKh
             {
 
 
-                //PBar1 = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, c);
-                //PBar1.SetProgressText("Loading Permeability...");
-                //PBar1.ProgressStatus = 1;
-                //if (PBar1.IsCanceled == true)
-                //{
-                //    return false;
-                //}
-                #region Enabling and Disabling certain UI objects
-                
-                SelectedWellsCheckBox.Enabled = false;
-                HistogramButton.Enabled = true;
-                SaveOriginalData.Enabled = true;
-                //Missing2Mean.Enabled = true;
-                Truncate2NormalDist.Enabled = true;
-                UseOriginalData.Enabled = true;
-                KeepMissingRatio1.Enabled = true;
 
-                WellKhDataGridView.Columns[5].ReadOnly = false;
-                WellKhDataGridView.Columns[3].ReadOnly = false;
-                WellKhDataGridView.Columns[4].ReadOnly = false;
-                WellKhDataGridView.Columns[7].ReadOnly = false;
-                WellKhDataGridView.Columns[6].ReadOnly = false;
-
-                MajorRangeTextBox.ReadOnly = false;
-                MinorRangeTextBox.ReadOnly = false;
-                MajorDirectionTextBox.ReadOnly = false;
-                NuggetTextBox.ReadOnly = false;
-                VariogramTypeComboBox.Enabled = true;
-                KrigingAlgComboBox.Enabled = true;
-                MaximumRatioValue.ReadOnly = false;
-                MinimumRatioValue.ReadOnly = false;
-               
-                #endregion
-
-                #region Setting the default Variogram parameters
-                args.VarArg.MajorRange = CalculateDefaultRange(WellKhObj.Permeability.Grid);
-                args.VarArg.MinorRange = args.VarArg.MajorRange;
-
-                MajorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MajorRange, SignificantDigits));
-                MinorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MinorRange, SignificantDigits));
-
-                args.VarArg.Nugget = 0.0;
-                NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
-
-                args.VariogramType = ModelVariogramType.Spherical;
-                VariogramTypeComboBox.SelectedIndex = 0;
-
-                args.VarArg.MajorDirection = Angle.CreateFromCompassAngle(0, false);
-                MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
-
-                args.VarArg.ModelVariogramType = ModelVariogramType.Spherical;
-                VariogramTypeComboBox.SelectedIndex = 0;
-
-                args.KrigType = Slb.Ocean.Petrel.PropertyModeling.KrigingType.Ordinary;
-                KrigingAlgComboBox.SelectedIndex = 0;
-
-                UpdateSillTextBox();
-
-                //PBar1.ProgressStatus = 10;
-                //if (PBar1.IsCanceled == true)
-                //{
-                //    return false;
-                //}
-                #endregion
-
-                #region Assigning the dropped permeability to argument object parameters
-               // e.Effect = DragDropEffects.All;
-                Success = true;
-                PermeabilityPresentationBox.Text = WellKhObj.Permeability.Name;
-                this.args.PermeabilityFromModel = WellKhObj.Permeability;
-                #endregion
-
-                #region Obtaining all the zones in the grid
-                ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(WellKhObj.Permeability.Grid.Zones);
-                args.ListOfAllZones = ListOfZones;
-         
-
-                ListOfSelectedWellZones.Clear();
-                foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone lzone in ListOfZones)
+                using (IProgress PBar1 = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, Cursors.WaitCursor))
                 {
-                    //PetrelLogger.InfoOutputWindow(lzone.Name);
-                    ListOfSelectedWellZones.Add(lzone.Name);
+
+                    PBar1.SetProgressText("Loading Permeability...");
+                    PBar1.ProgressStatus ++;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+
+                
+                    #region Enabling and Disabling certain UI objects
+
+                    SelectedWellsCheckBox.Enabled = false;
+                    HistogramButton.Enabled = true;
+                    SaveOriginalData.Enabled = true;
+                    //Missing2Mean.Enabled = true;
+                    Truncate2NormalDist.Enabled = true;
+                    UseOriginalData.Enabled = true;
+                    KeepMissingRatio1.Enabled = true;
+
+                    WellKhDataGridView.Columns[5].ReadOnly = false;
+                    WellKhDataGridView.Columns[3].ReadOnly = false;
+                    WellKhDataGridView.Columns[4].ReadOnly = false;
+                    WellKhDataGridView.Columns[7].ReadOnly = false;
+                    WellKhDataGridView.Columns[6].ReadOnly = false;
+
+                    MajorRangeTextBox.ReadOnly = false;
+                    MinorRangeTextBox.ReadOnly = false;
+                    MajorDirectionTextBox.ReadOnly = false;
+                    NuggetTextBox.ReadOnly = false;
+                    VariogramTypeComboBox.Enabled = true;
+                    KrigingAlgComboBox.Enabled = true;
+                    MaximumRatioValue.ReadOnly = false;
+                    MinimumRatioValue.ReadOnly = false;
+
+                    #endregion
+
+                    #region Setting the default Variogram parameters
+                    args.VarArg.MajorRange = CalculateDefaultRange(WellKhObj.Permeability.Grid);
+                    args.VarArg.MinorRange = args.VarArg.MajorRange;
+
+                    MajorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MajorRange, SignificantDigits));
+                    MinorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MinorRange, SignificantDigits));
+
+                    args.VarArg.Nugget = 0.0;
+                    NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
+
+                    args.VariogramType = ModelVariogramType.Spherical;
+                    VariogramTypeComboBox.SelectedIndex = 0;
+
+                    args.VarArg.MajorDirection = Angle.CreateFromCompassAngle(0, false);
+                    MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
+
+                    args.VarArg.ModelVariogramType = ModelVariogramType.Spherical;
+                    VariogramTypeComboBox.SelectedIndex = 0;
+
+                    args.KrigType = Slb.Ocean.Petrel.PropertyModeling.KrigingType.Ordinary;
+                    KrigingAlgComboBox.SelectedIndex = 0;
+
+                    UpdateSillTextBox();
+
+                    PBar1.ProgressStatus  = PBar1.ProgressStatus + 9;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+                    
+                    #endregion
+
+                    #region Assigning the dropped permeability to argument object parameters
+                    // e.Effect = DragDropEffects.All;
+                    Success = true;
+                    PermeabilityPresentationBox.Text = WellKhObj.Permeability.Name;
+                    this.args.PermeabilityFromModel = WellKhObj.Permeability;
+                    #endregion
+
+                    #region Obtaining all the zones in the grid
+                    ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(WellKhObj.Permeability.Grid.Zones);
+                    args.ListOfAllZones = ListOfZones;
+
+
+                    ListOfSelectedWellZones.Clear();
+                    foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone lzone in ListOfZones)
+                    {
+                        //PetrelLogger.InfoOutputWindow(lzone.Name);
+                        ListOfSelectedWellZones.Add(lzone.Name);
+                    }
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+                  
+                    WellKhObj.ZoneIndex = KandaPropertyCreator.CreateZoneIndex(WellKhObj.Permeability.Grid);
+                 
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+                   
+                    #endregion
+                    //WellKhObj.VerticalContinuity(this.ListOfNamesOfIntersectedZones);
+
+                    #region Updating the DataGridView and ListOfRowInfo object
+                    WellKhDataGridView.AllowUserToAddRows = true;
+                    UpdateRowObjectsWithNewWells(ListOfBoreholes);
+                   
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 45;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+
+                    UpdateAllRows();
+                   
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 15;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+                   
+                    WellKhDataGridView.AllowUserToAddRows = false;
+                    #endregion
+
+                    WellKhDataGridView.Columns[6].ReadOnly = true;
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
                 }
-                //PBar1.ProgressStatus = 20;
-                //if (PBar1.IsCanceled == true)
-                //{
-                //    return false;
-                //}
-                WellKhObj.ZoneIndex = KandaPropertyCreator.CreateZoneIndex(WellKhObj.Permeability.Grid);
-                //PBar1.ProgressStatus = 30;
-                //if (PBar1.IsCanceled == true)
-                //{
-                //    return false;
-                //}
-                #endregion
-                //WellKhObj.VerticalContinuity(this.ListOfNamesOfIntersectedZones);
-
-                #region Updating the DataGridView and ListOfRowInfo object
-                WellKhDataGridView.AllowUserToAddRows = true;
-                UpdateRowObjectsWithNewWells(ListOfBoreholes);
-                //PBar1.ProgressStatus = 75;
-                //if (PBar1.IsCanceled == true)
-                //{
-                //    return false;
-                //}
-                UpdateAllRows();
-                //PBar1.ProgressStatus = 90;
-                //if (PBar1.IsCanceled == true)
-                //{
-                //    return false;
-                //}
-                WellKhDataGridView.AllowUserToAddRows = false;
-                #endregion
-
-                WellKhDataGridView.Columns[6].ReadOnly = true;
-               // PBar1.ProgressStatus = 100;
-                //PBar1.Dispose();
             }
             else
             {
@@ -594,7 +607,7 @@ namespace ModifiedKh
                         PetrelLogger.InfoOutputWindow("The program finished running. \n" +
                             "The new Permeability property can be found in the same Properties Folder from where the original Permeability was taken. \n" +
                              "The new Permeability property is named Updated K. \n" +
-                              "A property called Kh_ratio Of Single Layer Model was created. \n" +
+                              "A property called Kh_ratio Of One Layer Per Zone Model was created. \n" +
                             "The new property can be found in the Properties folder of the one layer per zone grid.");
                     }
                     else
@@ -756,6 +769,10 @@ namespace ModifiedKh
                         else
                         {
                             MessageBox.Show("Please enter a positive number in the Kh well testing column before checking the Global/Individiual check box.");
+                            senderGrid.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                            senderGrid.Rows[RowIndex].Cells[ColumnIndex].Value = false;
+                            senderGrid.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                            ListOfRowInfo[RowIndex].Global = false;
                         }
                         
 
@@ -764,6 +781,10 @@ namespace ModifiedKh
                     else
                     {
                         MessageBox.Show("Please enter a number or a valid entry in the Kh well testing column before checking the Global/Individiual check box.");
+                        senderGrid.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                        senderGrid.Rows[RowIndex].Cells[ColumnIndex].Value = false;
+                        senderGrid.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                        ListOfRowInfo[RowIndex].Global = false;
                     }
                 }
 
@@ -789,13 +810,12 @@ namespace ModifiedKh
                     //    counter = counter + 1;
                     //}
 
+                    
                     ExcludeKhFromTotalRatio(ref senderGrid, RowIndex);
 
                     ListOfFilledKhwtIndices.Add(RowIndex);
                     senderGrid.Rows[RowIndex].Cells[ColumnIndex - 2].ReadOnly = false;
-
-
-                           
+                    ListOfRowInfo[RowIndex].Global = false;
 
                 }
 
@@ -1394,6 +1414,8 @@ namespace ModifiedKh
             SelectedWellsCheckBoxUpdateArgs(SelectedWellsCheckBox.Checked);
         }
 
+
+
         private void SelectedWellsCheckBoxUpdateArgs(bool CheckBoxState)
         {
             ListOfBoreholes.Clear();
@@ -1441,8 +1463,8 @@ namespace ModifiedKh
                     string NameOfCollection;
                     string NameOfPointSet;
 
-                    string NameOfCollectionOriginal = "Original Ratio(Kh_well_testing/kh_sim)";
-                    string NameOfPointSetOriginal = "Histogram of Original Ratios (Kh_well_testing/kh_sim)";
+                    string NameOfCollectionOriginal = "Original Ratio(Kh_well_testing/Kh_sim)";
+                    string NameOfPointSetOriginal = "Histogram of Original Ratios (Kh_well_testing/Kh_sim)";
 
 
                     //if (!DistributionCheckBox.Checked)
@@ -2285,8 +2307,24 @@ namespace ModifiedKh
                     ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
                 }
 
-               ListOfOriginalFilledKhwtIndices = SaveArgs.ListOfOriginalKhwtIndices;
-                ListOfFilledKhwtIndices = SaveArgs.ListOfKhwtIndices;
+                ListOfOriginalFilledKhwtIndices.Clear();
+                foreach (int ind in SaveArgs.ListOfOriginalKhwtIndices )
+                {
+                    ListOfOriginalFilledKhwtIndices.Add(ind);
+                }
+
+                ListOfFilledKhwtIndices.CollectionChanged -= FilledKhwtIndices_CollectionChanged;
+                ListOfFilledKhwtIndices.Clear();
+                SumOfRatios = 0.0;
+              
+                
+                foreach (int ind in SaveArgs.ListOfKhwtIndices)
+                {
+                    ListOfFilledKhwtIndices.Add(ind);
+                    SumOfRatios = SumOfRatios + ListOfRowInfo[ind].Ratio;
+                }
+                ListOfFilledKhwtIndices.CollectionChanged += FilledKhwtIndices_CollectionChanged;
+
                 UpdateDataGridViewWithListOfRowInfoObj(ListOfRowInfo, ref WellKhDataGridView);
     
             }
@@ -2367,12 +2405,14 @@ namespace ModifiedKh
         {
             if (ListOfRowInfo.Count == dgv.Rows.Count)
             {
+                dgv.CellEndEdit -= WellKhDataGridView_CellEndEdit;
+                dgv.CellValueChanged -= WellKhDataGridView_CellValueChanged;
                 for (int col = 3; col <= 5; col++)
                 {
                     switch (col)
                     {
                         case 3:
-                            dgv.CellEndEdit -= WellKhDataGridView_CellEndEdit;
+                           // dgv.CellEndEdit -= WellKhDataGridView_CellEndEdit;
                             for (int i = 0; i < dgv.Rows.Count; i++)
                             {
                                 if (ListOfRowInfo[i].Kh_wt>=0)
@@ -2384,11 +2424,11 @@ namespace ModifiedKh
                                 }
                                 
                             }
-                            dgv.CellEndEdit += WellKhDataGridView_CellEndEdit;
+                           // dgv.CellEndEdit += WellKhDataGridView_CellEndEdit;
                             break;
 
                         case 4:
-                            dgv.CellEndEdit -= WellKhDataGridView_CellEndEdit;
+                           // dgv.CellEndEdit -= WellKhDataGridView_CellEndEdit;
                             for (int i = 0; i < dgv.Rows.Count; i++)
                             {
                                 if (ListOfRowInfo[i].Ratio>=0)
@@ -2398,11 +2438,11 @@ namespace ModifiedKh
                                    
                                 
                             }
-                            dgv.CellEndEdit += WellKhDataGridView_CellEndEdit;
+                           // dgv.CellEndEdit += WellKhDataGridView_CellEndEdit;
                             break;
 
                         case 5:
-                            dgv.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                          //  dgv.CellValueChanged -= WellKhDataGridView_CellValueChanged;
                             for (int i = 0; i < dgv.Rows.Count; i++)
                             {
                                dgv.Rows[i].Cells[5].Value  = ListOfRowInfo[i].Global;
@@ -2412,13 +2452,15 @@ namespace ModifiedKh
                                    dgv.Rows[i].Cells[5].ReadOnly = false;
                                }
                             }
-                            dgv.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                           // dgv.CellValueChanged += WellKhDataGridView_CellValueChanged;
                             break;
 
                     }
 
 
-                }  
+                }
+                dgv.CellEndEdit += WellKhDataGridView_CellEndEdit;
+                dgv.CellValueChanged += WellKhDataGridView_CellValueChanged;
             }
             else
             {
