@@ -65,6 +65,8 @@ namespace ModifiedKh
         int OldIndex;
         double MaxRatio = 1; double MinRatio = 1;    
         bool FirstTimeTruncating = true;
+        int numberOfBins = 10;
+        Grid OneLayerGrid;
        
         
 
@@ -236,6 +238,7 @@ namespace ModifiedKh
                     #region Enabling and Disabling certain UI objects
 
                     SelectedWellsCheckBox.Enabled = false;
+                    NumberOfBinsTextBox.ReadOnly = false;
                     HistogramButton.Enabled = true;
                     SaveOriginalData.Enabled = true;
                     //Missing2Mean.Enabled = true;
@@ -289,14 +292,24 @@ namespace ModifiedKh
                     {
                         return false;
                     }
+
+                    NumberOfBinsTextBox.TextChanged -= NumberOfBinsTextBox_TextChanged;
+                    NumberOfBinsTextBox.Text = System.Convert.ToString(numberOfBins);
+                    NumberOfBinsTextBox.TextChanged += NumberOfBinsTextBox_TextChanged;
                     
                     #endregion
 
                     #region Assigning the dropped permeability to argument object parameters
                     // e.Effect = DragDropEffects.All;
                     Success = true;
-                    PermeabilityPresentationBox.Text = WellKhObj.Permeability.Name;
-                    this.args.PermeabilityFromModel = WellKhObj.Permeability;
+                   // PermeabilityPresentationBox.Text = WellKhObj.Permeability.Name;
+                   // this.args.PermeabilityFromModel = WellKhObj.Permeability;
+
+                    if (WellKhObj.Permeability != null)
+                    {
+                        setPerm(WellKhObj.Permeability, Perm_Deleted);
+                    }
+               
                     #endregion
 
                     #region Obtaining all the zones in the grid
@@ -360,6 +373,65 @@ namespace ModifiedKh
             }
             return Success;
         }
+
+        private void Perm_Deleted(object sender, EventArgs e)
+        {
+            this.args.PermeabilityFromModel = null;
+            PermeabilityPresentationBox.Text = "";
+        //#if DEBUG
+        //    PetrelLogger.InfoOutputWindow("permXCoarse Deleted Ran");
+        //#endif
+        }
+
+        private void OneLayerGrid_Deleted(object sender, EventArgs e)
+        {
+            this.args.OneLayerPerZoneGrid = null;
+            OneLayerGridPresentationBox.Text = "";
+            //#if DEBUG
+            //    PetrelLogger.InfoOutputWindow("permXCoarse Deleted Ran");
+            //#endif
+        }
+
+          private void setPerm(Property perm, EventHandler deletedHandler)
+        {
+            if (args.PermeabilityFromModel!=null)
+            {
+                args.PermeabilityFromModel.Deleted -= deletedHandler;
+                //#if DEBUG
+                //PetrelLogger.InfoOutputWindow(PermXCoarse.Name + " deleted diconnected");
+                //#endif
+            }
+            if (perm != null)
+            {
+                args.PermeabilityFromModel = perm;
+                PermeabilityPresentationBox.Text = args.PermeabilityFromModel.Name;
+                args.PermeabilityFromModel.Deleted += deletedHandler;
+                //#if DEBUG
+                //PetrelLogger.InfoOutputWindow(PermXCoarse.Name + " deleted connected");
+                //#endif
+            }
+        }
+
+          private void setOneLayerGrid(Grid grid, EventHandler deletedHandler)
+          {
+              if (args.OneLayerPerZoneGrid != null)
+              {
+                  args.OneLayerPerZoneGrid.Deleted -= deletedHandler;
+                  //#if DEBUG
+                  //PetrelLogger.InfoOutputWindow(PermXCoarse.Name + " deleted diconnected");
+                  //#endif
+              }
+              if (grid != null)
+              {
+                  args.OneLayerPerZoneGrid = grid;
+                  OneLayerGridPresentationBox.Text = args.OneLayerPerZoneGrid.Name;
+                  args.OneLayerPerZoneGrid.Deleted += deletedHandler;
+                  //#if DEBUG
+                  //PetrelLogger.InfoOutputWindow(PermXCoarse.Name + " deleted connected");
+                  //#endif
+              }
+          }
+
         private void WellDropTarget_DragDrop(object sender, DragEventArgs e)
         {
             
@@ -625,17 +697,17 @@ namespace ModifiedKh
 
         private void OneLayerGridDropTarget_DragDrop(object sender, DragEventArgs e)
         {
-            this.args.OneLayerPerZoneGrid = e.Data.GetData(typeof(Grid)) as Grid;
+            OneLayerGrid = e.Data.GetData(typeof(Grid)) as Grid;
 
 
-            if (this.args.OneLayerPerZoneGrid == null)
+            if (OneLayerGrid == null)
             {
                 MessageBox.Show("A Grid needs to be dropped");
                 return;
             }
             else
             {
-                OneLayerGridPresentationBox.Text = this.args.OneLayerPerZoneGrid.Name;
+                setOneLayerGrid(OneLayerGrid, OneLayerGrid_Deleted);
             }
         }
 
@@ -1519,7 +1591,7 @@ namespace ModifiedKh
                         arrayOfOriginalRatios[i] = RoundingClass.RoundToSignificantDigits(ListOfOriginalRowDataInfo[i].Ratio,4);
                     } 
 
-                 int numberOfBins = 10;
+                 
                  try
                  {
                      generateHistogramUI(arrayOfRatios, arrayOfOriginalRatios, numberOfBins);
@@ -2267,10 +2339,14 @@ namespace ModifiedKh
             if (SaveArgs.GridDroid != null)
             {
 
-                    this.args.OneLayerPerZoneGrid = DataManager.Resolve(SaveArgs.GridDroid) as Grid;
-                    if (this.args.OneLayerPerZoneGrid != null)
+                    OneLayerGrid = DataManager.Resolve(SaveArgs.GridDroid) as Grid;
+                    if (OneLayerGrid != null)
                     {
-                        OneLayerGridPresentationBox.Text = this.args.OneLayerPerZoneGrid.Name;
+                        setOneLayerGrid(OneLayerGrid, OneLayerGrid_Deleted); 
+                    }
+                    else
+                    {
+                        OneLayerGridPresentationBox.Text = "One Layer Grid Deleted";
                     }
 
             }
@@ -2388,7 +2464,15 @@ namespace ModifiedKh
 
         private bool TestUserInput()
         {
-            return true;
+            if (this.args.PermeabilityFromModel !=null && this.args.OneLayerPerZoneGrid !=null)
+            {
+                return true; 
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
         private Property PropertyDroidDrop(Droid droidOfProperty, PresentationBox presboxToPutPropertyIn)
@@ -2668,6 +2752,33 @@ namespace ModifiedKh
              }
                     
              
+         }
+
+         private void NumberOfBinsTextBox_TextChanged(object sender, EventArgs e)
+         {
+             int IntegerValue;
+
+
+             if (Int32.TryParse(NumberOfBinsTextBox.Text, System.Globalization.NumberStyles.None, new CultureInfo("en-US"), out IntegerValue))
+             {
+                 if (IntegerValue > 0 && IntegerValue <= WellKhDataGridView.Rows.Count)
+                 {
+                     numberOfBins = IntegerValue;
+                 }
+                 else
+                 {
+                     NumberOfBinsTextBox.Text = System.Convert.ToString(numberOfBins);
+                     MessageBox.Show("Please make sure that you input a positive number without any commas that does not exceed the number of rows of the Kh Ratio Table");
+                 }
+
+             }
+             else
+             {
+                 NumberOfBinsTextBox.Text = System.Convert.ToString(numberOfBins);
+                 MessageBox.Show("Please make sure that you input a positive number without any commas that does not exceed the number of rows of the Kh Ratio Table");
+
+             }
+         
          }
     }
 

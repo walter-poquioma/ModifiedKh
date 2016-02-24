@@ -29,28 +29,28 @@ namespace ModifiedKh
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement3 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
-            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect3 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
-            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement4 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
-            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect4 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo9 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem9 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo10 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem10 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement1 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
+            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect1 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
+            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement2 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
+            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect2 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo1 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem1 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo2 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem2 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModifiedKhUI));
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo11 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem11 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo12 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem12 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo13 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem13 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo14 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem14 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo15 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem15 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo16 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem16 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo3 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem3 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo4 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem4 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo5 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem5 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo6 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem6 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo7 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem7 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo8 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem8 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
             this.PermeabilityDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.WellDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.PermeabilityPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
@@ -129,6 +129,8 @@ namespace ModifiedKh
             this.toolTipManager1 = new Slb.Ocean.Petrel.UI.Controls.ToolTipManager(this.components);
             this.toolTipHotspot8 = new Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot(this.components);
             this.SaveOriginalData = new System.Windows.Forms.Button();
+            this.NumberOfBinsTextBox = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.WellKhDataGridView)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.KhRatioTab.SuspendLayout();
@@ -405,9 +407,9 @@ namespace ModifiedKh
             // 
             // IncludeRow
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.NullValue = "True";
-            this.IncludeRow.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.NullValue = "True";
+            this.IncludeRow.DefaultCellStyle = dataGridViewCellStyle1;
             this.IncludeRow.HeaderText = "Include";
             this.IncludeRow.Name = "IncludeRow";
             this.IncludeRow.ReadOnly = true;
@@ -732,9 +734,9 @@ namespace ModifiedKh
             // HistogramChart2
             // 
             this.HistogramChart2.Axis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            paintElement3.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
-            paintElement3.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            this.HistogramChart2.Axis.PE = paintElement3;
+            paintElement1.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
+            paintElement1.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
+            this.HistogramChart2.Axis.PE = paintElement1;
             this.HistogramChart2.Axis.X.Labels.Font = new System.Drawing.Font("Verdana", 7F);
             this.HistogramChart2.Axis.X.Labels.FontColor = System.Drawing.Color.DimGray;
             this.HistogramChart2.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near;
@@ -894,7 +896,7 @@ namespace ModifiedKh
             this.HistogramChart2.ColorModel.ColorBegin = System.Drawing.Color.LemonChiffon;
             this.HistogramChart2.ColorModel.ColorEnd = System.Drawing.Color.Brown;
             this.HistogramChart2.ColorModel.ModelStyle = Infragistics.UltraChart.Shared.Styles.ColorModels.Office2007Style;
-            this.HistogramChart2.Effects.Effects.Add(gradientEffect3);
+            this.HistogramChart2.Effects.Effects.Add(gradientEffect1);
             this.HistogramChart2.Location = new System.Drawing.Point(441, 3);
             this.HistogramChart2.Name = "HistogramChart2";
             this.HistogramChart2.Size = new System.Drawing.Size(432, 369);
@@ -911,9 +913,9 @@ namespace ModifiedKh
             // HistogramChart1
             // 
             this.HistogramChart1.Axis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            paintElement4.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
-            paintElement4.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            this.HistogramChart1.Axis.PE = paintElement4;
+            paintElement2.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
+            paintElement2.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
+            this.HistogramChart1.Axis.PE = paintElement2;
             this.HistogramChart1.Axis.X.Labels.Font = new System.Drawing.Font("Verdana", 7F);
             this.HistogramChart1.Axis.X.Labels.FontColor = System.Drawing.Color.DimGray;
             this.HistogramChart1.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near;
@@ -1073,7 +1075,7 @@ namespace ModifiedKh
             this.HistogramChart1.ColorModel.ColorBegin = System.Drawing.Color.LightSteelBlue;
             this.HistogramChart1.ColorModel.ColorEnd = System.Drawing.Color.Brown;
             this.HistogramChart1.ColorModel.ModelStyle = Infragistics.UltraChart.Shared.Styles.ColorModels.Office2007Style;
-            this.HistogramChart1.Effects.Effects.Add(gradientEffect4);
+            this.HistogramChart1.Effects.Effects.Add(gradientEffect2);
             this.HistogramChart1.Location = new System.Drawing.Point(3, 3);
             this.HistogramChart1.Name = "HistogramChart1";
             this.HistogramChart1.Size = new System.Drawing.Size(432, 365);
@@ -1088,12 +1090,12 @@ namespace ModifiedKh
             this.toolTipHotspot7.Name = "toolTipHotspot7";
             this.toolTipHotspot7.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot7.TabIndex = 105;
-            toolTipItem9.Text = "Creates two sets of Histogram data that can be displayed using a Histogram window" +
+            toolTipItem1.Text = "Creates two sets of Histogram data that can be displayed using a Histogram window" +
     ". The data generated can be found in the Input pane or visualized in the Histogr" +
     "am Plots tab.";
-            toolTipInfo9.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem9});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot7, toolTipInfo9);
+            toolTipInfo1.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem1});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot7, toolTipInfo1);
             // 
             // groupBox2
             // 
@@ -1120,10 +1122,10 @@ namespace ModifiedKh
             this.toolTipHotspot5.Name = "toolTipHotspot5";
             this.toolTipHotspot5.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot5.TabIndex = 44;
-            toolTipItem10.Text = resources.GetString("toolTipItem10.Text");
-            toolTipInfo10.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem10});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot5, toolTipInfo10);
+            toolTipItem2.Text = resources.GetString("toolTipItem2.Text");
+            toolTipInfo2.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem2});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot5, toolTipInfo2);
             // 
             // toolTipHotspot4
             // 
@@ -1131,10 +1133,10 @@ namespace ModifiedKh
             this.toolTipHotspot4.Name = "toolTipHotspot4";
             this.toolTipHotspot4.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot4.TabIndex = 43;
-            toolTipItem11.Text = resources.GetString("toolTipItem11.Text");
-            toolTipInfo11.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem11});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot4, toolTipInfo11);
+            toolTipItem3.Text = resources.GetString("toolTipItem3.Text");
+            toolTipInfo3.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem3});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot4, toolTipInfo3);
             // 
             // toolTipHotspot3
             // 
@@ -1142,10 +1144,10 @@ namespace ModifiedKh
             this.toolTipHotspot3.Name = "toolTipHotspot3";
             this.toolTipHotspot3.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot3.TabIndex = 42;
-            toolTipItem12.Text = "Sets all the ratios that have no Kh (wt) defined to 1.";
-            toolTipInfo12.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem12});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot3, toolTipInfo12);
+            toolTipItem4.Text = "Sets all the ratios that have no Kh (wt) defined to 1.";
+            toolTipInfo4.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem4});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot3, toolTipInfo4);
             // 
             // label3
             // 
@@ -1190,12 +1192,12 @@ namespace ModifiedKh
             this.toolTipHotspot6.Name = "toolTipHotspot6";
             this.toolTipHotspot6.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot6.TabIndex = 42;
-            toolTipItem13.Text = "Populates the Kh Ratio table with the wells selected in the Input Pane instead of" +
+            toolTipItem5.Text = "Populates the Kh Ratio table with the wells selected in the Input Pane instead of" +
     " all the available wells. Make sure you check or uncheck this checkbox before dr" +
     "opping the Selected Permeability.";
-            toolTipInfo13.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem13});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot6, toolTipInfo13);
+            toolTipInfo5.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem5});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot6, toolTipInfo5);
             // 
             // toolTipHotspot2
             // 
@@ -1203,10 +1205,10 @@ namespace ModifiedKh
             this.toolTipHotspot2.Name = "toolTipHotspot2";
             this.toolTipHotspot2.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot2.TabIndex = 41;
-            toolTipItem14.Text = "Select Grid that contains one layer per zone.";
-            toolTipInfo14.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem14});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot2, toolTipInfo14);
+            toolTipItem6.Text = "Select Grid that contains one layer per zone.";
+            toolTipInfo6.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem6});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot2, toolTipInfo6);
             // 
             // toolTipHotspot1
             // 
@@ -1214,10 +1216,10 @@ namespace ModifiedKh
             this.toolTipHotspot1.Name = "toolTipHotspot1";
             this.toolTipHotspot1.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot1.TabIndex = 40;
-            toolTipItem15.Text = "Select Permeability data from original model.";
-            toolTipInfo15.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem15});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot1, toolTipInfo15);
+            toolTipItem7.Text = "Select Permeability data from original model.";
+            toolTipInfo7.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem7});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot1, toolTipInfo7);
             // 
             // label1
             // 
@@ -1263,10 +1265,10 @@ namespace ModifiedKh
             this.toolTipHotspot8.Name = "toolTipHotspot8";
             this.toolTipHotspot8.Size = new System.Drawing.Size(20, 20);
             this.toolTipHotspot8.TabIndex = 107;
-            toolTipItem16.Text = resources.GetString("toolTipItem16.Text");
-            toolTipInfo16.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem16});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot8, toolTipInfo16);
+            toolTipItem8.Text = resources.GetString("toolTipItem8.Text");
+            toolTipInfo8.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem8});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot8, toolTipInfo8);
             // 
             // SaveOriginalData
             // 
@@ -1279,10 +1281,30 @@ namespace ModifiedKh
             this.SaveOriginalData.UseVisualStyleBackColor = true;
             this.SaveOriginalData.Click += new System.EventHandler(this.SaveOriginalData_Click);
             // 
+            // NumberOfBinsTextBox
+            // 
+            this.NumberOfBinsTextBox.Location = new System.Drawing.Point(824, 50);
+            this.NumberOfBinsTextBox.Name = "NumberOfBinsTextBox";
+            this.NumberOfBinsTextBox.ReadOnly = true;
+            this.NumberOfBinsTextBox.Size = new System.Drawing.Size(39, 20);
+            this.NumberOfBinsTextBox.TabIndex = 108;
+            this.NumberOfBinsTextBox.TextChanged += new System.EventHandler(this.NumberOfBinsTextBox_TextChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(726, 53);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(92, 13);
+            this.label13.TabIndex = 109;
+            this.label13.Text = "Bins for Histogram";
+            // 
             // ModifiedKhUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.NumberOfBinsTextBox);
             this.Controls.Add(this.toolTipHotspot8);
             this.Controls.Add(this.SaveOriginalData);
             this.Controls.Add(this.toolTipHotspot7);
@@ -1412,5 +1434,7 @@ namespace ModifiedKh
         private System.Windows.Forms.DataGridViewCheckBoxColumn Global;
         private System.Windows.Forms.DataGridViewButtonColumn Estimate;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IncludeRow;
+        private System.Windows.Forms.TextBox NumberOfBinsTextBox;
+        private System.Windows.Forms.Label label13;
     }
 }
