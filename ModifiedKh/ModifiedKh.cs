@@ -657,25 +657,7 @@ namespace ModifiedKh
                 return new ModifiedKhUI((PermMatching)workstep, (Arguments)argumentPackage, context);
             }
         }
-
-        public static List<Borehole> GetAllBoreholesInProject(BoreholeCollection TopBhCollection)
-        {
-
-            List<Borehole> ListOfBoreholes = new List<Borehole>();
-
-            foreach (Borehole bh in TopBhCollection)
-            {
-                ListOfBoreholes.Add(bh);
-            }
-
-            foreach (BoreholeCollection BhCollection in TopBhCollection.BoreholeCollections)
-            {
-                    ListOfBoreholes.AddRange(GetAllBoreholesInProject(BhCollection));
-            }
-            return ListOfBoreholes;
-
-        
-        }
+      
 
         public static double Normal_Transform(double mean, double std, double OriginalData)
         {

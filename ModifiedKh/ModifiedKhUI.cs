@@ -328,7 +328,27 @@ namespace ModifiedKh
                     {
                         return false;
                     }
-                  
+
+                    if (WellKhObj.ZoneIndex!=null)
+                    {
+                        Slb.Ocean.Petrel.DomainObject.PillarGrid.PropertyCollection pc = WellKhObj.ZoneIndex.Grid.PropertyCollection;
+                       
+                        using (ITransaction trans = DataManager.NewTransaction())
+                        {
+                            try
+                            {
+                                trans.Lock(WellKhObj.ZoneIndex);
+                                WellKhObj.ZoneIndex.Delete();
+                                trans.Commit();
+                            }
+                            catch (Exception)
+                            {
+
+                                MessageBox.Show("The previously created Zone Index property was not deleted.");
+                            }
+                           
+                        }
+                    }
                     WellKhObj.ZoneIndex = KandaPropertyCreator.CreateZoneIndex(WellKhObj.Permeability.Grid);
                  
                     PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
@@ -1220,7 +1240,7 @@ namespace ModifiedKh
             WellRoot wr = WellRoot.Get(proj);
 
             BoreholeCollection BhCollection = wr.BoreholeCollection;
-            ListOfBoreholes = PermMatching.GetAllBoreholesInProject(BhCollection);
+            ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
 
             UpdateRowsInDataGridWithNewWells(ListOfBoreholes); 
 
@@ -1295,6 +1315,88 @@ namespace ModifiedKh
             }
 
 
+        }
+
+        public List<Borehole> GetAllBoreholesInProject(BoreholeCollection TopBhCollection)
+        {
+
+            List<Borehole> ListOfBoreholes = new List<Borehole>();
+
+            foreach (Borehole bh in TopBhCollection)
+            {
+                bh.Deleted -= Deleted_Well;
+                bh.Deleted += Deleted_Well;
+                ListOfBoreholes.Add(bh);
+               
+            }
+
+            foreach (BoreholeCollection BhCollection in TopBhCollection.BoreholeCollections)
+            {
+                ListOfBoreholes.AddRange(GetAllBoreholesInProject(BhCollection));
+            }
+            return ListOfBoreholes;
+
+
+        }
+
+    
+        private void Deleted_Well(object sender, EventArgs e)
+        {
+            Borehole Well = (Borehole)sender;
+
+            if (args.PermeabilityFromModel ==null)
+            {
+                int position = ListOfBoreholes.IndexOf(ListOfBoreholes.Find(x => x.Droid == Well.Droid));
+                ListOfBoreholes.RemoveAt(position);
+                UpdateRowsInDataGridWithNewWells(ListOfBoreholes);  
+            }            
+            else 
+            {
+                
+                int position = ListOfRowInfo.IndexOf(ListOfRowInfo.Find(ri => ri.WellName  == Well.Name));
+                
+
+                while(position != -1)
+                {
+
+                    if (ListOfFilledKhwtIndices.Count > 0)
+                    {
+                        if (ListOfFilledKhwtIndices.Any(ind => ind == position))
+                        {
+                            var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == position);
+                            ListOfFilledKhwtIndices.Remove(itemToRemove);
+                        }
+                        
+
+                        for (int i = 0; i < ListOfFilledKhwtIndices.Count; i++)
+                        {
+                            if (ListOfFilledKhwtIndices[i] > position)
+                            {
+                                ListOfFilledKhwtIndices[i] = ListOfFilledKhwtIndices[i] - 1; //Decreasing the position number because the row information has been deleted.
+                            }
+                        }
+                    }
+                    
+
+                    ListOfRowInfo.RemoveAt(position);
+                    
+
+                    
+                    WellKhDataGridView.Rows.RemoveAt(position);
+
+                    
+                    position = ListOfRowInfo.IndexOf(ListOfRowInfo.Find(ri => ri.WellName == Well.Name));
+                }
+
+
+                ListOfOriginalRowDataInfo.Clear();
+                ListOfOriginalFilledKhwtIndices.Clear();
+
+                MessageBox.Show("If previous data was saved as original data it has been deleted due to the change in the wells.");
+
+   
+            }
+            
         }
 
         private void UpdateRowsInDataGridWithNewWells(List<Borehole> ListOfBoreholes) 
@@ -1372,7 +1474,7 @@ namespace ModifiedKh
 
                 else
                 {
-                    MessageBox.Show("Please verify that a Permeability property and a Zone Index property have been dropped.");
+                    MessageBox.Show("Please verify that a Permeability property has been dropped.");
                 }
 
 
@@ -1500,7 +1602,10 @@ namespace ModifiedKh
                 {
                     if (item is Borehole)
                     {
-                        ListOfBoreholes.Add((Borehole)item);
+                        Borehole item2 = (Borehole)item;
+                        item2.Deleted -= Deleted_Well;
+                        item2.Deleted += Deleted_Well;
+                        ListOfBoreholes.Add(item2);
 
                     }
                 }
@@ -1517,7 +1622,7 @@ namespace ModifiedKh
                 WellRoot wr = WellRoot.Get(proj);
 
                 BoreholeCollection BhCollection = wr.BoreholeCollection;
-                ListOfBoreholes = PermMatching.GetAllBoreholesInProject(BhCollection);
+                ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
                 if (ListOfBoreholes != null)
                 {
                     UpdateRowsInDataGridWithNewWells(ListOfBoreholes);

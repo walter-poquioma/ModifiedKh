@@ -116,7 +116,7 @@ namespace ModifiedKh
 
                  DictionaryTemplate TemplateOfProperty = PetrelProject.WellKnownTemplates.FaciesGroup.ZonesMain;
                  DictionaryProperty ZoneIndex = pc.CreateDictionaryProperty(TemplateOfProperty);
-                 ZoneIndex.Name = "Zone Index";
+                 ZoneIndex.Name = "Zone Index (Created by PermMatch)";
                  ColorTableRoot Root = ColorTableRoot.Get(PetrelProject.PrimaryProject);
                  DictionaryColorTableAccess TableAccess = Root.GetDictionaryColorTableAccess(ZoneIndex);
                  Slb.Ocean.Petrel.DomainObject.ColorTables.DictionaryColorTableEntry ColorTableEntry = new Slb.Ocean.Petrel.DomainObject.ColorTables.DictionaryColorTableEntry();
@@ -173,6 +173,7 @@ namespace ModifiedKh
              
     
         }
+
 
         //Recursive Loop to get all the low level zones
         public static List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> GetAllLowLevelZones(IEnumerable<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> TopZones)
