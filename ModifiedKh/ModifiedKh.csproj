@@ -111,6 +111,11 @@
     </Compile>
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Quadrilateral.cs" />
     <Compile Include="ResourcePermMatch.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -118,6 +123,7 @@
       <DependentUpon>ResourcePermMatch.resx</DependentUpon>
     </Compile>
     <Compile Include="SaveableArguments.cs" />
+    <Compile Include="UpScaleDesignModuleAppearance.cs" />
     <Compile Include="WellKh.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -142,22 +148,24 @@
       <DependentUpon>ModifiedKhUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="ResourcePermMatch.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourcePermMatch.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Resources\connect_logo_symbol.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\PermMatchConfig.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DynaRankLogoTransparent1616.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DynaRankLogoTransparent3232.png" />
+    <Content Include="DynaRankLogoTransparent1616.png" />
+    <Content Include="DynaRankLogoTransparent3232.png" />
+    <None Include="PermMatchConfig1.xml" />
+    <Content Include="Resources\PermMatchConfig1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

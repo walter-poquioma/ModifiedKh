@@ -276,6 +276,7 @@ namespace ModifiedKh
                         KrigingArgs.ModelVariogram.Dip = new Angle(0);
                         KrigingArgs.ModelVariogram.MajorDirection = arguments.VarArg.MajorDirection;
                         KrigingArgs.Expert.KrigingType = arguments.KrigType;
+                        KrigingArgs.Distribution.MaximumResultDataValue = 1;
                         ModelVariogramArguments argval = new ModelVariogramArguments();
 
                         arguments.ListOfZonesOfOneLayerPerZoneGrid = KandaPropertyCreator.GetAllLowLevelZones(arguments.OneLayerPerZoneGrid.Zones);
@@ -298,6 +299,7 @@ namespace ModifiedKh
                         int top_k;
                         int base_k;
 
+
                         foreach (Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone zone in arguments.ListOfZonesOfOneLayerPerZoneGrid)
                         {
                             if (zone.BaseK < zone.TopK)
@@ -310,7 +312,7 @@ namespace ModifiedKh
                                 top_k = zone.BaseK;
                                 base_k = zone.TopK;
                             }
-                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name)) //If it is a kriged zone then multiply the unnormalized ratio property with the original K property
+                            if (arguments.ListOfPenetratedZoneNames.Contains(zone.Name)) 
                             {
 
                                 for (int i = 0; i < max_i; i++)
@@ -319,10 +321,11 @@ namespace ModifiedKh
                                     {
                                         for (int k = base_k; k <= top_k; k++)
                                         {
-                                            if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))
-                                            {
+                                            //if (!float.IsNaN(arguments.PermeabilityFromModel[i, j, k]))                                         
+                                            //{
                                                 p[i, j, k] = (float)Normal_Transform_Reverse(arguments.mean, arguments.std, (double)p[i, j, k]);
-                                            }
+                                                
+                                            //}
 
                                         }
                                     }
@@ -408,6 +411,7 @@ namespace ModifiedKh
                                                 counter3 = counter3 + 1;
 
                                             }
+
 
                                         }
                                     }

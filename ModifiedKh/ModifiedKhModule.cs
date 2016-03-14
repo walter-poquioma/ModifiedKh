@@ -7,6 +7,7 @@ using Slb.Ocean.Petrel.Commands;
 using System.Windows.Forms;
 using Slb.Ocean.Petrel.Contexts;
 using Slb.Ocean.Petrel.Configuration;
+using Slb.Ocean.Petrel.Basics;
 
 namespace ModifiedKh
 {
@@ -14,11 +15,16 @@ namespace ModifiedKh
     /// This class will control the lifecycle of the Module.
     /// The order of the methods are the same as the calling order.
     /// </summary>
+    /// 
+    [ModuleAppearance(typeof(ModifiedKhModuleAppearance))]
+
+    [FlexFeature("OCEAN_KAA_CONNECT-PERMMATCH", 0.0f)]
     public class ModifiedKhModule : IModule
     {
         #region Private Variables
         private Process m_modifiedkhInstance;
         #endregion
+        private bool m_HasLicense;
         public ModifiedKhModule()
         {
             //
@@ -36,6 +42,20 @@ namespace ModifiedKh
         {
             //System.Diagnostics.Debugger.Launch();
             // TODO:  Add ModifiedKhModule.Initialize implementation
+
+
+
+            m_HasLicense = PetrelSystem.LicensingService.HasModuleLicense(typeof(ModifiedKhModule));
+            if (m_HasLicense == true)
+            {
+                CoreLogger.Info(FeatureName + ", " + FeatureVersion + " is licensed with key : " + m_HasLicense.ToString());
+
+            }
+            else
+            {
+                CoreLogger.Info("License is not valid for " + FeatureName + ", " + FeatureVersion);
+                PetrelLogger.InfoOutputWindow("CONNECT-TransMod license is not available or expired");
+            }
         }
 
         /// <summary>
@@ -49,14 +69,16 @@ namespace ModifiedKh
             // TODO:  Add ModifiedKhModule.Integrate implementation
             
             // Register ModifiedKh
-            PermMatching modifiedkhInstance = new PermMatching();
-            PetrelSystem.WorkflowEditor.AddUIFactory<PermMatching.Arguments>(new PermMatching.UIFactory());
-            //PetrelSystem.WorkflowEditor.Add(modifiedkhInstance);
-            m_modifiedkhInstance = new Slb.Ocean.Petrel.Workflow.WorkstepProcessWrapper(modifiedkhInstance);
-            PetrelSystem.ProcessDiagram.Add(m_modifiedkhInstance, "Property modeling");
-            PetrelSystem.AddDataSourceFactory( new CONNECTModifiedKhDataSourceFactory());
-            PetrelSystem.CommandManager.CreateCommand(PermMatchCommandHandler.Id, new PermMatchCommandHandler());
-
+            if (m_HasLicense == true)
+            {
+                PermMatching modifiedkhInstance = new PermMatching();
+                PetrelSystem.WorkflowEditor.AddUIFactory<PermMatching.Arguments>(new PermMatching.UIFactory());
+                //PetrelSystem.WorkflowEditor.Add(modifiedkhInstance);
+                m_modifiedkhInstance = new Slb.Ocean.Petrel.Workflow.WorkstepProcessWrapper(modifiedkhInstance);
+                PetrelSystem.ProcessDiagram.Add(m_modifiedkhInstance, "Property modeling");
+                PetrelSystem.AddDataSourceFactory(new CONNECTModifiedKhDataSourceFactory());
+                PetrelSystem.CommandManager.CreateCommand(PermMatchCommandHandler.Id, new PermMatchCommandHandler());
+            }
 
           //  PetrelSystem.CommandManager.CreateCommand("Slb.Ocean.Example.MyFirstPluginCommand",  new DoSomethingCommandHandler());
 
@@ -71,7 +93,10 @@ namespace ModifiedKh
         {
 
             // TODO:  Add ModifiedKhModule.IntegratePresentation implementation
-            PetrelSystem.ConfigurationService.AddConfiguration(ResourcePermMatch.PermMatchConfig);
+            if (m_HasLicense == true)
+            {
+                PetrelSystem.ConfigurationService.AddConfiguration(ModifiedKh.Properties.Resources.PermMatchConfig1);
+            }
         }
 
         /// <summary>
@@ -98,6 +123,62 @@ namespace ModifiedKh
 
         #endregion
 
+        #region ISlbFeature Members
+
+        public string FeatureName
+        {
+            get { return "OCEAN_KAA_CONNECT-PERMMATCH"; }
+        }
+
+        public float FeatureVersion
+        {
+            get { return 0.0f; }
+        }
+
+        #endregion
+
+        #region ModuleAppearance Class
+
+        /// <summary>
+        /// Appearance (or branding) for a Slb.Ocean.Core.IModule.
+        /// This is associated with a module using Slb.Ocean.Core.ModuleAppearanceAttribute.
+        /// </summary>
+        internal class ModifiedKhModuleAppearance : IModuleAppearance
+        {
+            /// <summary>
+            /// Description of the module.
+            /// </summary>
+            public string Description
+            {
+                get { return "CONNECT-PermMatch"; }
+            }
+
+            /// <summary>
+            /// Display name for the module.
+            /// </summary>
+            public string DisplayName
+            {
+                get { return "CONNECT-PermMatch"; }
+            }
+
+            /// <summary>
+            /// Returns the name of a image resource.
+            /// </summary>
+            public string ImageResourceName
+            {
+                get { return null; }//"Upscaling.ResourceConnect.connect_logo_symbol"
+            }
+
+            /// <summary>
+            /// A link to the publisher or null.
+            /// </summary>
+            public Uri ModuleUri
+            {
+                get { return null; }//(new Uri("ttp://www.kelkar-and-assoc.com"))
+            }
+        }
+
+        #endregion
     }
 
     class PermMatchCommandHandler : SimpleCommandHandler

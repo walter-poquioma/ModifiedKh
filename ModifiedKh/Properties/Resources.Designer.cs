@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModifiedKh {
+namespace ModifiedKh.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace ModifiedKh {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ResourcePermMatch {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ResourcePermMatch() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ModifiedKh {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModifiedKh.ResourcePermMatch", typeof(ResourcePermMatch).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModifiedKh.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,10 +63,37 @@ namespace ModifiedKh {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap connect_logo_symbol {
+        internal static System.Drawing.Bitmap DynaRankLogoTransparent1616 {
             get {
-                object obj = ResourceManager.GetObject("connect_logo_symbol", resourceCulture);
+                object obj = ResourceManager.GetObject("DynaRankLogoTransparent1616", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DynaRankLogoTransparent3232 {
+            get {
+                object obj = ResourceManager.GetObject("DynaRankLogoTransparent3232", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Configuration Type=&quot;Configuration.ConfigurationState&quot; Version=&quot;1.0.0.10&quot; Caption=&quot;CONNECT-PermMatchConfig&quot;&gt;
+        ///  &lt;Extensions Type=&quot;Extensibility.ExtensionCollection&quot;&gt;
+        ///    &lt;Workspaces.WorkspaceExtension EntityId=&quot;f473c60f-579a-4e0a-853d-73f13e1122b1&quot; /&gt;
+        ///  &lt;/Extensions&gt;
+        ///  &lt;Sections Type=&quot;Extesibility.ConfigurationSectionCollection&quot;&gt;
+        ///    &lt;Commands.CommandSection Version=&quot;1.0.0.4&quot;&gt;
+        ///      &lt;Extensions Type=&quot;Extensibility.ExtensionCollection&quot;&gt;
+        ///        &lt;Workspaces.Worksp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PermMatchConfig1 {
+            get {
+                return ResourceManager.GetString("PermMatchConfig1", resourceCulture);
             }
         }
     }

@@ -67,7 +67,7 @@ namespace ModifiedKh
         bool FirstTimeTruncating = true;
         int numberOfBins = 10;
         Grid OneLayerGrid;
-       
+        IStairstepModelingService SMS = CoreSystem.GetService<IStairstepModelingService>(); 
         
 
         private SaveableArguments SaveArgs;
@@ -106,6 +106,16 @@ namespace ModifiedKh
         {
             int counter = 0;
 
+            //if (ListOfRowInfo.Count < WellKhDataGridView.RowCount)
+            //{
+            //    int Difference = WellKhDataGridView.RowCount - ListOfRowInfo.Count;
+
+            //    for (int i = 0; i < Difference; i++)
+            //    {
+            //        WellKhDataGridView.Rows.Remove(WellKhDataGridView.Rows[ListOfRowInfo.Count]);
+            //    }
+            //}
+            WellKhDataGridView.CellValueChanged -= WellKhDataGridView_CellValueChanged;
 
             foreach (KhTableRowInfoContainer ri in ListOfRowInfo)
             {Button B1 = new Button();
@@ -189,6 +199,7 @@ namespace ModifiedKh
                 counter++; 
             }
 
+            WellKhDataGridView.CellValueChanged += WellKhDataGridView_CellValueChanged;
         }
 
         private void PermeabilityDropTarget_DragDrop(object sender, DragEventArgs e)
@@ -203,6 +214,7 @@ namespace ModifiedKh
                 return;
             }
 
+            
 
             if (UpdateArgsWithNewPerm())
             {
@@ -219,10 +231,11 @@ namespace ModifiedKh
         private bool UpdateArgsWithNewPerm()
         {
             bool Success = false;
-            if (WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.Perm))
+            if(WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.Perm))
             {
 
-
+                if(!SMS.IsStairstepped(WellKhObj.Permeability.Grid) && !SMS.HasLayerMap(WellKhObj.Permeability.Grid))
+                {
 
                 using (IProgress PBar1 = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, Cursors.WaitCursor))
                 {
@@ -343,7 +356,7 @@ namespace ModifiedKh
                             }
                             catch (Exception)
                             {
-
+                                
                                 MessageBox.Show("The previously created Zone Index property was not deleted.");
                             }
                            
@@ -361,6 +374,7 @@ namespace ModifiedKh
                     //WellKhObj.VerticalContinuity(this.ListOfNamesOfIntersectedZones);
 
                     #region Updating the DataGridView and ListOfRowInfo object
+                    //UpdateRowObjectsWithNewWells(ListOfBoreholes);
                     WellKhDataGridView.AllowUserToAddRows = true;
                     UpdateRowObjectsWithNewWells(ListOfBoreholes);
                    
@@ -384,6 +398,13 @@ namespace ModifiedKh
                     WellKhDataGridView.Columns[6].ReadOnly = true;
                     PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
                 }
+            }
+            else
+	        {
+                Success = false;
+                MessageBox.Show("A structural grid cannot be dropped.");
+	        }
+
             }
             else
             {
@@ -718,7 +739,7 @@ namespace ModifiedKh
         private void OneLayerGridDropTarget_DragDrop(object sender, DragEventArgs e)
         {
             OneLayerGrid = e.Data.GetData(typeof(Grid)) as Grid;
-
+            ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(OneLayerGrid.Zones);
 
             if (OneLayerGrid == null)
             {
@@ -727,7 +748,25 @@ namespace ModifiedKh
             }
             else
             {
-                setOneLayerGrid(OneLayerGrid, OneLayerGrid_Deleted);
+                if (!SMS.IsStairstepped(OneLayerGrid) && !SMS.HasLayerMap(OneLayerGrid))
+                {
+                    if (OneLayerGrid.NumCellsIJK.K == ListOfZones.Count)
+                    {
+
+                        setOneLayerGrid(OneLayerGrid, OneLayerGrid_Deleted);
+                    }
+                    else
+                    {
+                        MessageBox.Show("A Grid that has one layer per zone needs to be dropped. Please refer to the help material in order create this grid.");
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("A structural grid cannot be dropped.");
+                    return;
+                }
+   
             }
         }
 
@@ -1284,7 +1323,14 @@ namespace ModifiedKh
         }
 
         private void FilledKhwtIndices_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        { bool Remove = false;
+        {
+            bool originalStatusOfCheck = WellKhDataGridView.AllowUserToAddRows;
+            if (originalStatusOfCheck)
+            {
+                WellKhDataGridView.AllowUserToAddRows = false;
+            }
+
+            bool Remove = false;
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 SumOfRatios = SumOfRatios + ListOfRowInfo[ListOfFilledKhwtIndices[e.NewStartingIndex]].Ratio; 
@@ -1314,7 +1360,7 @@ namespace ModifiedKh
                 }
             }
 
-
+            WellKhDataGridView.AllowUserToAddRows = originalStatusOfCheck;
         }
 
         public List<Borehole> GetAllBoreholesInProject(BoreholeCollection TopBhCollection)
@@ -2456,59 +2502,70 @@ namespace ModifiedKh
 
             }
 
-            MaxRatio = SaveArgs.MaxRatio;
-
-            MinRatio = SaveArgs.MinRatio;
-
-            Truncate2NormalDist.Checked = SaveArgs.Truncate2NormalDist;
-            UseOriginalData.Checked = SaveArgs.UseOriginalData;
-            FirstTimeEditingRatio = SaveArgs.FirstTimeEditingRatio;
-            KeepMissingRatio1.CheckedChanged -= KeepMissingRatio1_CheckedChanged;
-            KeepMissingRatio1.Checked = SaveArgs.KeepMissingAs1;
-            KeepMissingRatio1.CheckedChanged += KeepMissingRatio1_CheckedChanged;
-
-
-            if (!UseOriginalData.Checked && !Truncate2NormalDist.Checked)
+            if (SaveArgs.ListOfRowInfo.Count == WellKhDataGridView.Rows.Count)
             {
-                MaximumRatioValue.Text= System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
-                MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+
+                MaxRatio = SaveArgs.MaxRatio;
+
+                MinRatio = SaveArgs.MinRatio;
+
+                Truncate2NormalDist.Checked = SaveArgs.Truncate2NormalDist;
+                UseOriginalData.Checked = SaveArgs.UseOriginalData;
+                FirstTimeEditingRatio = SaveArgs.FirstTimeEditingRatio;
+                KeepMissingRatio1.CheckedChanged -= KeepMissingRatio1_CheckedChanged;
+                KeepMissingRatio1.Checked = SaveArgs.KeepMissingAs1;
+                KeepMissingRatio1.CheckedChanged += KeepMissingRatio1_CheckedChanged;
+
+
+                if (!UseOriginalData.Checked && !Truncate2NormalDist.Checked)
+                {
+                    MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
+                    MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                }
+
+                if (SaveArgs.ListOfRowInfo.Count > 0)
+                {
+                    ListOfRowInfo.Clear();
+                    foreach (KhTableRowInfoContainer ri in SaveArgs.ListOfRowInfo)
+                    {
+                        ListOfRowInfo.Add(ri.CreateCopy());
+                    }
+
+                    ListOfOriginalRowDataInfo.Clear();
+                    foreach (KhTableRowInfoContainer ri in SaveArgs.ListOfOriginalData)
+                    {
+                        ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
+                    }
+
+                    ListOfOriginalFilledKhwtIndices.Clear();
+                    foreach (int ind in SaveArgs.ListOfOriginalKhwtIndices)
+                    {
+                        ListOfOriginalFilledKhwtIndices.Add(ind);
+                    }
+
+                    ListOfFilledKhwtIndices.CollectionChanged -= FilledKhwtIndices_CollectionChanged;
+                    ListOfFilledKhwtIndices.Clear();
+                    SumOfRatios = 0.0;
+
+
+                    foreach (int ind in SaveArgs.ListOfKhwtIndices)
+                    {
+                        ListOfFilledKhwtIndices.Add(ind);
+                        SumOfRatios = SumOfRatios + ListOfRowInfo[ind].Ratio;
+                    }
+                    ListOfFilledKhwtIndices.CollectionChanged += FilledKhwtIndices_CollectionChanged;
+
+                    UpdateDataGridViewWithListOfRowInfoObj(ListOfRowInfo, ref WellKhDataGridView);
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("There was a problem loading the saved data into the Table. \n" +
+                    "The number of rows of the current Table does not match the number of rows of the previously saved Table. \n" +
+                     "The Table will be cleared.");
             }
 
-            if (SaveArgs.ListOfRowInfo.Count > 0)
-            {
-                ListOfRowInfo.Clear();
-                foreach (KhTableRowInfoContainer ri in SaveArgs.ListOfRowInfo)
-                {
-                    ListOfRowInfo.Add(ri.CreateCopy());
-                }
-
-                ListOfOriginalRowDataInfo.Clear();
-                foreach (KhTableRowInfoContainer ri in SaveArgs.ListOfOriginalData)
-                {
-                    ListOfOriginalRowDataInfo.Add(ri.CreateCopy());
-                }
-
-                ListOfOriginalFilledKhwtIndices.Clear();
-                foreach (int ind in SaveArgs.ListOfOriginalKhwtIndices )
-                {
-                    ListOfOriginalFilledKhwtIndices.Add(ind);
-                }
-
-                ListOfFilledKhwtIndices.CollectionChanged -= FilledKhwtIndices_CollectionChanged;
-                ListOfFilledKhwtIndices.Clear();
-                SumOfRatios = 0.0;
-              
-                
-                foreach (int ind in SaveArgs.ListOfKhwtIndices)
-                {
-                    ListOfFilledKhwtIndices.Add(ind);
-                    SumOfRatios = SumOfRatios + ListOfRowInfo[ind].Ratio;
-                }
-                ListOfFilledKhwtIndices.CollectionChanged += FilledKhwtIndices_CollectionChanged;
-
-                UpdateDataGridViewWithListOfRowInfoObj(ListOfRowInfo, ref WellKhDataGridView);
-    
-            }
             if (SaveArgs.MajorRange>0.0)
             {
                 args.VarArg.MajorRange = SaveArgs.MajorRange;
