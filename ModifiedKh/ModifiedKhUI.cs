@@ -63,7 +63,8 @@ namespace ModifiedKh
         bool FirstTimeEditingRatio = true;
         double SumOfRatios = 0;
         int OldIndex;
-        double MaxRatio = 1; double MinRatio = 1;    
+        double MaxRatio = Double.MaxValue; double MinRatio = 0.0000000000001;
+       // double MaxRatio = 1; double MinRatio = 1;    
         bool FirstTimeTruncating = true;
         int numberOfBins = 10;
         Grid OneLayerGrid;
@@ -798,7 +799,11 @@ namespace ModifiedKh
             {
                 senderGrid.Rows[RowIndex].ReadOnly = false;
                 ListOfRowInfo[RowIndex].Include = true;
-                ListOfFilledKhwtIndices.Add(RowIndex);
+                if (ListOfRowInfo[RowIndex].Kh_wt > 0)
+                {
+                    ListOfFilledKhwtIndices.Add(RowIndex); 
+                }
+                
 
 
 
@@ -947,7 +952,7 @@ namespace ModifiedKh
                     ListOfFilledKhwtIndices.Add(RowIndex);
                     senderGrid.Rows[RowIndex].Cells[ColumnIndex - 2].ReadOnly = false;
                     ListOfRowInfo[RowIndex].Global = false;
-
+                    senderGrid.Rows[RowIndex].Cells[7].ReadOnly = false;
                 }
 
 
@@ -1581,23 +1586,34 @@ namespace ModifiedKh
 
         private void ExcludeKhFromTotalRatio(ref DataGridView senderGrid, int RowIndex)
         {
-            double NewRatio = 1.0 / (1.0 /(ListOfRowInfo[RowIndex].Ratio) - ListOfRowInfo[RowIndex].Kh_sim / ListOfRowInfo[RowIndex].Kh_wt);
-
-            for (int i = 0; i < senderGrid.Rows.Count; i++)
+            if (ListOfRowInfo[RowIndex].Kh_wt > 0)
             {
-                if (ListOfRowInfo[RowIndex].WellName.Equals(ListOfRowInfo[i].WellName) && RowIndex != i && (bool)senderGrid.Rows[i].Cells[5].Value)
-                {
-                    if (ListOfFilledKhwtIndices.Any(ind => ind == i))
-                    {
-                        var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == i);
-                        ListOfFilledKhwtIndices.Remove(itemToRemove);
-                    }
-                    ListOfRowInfo[i].Ratio = NewRatio;
-                    senderGrid.Rows[i].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(NewRatio, SignificantDigits));
-                    ListOfFilledKhwtIndices.Add(i);
-                }
 
-            }
+                if ((bool)senderGrid.Rows[RowIndex].Cells[7].Value==false && (bool)senderGrid.Rows[RowIndex].Cells[5].Value==false)
+                {
+                    
+                }
+                else
+                {
+                    double NewRatio = 1.0 / (1.0 / (ListOfRowInfo[RowIndex].Ratio) - ListOfRowInfo[RowIndex].Kh_sim / ListOfRowInfo[RowIndex].Kh_wt);
+
+                    for (int i = 0; i < senderGrid.Rows.Count; i++)
+                    {
+                        if (ListOfRowInfo[RowIndex].WellName.Equals(ListOfRowInfo[i].WellName) && RowIndex != i && (bool)senderGrid.Rows[i].Cells[5].Value)
+                        {
+                            if (ListOfFilledKhwtIndices.Any(ind => ind == i))
+                            {
+                                var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == i);
+                                ListOfFilledKhwtIndices.Remove(itemToRemove);
+                            }
+                            ListOfRowInfo[i].Ratio = NewRatio;
+                            senderGrid.Rows[i].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(NewRatio, SignificantDigits));
+                            ListOfFilledKhwtIndices.Add(i);
+                        }
+
+                    }
+                }
+            
 
             //Making sure that the previous ratio is removed from the List of Filled Khwt so that the calculation of the total average ratio of the datagridview is done without that number
             //If the new ratio (kh_wt/kh_sim) needs to be taken into account for the calculation of the new average then you need to use ListofFilledKhwtIndices.Add() outside of the method.
@@ -1614,7 +1630,7 @@ namespace ModifiedKh
             senderGrid.CellValueChanged += WellKhDataGridView_CellValueChanged;
             ListOfRowInfo[RowIndex].Ratio = ListOfRowInfo[RowIndex].Kh_wt / ListOfRowInfo[RowIndex].Kh_sim; //New ratio (kh_wt/kh_sim)
             senderGrid.Rows[RowIndex].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowIndex].Ratio, SignificantDigits));
-
+            }
         }
 
 
@@ -2009,19 +2025,19 @@ namespace ModifiedKh
                              "If you do not wish to truncate the data using a normal distribution please uncheck the Truncate to Normal Distribution checkbox.");
                     return;
                 }
-                TruncateData(ref WellKhDataGridView, ref args.ListOfModellingData, MaxRatio, MinRatio);
+               // TruncateData(ref WellKhDataGridView, ref args.ListOfModellingData, MaxRatio, MinRatio);
             }
             else if (!Truncate2NormalDist.Checked && !UseOriginalData.Checked)
             {
-                if (MaxRatio > 0)
-                {
-                    TruncateData(ref WellKhDataGridView, ref args.ListOfModellingData, MaxRatio, MinRatio);
-                }
-                else
-                {
-                    MessageBox.Show("Please input a value bigger than zero for the Maximum Ratio");
-                    return;
-                }
+                //if (MaxRatio > 0)
+                //{
+                //    TruncateData(ref WellKhDataGridView, ref args.ListOfModellingData, MaxRatio, MinRatio);
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Please input a value bigger than zero for the Maximum Ratio");
+                //    return;
+                //}
             }
         }
         //private void Missing2Mean_CheckedChanged(object sender, EventArgs e)
@@ -2124,17 +2140,39 @@ namespace ModifiedKh
                  if (DoubleValue>=0)
                  {
                      MinRatio = DoubleValue;
+
+                     //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                     TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio, true);
+                     //End of Change.
                  }
                  else
                  {
-                     MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                     //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                     if (MinRatio != 0.0000000000001)
+                     {
+                         MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                     }
+                     else
+                     {
+                         MinimumRatioValue.Text = String.Empty;
+                     }
+                     
                      MessageBox.Show("Please make sure that you input a positive number without any commas");
+                     //End of Change.
                  }
                  
 	         }
                 else
             {
-                MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                if (MinRatio != 0.0000000000001)
+                {
+                    MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                }
+                else
+                {
+                    MinimumRatioValue.Text = String.Empty;
+                }
                     MessageBox.Show("Please make sure that you input a positive number without any commas");
                
 	         }
@@ -2155,17 +2193,40 @@ namespace ModifiedKh
                 if (DoubleValue>=0)
                 {
                     MaxRatio = DoubleValue;  
+
+                    //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                    TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio,true);
+                    //End of Change.
                 }
                 else
                 {
-                    MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio,SignificantDigits));
+                    //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                    if (MaxRatio != Double.MaxValue)
+                    {
+                        MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));  
+                    }
+                    else
+                    {
+                        MaximumRatioValue.Text = String.Empty;
+                    }
+                    //End of Change.
+
                     MessageBox.Show("Please make sure that you input a positive number without any commas");
                 }
                 
             }
             else
             {
-                MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
+                //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                if (MaxRatio != Double.MaxValue)
+                {
+                    MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
+                }
+                else
+                {
+                    MaximumRatioValue.Text = String.Empty;
+                }
+                //End of Change.
                 MessageBox.Show("Please make sure that you input a positive number without any commas");
 
             }
@@ -2222,7 +2283,7 @@ namespace ModifiedKh
 
         }
 
-        private void TruncateData(ref DataGridView dgv,ref List<KhTableRowInfoContainer> ListOfRowInfoData, double MaxVal, double MinVal)
+        private void TruncateData(ref DataGridView dgv,ref List<KhTableRowInfoContainer> ListOfRowInfoData, double MaxVal, double MinVal, bool UpdateTable)
         {
            int counter = 0;
            String MaxValStr = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxVal,SignificantDigits));
@@ -2233,11 +2294,19 @@ namespace ModifiedKh
                 if (ric.Ratio > MaxVal)
                 {
                     ric.Ratio = MaxVal;
+                    if (UpdateTable)
+                    {
+                        dgv.Rows[counter].Cells[4].Value = MaxValStr;
+                    }
                  //   dgv.Rows[counter].Cells[4].Value = MaxValStr;
                 }
                 else if (ric.Ratio < MinVal)
                 {
                     ric.Ratio = MinVal;
+                    if (UpdateTable)
+                    {
+                        dgv.Rows[counter].Cells[4].Value = MinValStr;
+                    }
                 //    dgv.Rows[counter].Cells[4].Value = MinValStr;
                 }
                 counter = counter +1;
@@ -2696,6 +2765,7 @@ namespace ModifiedKh
                                {
                                    dgv.Rows[i].ReadOnly = true;
                                    dgv.Rows[i].Cells[5].ReadOnly = false;
+                                   dgv.Rows[i].Cells[7].ReadOnly = false;
                                }
                             }
                            // dgv.CellValueChanged += WellKhDataGridView_CellValueChanged;
