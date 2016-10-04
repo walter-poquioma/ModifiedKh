@@ -2,5 +2,8 @@
 <OceanDeployList>
   <CopyList>
     <Project source="../ModifiedKh/ModifiedKh.csproj" />
+    <File source="../DynaRankLogoTransparent3232.png">
+      <Target path=".\Images\DynaRankLogoTransparent3232.png" />
+    </File>
   </CopyList>
 </OceanDeployList>

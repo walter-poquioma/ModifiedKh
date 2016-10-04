@@ -273,10 +273,10 @@ namespace ModifiedKh
             set
             {
                     this.kh_wt = value; //* WellKh.FactorToConvert_mdft_To_m3;
-                    if (kh_wt > 0)
-                    { this.ratio = Kh_wt / Kh_sim; }
+                    if (kh_wt > 0 && Kh_sim> 0)
+                    { this.Ratio = Kh_wt / Kh_sim; }
                     else
-                    { this.ratio = 1.0; }
+                    { this.Ratio = 1.0; }
                     RaisePropertyChanged("Kh_wt");
                   //  SetDataSourceToDirty();
                 // Call OnPropertyChanged whenever the property is updated    
@@ -289,7 +289,10 @@ namespace ModifiedKh
             get { return ratio; }
             set
             {
+                if (!Double.IsNaN(value) && value <= 7.9E+28)
+                {
                     this.ratio = value;
+                }
                     RaisePropertyChanged("Ratio");
                   //  SetDataSourceToDirty();
                 // Call OnPropertyChanged whenever the property is updated

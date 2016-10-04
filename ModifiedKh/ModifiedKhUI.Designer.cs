@@ -29,28 +29,28 @@ namespace ModifiedKh
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement1 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
-            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect1 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
-            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement2 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
-            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect2 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo1 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem1 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo2 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem2 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo25 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem25 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo26 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem26 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModifiedKhUI));
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo3 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem3 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo4 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem4 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo5 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem5 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo6 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem6 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo7 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem7 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo8 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
-            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem8 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo27 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem27 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo28 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem28 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo30 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem30 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo31 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem31 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo32 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem32 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipInfo toolTipInfo29 = new Slb.Ocean.Petrel.UI.Controls.ToolTipInfo();
+            Slb.Ocean.Petrel.UI.Controls.ToolTipItem toolTipItem29 = new Slb.Ocean.Petrel.UI.Controls.ToolTipItem();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement7 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
+            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect7 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
+            Infragistics.UltraChart.Resources.Appearance.PaintElement paintElement8 = new Infragistics.UltraChart.Resources.Appearance.PaintElement();
+            Infragistics.UltraChart.Resources.Appearance.GradientEffect gradientEffect8 = new Infragistics.UltraChart.Resources.Appearance.GradientEffect();
             this.PermeabilityDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.WellDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.PermeabilityPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
@@ -72,15 +72,6 @@ namespace ModifiedKh
             this.Apply = new System.Windows.Forms.Button();
             this.OneLayerGridDropTarget = new Slb.Ocean.Petrel.UI.DropTarget();
             this.OneLayerGridPresentationBox = new Slb.Ocean.Petrel.UI.Controls.PresentationBox();
-            this.WellKhDataGridView = new System.Windows.Forms.DataGridView();
-            this.ColumnWell = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnZones = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.KhSim = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Khwt = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Ratio = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Global = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Estimate = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.IncludeRow = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.SelectedWellsCheckBox = new System.Windows.Forms.CheckBox();
             this.HistogramButton = new System.Windows.Forms.Button();
             this.DistributionCheckBox = new System.Windows.Forms.CheckBox();
@@ -89,28 +80,6 @@ namespace ModifiedKh
             this.MaximumRatioValue = new System.Windows.Forms.TextBox();
             this.MinimumRatioValue = new System.Windows.Forms.TextBox();
             this.UseOriginalData = new System.Windows.Forms.CheckBox();
-            this.MajorRangeTextBox = new System.Windows.Forms.TextBox();
-            this.MinorRangeTextBox = new System.Windows.Forms.TextBox();
-            this.NuggetTextBox = new System.Windows.Forms.TextBox();
-            this.VariogramTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.KhRatioTab = new System.Windows.Forms.TabPage();
-            this.KrigingParametersTab = new System.Windows.Forms.TabPage();
-            this.label12 = new System.Windows.Forms.Label();
-            this.KrigingAlgComboBox = new System.Windows.Forms.ComboBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.SillTextBox = new System.Windows.Forms.TextBox();
-            this.MajorDirectionTextBox = new System.Windows.Forms.TextBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.HistogramChart2 = new Infragistics.Win.UltraWinChart.UltraChart();
-            this.HistogramChart1 = new Infragistics.Win.UltraWinChart.UltraChart();
             this.toolTipHotspot7 = new Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.toolTipHotspot5 = new Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot(this.components);
@@ -129,19 +98,52 @@ namespace ModifiedKh
             this.toolTipManager1 = new Slb.Ocean.Petrel.UI.Controls.ToolTipManager(this.components);
             this.toolTipHotspot8 = new Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot(this.components);
             this.SaveOriginalData = new System.Windows.Forms.Button();
-            this.NumberOfBinsTextBox = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.WellKhDataGridView)).BeginInit();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.KhRatioTab = new System.Windows.Forms.TabPage();
+            this.WellKhDataGridView = new System.Windows.Forms.DataGridView();
+            this.ColumnWell = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnZones = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.KhSim = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Khwt = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Ratio = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Global = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Estimate = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.IncludeRow = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.KrigingParametersTab = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
+            this.KrigingAlgComboBox = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.SillTextBox = new System.Windows.Forms.TextBox();
+            this.MajorDirectionTextBox = new System.Windows.Forms.TextBox();
+            this.MajorRangeTextBox = new System.Windows.Forms.TextBox();
+            this.NuggetTextBox = new System.Windows.Forms.TextBox();
+            this.MinorRangeTextBox = new System.Windows.Forms.TextBox();
+            this.VariogramTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.HistogramChart2 = new Infragistics.Win.UltraWinChart.UltraChart();
+            this.HistogramChart1 = new Infragistics.Win.UltraWinChart.UltraChart();
+            this.NumberOfBinsTextBox = new System.Windows.Forms.TextBox();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.toolTipManager1)).BeginInit();
+            this.tableLayoutPanel3.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.KhRatioTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WellKhDataGridView)).BeginInit();
             this.KrigingParametersTab.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.HistogramChart2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HistogramChart1)).BeginInit();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.toolTipManager1)).BeginInit();
             this.SuspendLayout();
             // 
             // PermeabilityDropTarget
@@ -307,11 +309,13 @@ namespace ModifiedKh
             // 
             // Apply
             // 
-            this.Apply.Location = new System.Drawing.Point(388, 566);
+            this.Apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Apply.Location = new System.Drawing.Point(626, 566);
             this.Apply.Name = "Apply";
             this.Apply.Size = new System.Drawing.Size(75, 23);
             this.Apply.TabIndex = 23;
             this.Apply.Text = "Apply";
+            this.Apply.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.Apply.UseVisualStyleBackColor = true;
             this.Apply.Click += new System.EventHandler(this.Apply_Click);
             // 
@@ -331,91 +335,6 @@ namespace ModifiedKh
             this.OneLayerGridPresentationBox.Size = new System.Drawing.Size(156, 22);
             this.OneLayerGridPresentationBox.TabIndex = 25;
             // 
-            // WellKhDataGridView
-            // 
-            this.WellKhDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.WellKhDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ColumnWell,
-            this.ColumnZones,
-            this.KhSim,
-            this.Khwt,
-            this.Ratio,
-            this.Global,
-            this.Estimate,
-            this.IncludeRow});
-            this.WellKhDataGridView.Location = new System.Drawing.Point(3, 6);
-            this.WellKhDataGridView.Name = "WellKhDataGridView";
-            this.WellKhDataGridView.Size = new System.Drawing.Size(876, 365);
-            this.WellKhDataGridView.TabIndex = 26;
-            this.WellKhDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellContentClick);
-            this.WellKhDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellEndEdit);
-            this.WellKhDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.WellKhDataGridView_CellMouseUp);
-            this.WellKhDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellValueChanged);
-            this.WellKhDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WellKhDataGridView_KeyDown);
-            // 
-            // ColumnWell
-            // 
-            this.ColumnWell.HeaderText = "Well";
-            this.ColumnWell.Name = "ColumnWell";
-            this.ColumnWell.ReadOnly = true;
-            this.ColumnWell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // ColumnZones
-            // 
-            this.ColumnZones.HeaderText = "Zones";
-            this.ColumnZones.Name = "ColumnZones";
-            this.ColumnZones.ReadOnly = true;
-            this.ColumnZones.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // KhSim
-            // 
-            this.KhSim.HeaderText = "Kh(sim) md-ft";
-            this.KhSim.Name = "KhSim";
-            this.KhSim.ReadOnly = true;
-            this.KhSim.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Khwt
-            // 
-            this.Khwt.HeaderText = "Kh(wt) md-ft";
-            this.Khwt.Name = "Khwt";
-            this.Khwt.ReadOnly = true;
-            this.Khwt.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Ratio
-            // 
-            this.Ratio.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Ratio.HeaderText = "Ratio: Kh(wt)/Kh(sim)";
-            this.Ratio.Name = "Ratio";
-            this.Ratio.ReadOnly = true;
-            this.Ratio.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Global
-            // 
-            this.Global.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Global.HeaderText = "Global Kh";
-            this.Global.Name = "Global";
-            this.Global.ReadOnly = true;
-            // 
-            // Estimate
-            // 
-            this.Estimate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Estimate.HeaderText = "Estimate";
-            this.Estimate.Name = "Estimate";
-            this.Estimate.ReadOnly = true;
-            this.Estimate.Text = "";
-            this.Estimate.UseColumnTextForButtonValue = true;
-            // 
-            // IncludeRow
-            // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.NullValue = "True";
-            this.IncludeRow.DefaultCellStyle = dataGridViewCellStyle1;
-            this.IncludeRow.HeaderText = "Include";
-            this.IncludeRow.Name = "IncludeRow";
-            this.IncludeRow.ReadOnly = true;
-            this.IncludeRow.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.IncludeRow.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
             // SelectedWellsCheckBox
             // 
             this.SelectedWellsCheckBox.AutoSize = true;
@@ -429,10 +348,11 @@ namespace ModifiedKh
             // 
             // HistogramButton
             // 
+            this.HistogramButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.HistogramButton.Enabled = false;
-            this.HistogramButton.Location = new System.Drawing.Point(713, 76);
+            this.HistogramButton.Location = new System.Drawing.Point(663, 69);
             this.HistogramButton.Name = "HistogramButton";
-            this.HistogramButton.Size = new System.Drawing.Size(124, 23);
+            this.HistogramButton.Size = new System.Drawing.Size(117, 23);
             this.HistogramButton.TabIndex = 28;
             this.HistogramButton.Text = "Create Histogram Data";
             this.HistogramButton.UseVisualStyleBackColor = true;
@@ -481,7 +401,7 @@ namespace ModifiedKh
             this.MaximumRatioValue.ReadOnly = true;
             this.MaximumRatioValue.Size = new System.Drawing.Size(100, 20);
             this.MaximumRatioValue.TabIndex = 33;
-            this.MaximumRatioValue.TextChanged += new System.EventHandler(this.MaximumRatioValue_TextChanged);
+            this.MaximumRatioValue.Leave += new System.EventHandler(this.MaximumRatioValue_Leave);
             // 
             // MinimumRatioValue
             // 
@@ -490,7 +410,7 @@ namespace ModifiedKh
             this.MinimumRatioValue.ReadOnly = true;
             this.MinimumRatioValue.Size = new System.Drawing.Size(100, 20);
             this.MinimumRatioValue.TabIndex = 35;
-            this.MinimumRatioValue.TextChanged += new System.EventHandler(this.MinimumRatioValue_TextChanged);
+            this.MinimumRatioValue.Leave += new System.EventHandler(this.MinimumRatioValue_Leave);
             // 
             // UseOriginalData
             // 
@@ -504,60 +424,266 @@ namespace ModifiedKh
             this.UseOriginalData.UseVisualStyleBackColor = true;
             this.UseOriginalData.CheckedChanged += new System.EventHandler(this.UseOriginalData_CheckedChanged);
             // 
-            // MajorRangeTextBox
+            // toolTipHotspot7
             // 
-            this.MajorRangeTextBox.Location = new System.Drawing.Point(170, 28);
-            this.MajorRangeTextBox.Name = "MajorRangeTextBox";
-            this.MajorRangeTextBox.ReadOnly = true;
-            this.MajorRangeTextBox.Size = new System.Drawing.Size(100, 20);
-            this.MajorRangeTextBox.TabIndex = 38;
-            this.MajorRangeTextBox.TextChanged += new System.EventHandler(this.MajorRangeTextBox_TextChanged);
+            this.toolTipHotspot7.Location = new System.Drawing.Point(786, 69);
+            this.toolTipHotspot7.Name = "toolTipHotspot7";
+            this.toolTipHotspot7.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot7.TabIndex = 105;
+            toolTipItem25.Text = "Creates two sets of Histogram data that can be displayed using a Histogram window" +
+    ". The data generated can be found in the Input pane or visualized in the Histogr" +
+    "am Plots tab.";
+            toolTipInfo25.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem25});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot7, toolTipInfo25);
             // 
-            // MinorRangeTextBox
+            // groupBox2
             // 
-            this.MinorRangeTextBox.Location = new System.Drawing.Point(170, 67);
-            this.MinorRangeTextBox.Name = "MinorRangeTextBox";
-            this.MinorRangeTextBox.ReadOnly = true;
-            this.MinorRangeTextBox.Size = new System.Drawing.Size(100, 20);
-            this.MinorRangeTextBox.TabIndex = 40;
-            this.MinorRangeTextBox.TextChanged += new System.EventHandler(this.MinorRangeTextBox_TextChanged);
+            this.groupBox2.Controls.Add(this.toolTipHotspot5);
+            this.groupBox2.Controls.Add(this.toolTipHotspot4);
+            this.groupBox2.Controls.Add(this.toolTipHotspot3);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.MaximumRatioValue);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.MinimumRatioValue);
+            this.groupBox2.Controls.Add(this.Truncate2NormalDist);
+            this.groupBox2.Controls.Add(this.KeepMissingRatio1);
+            this.groupBox2.Controls.Add(this.UseOriginalData);
+            this.groupBox2.Location = new System.Drawing.Point(373, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.tableLayoutPanel3.SetRowSpan(this.groupBox2, 4);
+            this.groupBox2.Size = new System.Drawing.Size(269, 141);
+            this.groupBox2.TabIndex = 104;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Optional Input (Control of Ratio Values)";
             // 
-            // NuggetTextBox
+            // toolTipHotspot5
             // 
-            this.NuggetTextBox.Location = new System.Drawing.Point(362, 29);
-            this.NuggetTextBox.Name = "NuggetTextBox";
-            this.NuggetTextBox.ReadOnly = true;
-            this.NuggetTextBox.Size = new System.Drawing.Size(100, 20);
-            this.NuggetTextBox.TabIndex = 42;
-            this.NuggetTextBox.Leave += new System.EventHandler(this.NuggetTextBox_Leave);
+            this.toolTipHotspot5.Location = new System.Drawing.Point(200, 118);
+            this.toolTipHotspot5.Name = "toolTipHotspot5";
+            this.toolTipHotspot5.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot5.TabIndex = 44;
+            toolTipItem26.Text = resources.GetString("toolTipItem26.Text");
+            toolTipInfo26.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem26});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot5, toolTipInfo26);
             // 
-            // VariogramTypeComboBox
+            // toolTipHotspot4
             // 
-            this.VariogramTypeComboBox.Cursor = System.Windows.Forms.Cursors.SizeNS;
-            this.VariogramTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.VariogramTypeComboBox.Enabled = false;
-            this.VariogramTypeComboBox.FormattingEnabled = true;
-            this.VariogramTypeComboBox.Items.AddRange(new object[] {
-            "Spherical",
-            "Gaussian\t",
-            "Exponential"});
-            this.VariogramTypeComboBox.Location = new System.Drawing.Point(600, 28);
-            this.VariogramTypeComboBox.MaxDropDownItems = 3;
-            this.VariogramTypeComboBox.Name = "VariogramTypeComboBox";
-            this.VariogramTypeComboBox.Size = new System.Drawing.Size(100, 21);
-            this.VariogramTypeComboBox.TabIndex = 44;
-            this.VariogramTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.VariogramTypeComboBox_SelectedIndexChanged);
+            this.toolTipHotspot4.Location = new System.Drawing.Point(200, 94);
+            this.toolTipHotspot4.Name = "toolTipHotspot4";
+            this.toolTipHotspot4.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot4.TabIndex = 43;
+            toolTipItem27.Text = resources.GetString("toolTipItem27.Text");
+            toolTipInfo27.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem27});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot4, toolTipInfo27);
+            // 
+            // toolTipHotspot3
+            // 
+            this.toolTipHotspot3.Location = new System.Drawing.Point(200, 72);
+            this.toolTipHotspot3.Name = "toolTipHotspot3";
+            this.toolTipHotspot3.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot3.TabIndex = 42;
+            toolTipItem28.Text = "Sets all the ratios that have no Kh (wt) defined to 1.";
+            toolTipInfo28.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem28});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot3, toolTipInfo28);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(13, 24);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(85, 13);
+            this.label3.TabIndex = 40;
+            this.label3.Text = "Maximum Ratio :";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 49);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 41;
+            this.label4.Text = "Minimum Ratio :";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.toolTipHotspot6);
+            this.groupBox1.Controls.Add(this.toolTipHotspot2);
+            this.groupBox1.Controls.Add(this.toolTipHotspot1);
+            this.groupBox1.Controls.Add(this.PermeabilityPresentationBox);
+            this.groupBox1.Controls.Add(this.PermeabilityDropTarget);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.SelectedWellsCheckBox);
+            this.groupBox1.Controls.Add(this.OneLayerGridPresentationBox);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.OneLayerGridDropTarget);
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.tableLayoutPanel3.SetRowSpan(this.groupBox1, 4);
+            this.groupBox1.Size = new System.Drawing.Size(364, 141);
+            this.groupBox1.TabIndex = 103;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Main Input";
+            // 
+            // toolTipHotspot6
+            // 
+            this.toolTipHotspot6.Location = new System.Drawing.Point(338, 19);
+            this.toolTipHotspot6.Name = "toolTipHotspot6";
+            this.toolTipHotspot6.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot6.TabIndex = 42;
+            toolTipItem30.Text = "Populates the Kh Ratio table with the wells selected in the Input Pane instead of" +
+    " all the available wells. Make sure you check or uncheck this checkbox before dr" +
+    "opping the Selected Permeability.";
+            toolTipInfo30.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem30});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot6, toolTipInfo30);
+            // 
+            // toolTipHotspot2
+            // 
+            this.toolTipHotspot2.Location = new System.Drawing.Point(338, 91);
+            this.toolTipHotspot2.Name = "toolTipHotspot2";
+            this.toolTipHotspot2.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot2.TabIndex = 41;
+            toolTipItem31.Text = "Select Grid that contains one layer per zone.";
+            toolTipInfo31.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem31});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot2, toolTipInfo31);
+            // 
+            // toolTipHotspot1
+            // 
+            this.toolTipHotspot1.Location = new System.Drawing.Point(338, 50);
+            this.toolTipHotspot1.Name = "toolTipHotspot1";
+            this.toolTipHotspot1.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot1.TabIndex = 40;
+            toolTipItem32.Text = "Select Permeability data from original model.";
+            toolTipInfo32.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem32});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot1, toolTipInfo32);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(25, 55);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(114, 13);
+            this.label1.TabIndex = 38;
+            this.label1.Text = "Selected Permeability :";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 97);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(131, 13);
+            this.label2.TabIndex = 39;
+            this.label2.Text = "One Layer Per Zone Grid :";
+            // 
+            // OK
+            // 
+            this.OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.OK.Location = new System.Drawing.Point(721, 566);
+            this.OK.Name = "OK";
+            this.OK.Size = new System.Drawing.Size(75, 23);
+            this.OK.TabIndex = 47;
+            this.OK.Text = "OK";
+            this.OK.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.OK.UseVisualStyleBackColor = true;
+            this.OK.Click += new System.EventHandler(this.OK_Click);
+            // 
+            // Cancel
+            // 
+            this.Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Cancel.Location = new System.Drawing.Point(815, 566);
+            this.Cancel.Name = "Cancel";
+            this.Cancel.Size = new System.Drawing.Size(75, 23);
+            this.Cancel.TabIndex = 48;
+            this.Cancel.Text = "Cancel";
+            this.Cancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.Cancel.UseVisualStyleBackColor = true;
+            this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
+            // 
+            // toolTipHotspot8
+            // 
+            this.toolTipHotspot8.Location = new System.Drawing.Point(786, 114);
+            this.toolTipHotspot8.Name = "toolTipHotspot8";
+            this.toolTipHotspot8.Size = new System.Drawing.Size(20, 20);
+            this.toolTipHotspot8.TabIndex = 107;
+            toolTipItem29.Text = resources.GetString("toolTipItem29.Text");
+            toolTipInfo29.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
+            toolTipItem29});
+            this.toolTipManager1.SetToolTip(this.toolTipHotspot8, toolTipInfo29);
+            // 
+            // SaveOriginalData
+            // 
+            this.SaveOriginalData.Dock = System.Windows.Forms.DockStyle.Top;
+            this.SaveOriginalData.Enabled = false;
+            this.SaveOriginalData.Location = new System.Drawing.Point(663, 114);
+            this.SaveOriginalData.Name = "SaveOriginalData";
+            this.SaveOriginalData.Size = new System.Drawing.Size(117, 23);
+            this.SaveOriginalData.TabIndex = 106;
+            this.SaveOriginalData.Text = "Save As Original Data";
+            this.SaveOriginalData.UseVisualStyleBackColor = true;
+            this.SaveOriginalData.Click += new System.EventHandler(this.SaveOriginalData_Click);
+            // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(682, 43);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(98, 13);
+            this.label13.TabIndex = 109;
+            this.label13.Text = "Bins for Histogram :";
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel3.ColumnCount = 6;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.06694F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.93306F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 123F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 18F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
+            this.tableLayoutPanel3.Controls.Add(this.toolTipHotspot8, 3, 3);
+            this.tableLayoutPanel3.Controls.Add(this.groupBox2, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.groupBox1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tabControl1, 0, 4);
+            this.tableLayoutPanel3.Controls.Add(this.label13, 2, 0);
+            this.tableLayoutPanel3.Controls.Add(this.SaveOriginalData, 2, 3);
+            this.tableLayoutPanel3.Controls.Add(this.NumberOfBinsTextBox, 3, 0);
+            this.tableLayoutPanel3.Controls.Add(this.toolTipHotspot7, 3, 2);
+            this.tableLayoutPanel3.Controls.Add(this.HistogramButton, 2, 2);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 12);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 5;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 56F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 397F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(887, 548);
+            this.tableLayoutPanel3.TabIndex = 27;
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel3.SetColumnSpan(this.tabControl1, 6);
             this.tabControl1.Controls.Add(this.KhRatioTab);
             this.tabControl1.Controls.Add(this.KrigingParametersTab);
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Location = new System.Drawing.Point(3, 160);
+            this.tabControl1.Location = new System.Drawing.Point(3, 150);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.RightToLeftLayout = true;
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(887, 400);
+            this.tabControl1.Size = new System.Drawing.Size(881, 395);
             this.tabControl1.TabIndex = 46;
             // 
             // KhRatioTab
@@ -566,10 +692,101 @@ namespace ModifiedKh
             this.KhRatioTab.Location = new System.Drawing.Point(4, 22);
             this.KhRatioTab.Name = "KhRatioTab";
             this.KhRatioTab.Padding = new System.Windows.Forms.Padding(3);
-            this.KhRatioTab.Size = new System.Drawing.Size(879, 374);
+            this.KhRatioTab.Size = new System.Drawing.Size(873, 369);
             this.KhRatioTab.TabIndex = 0;
             this.KhRatioTab.Text = "Kh Ratio Table";
             this.KhRatioTab.UseVisualStyleBackColor = true;
+            // 
+            // WellKhDataGridView
+            // 
+            this.WellKhDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.WellKhDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ColumnWell,
+            this.ColumnZones,
+            this.KhSim,
+            this.Khwt,
+            this.Ratio,
+            this.Global,
+            this.Estimate,
+            this.IncludeRow});
+            this.WellKhDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.WellKhDataGridView.Location = new System.Drawing.Point(3, 3);
+            this.WellKhDataGridView.Name = "WellKhDataGridView";
+            this.WellKhDataGridView.Size = new System.Drawing.Size(867, 363);
+            this.WellKhDataGridView.TabIndex = 26;
+            this.WellKhDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellContentClick);
+            this.WellKhDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellEndEdit);
+            this.WellKhDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.WellKhDataGridView_CellMouseUp);
+            this.WellKhDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.WellKhDataGridView_CellValueChanged);
+            this.WellKhDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WellKhDataGridView_KeyDown);
+            // 
+            // ColumnWell
+            // 
+            this.ColumnWell.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ColumnWell.HeaderText = "Well";
+            this.ColumnWell.Name = "ColumnWell";
+            this.ColumnWell.ReadOnly = true;
+            this.ColumnWell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // ColumnZones
+            // 
+            this.ColumnZones.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ColumnZones.HeaderText = "Zones";
+            this.ColumnZones.Name = "ColumnZones";
+            this.ColumnZones.ReadOnly = true;
+            this.ColumnZones.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // KhSim
+            // 
+            this.KhSim.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.KhSim.HeaderText = "Kh(sim) md-ft";
+            this.KhSim.Name = "KhSim";
+            this.KhSim.ReadOnly = true;
+            this.KhSim.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Khwt
+            // 
+            this.Khwt.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Khwt.HeaderText = "Kh(wt) md-ft";
+            this.Khwt.Name = "Khwt";
+            this.Khwt.ReadOnly = true;
+            this.Khwt.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Ratio
+            // 
+            this.Ratio.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Ratio.HeaderText = "Ratio: Kh(wt)/Kh(sim)";
+            this.Ratio.Name = "Ratio";
+            this.Ratio.ReadOnly = true;
+            this.Ratio.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Global
+            // 
+            this.Global.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Global.HeaderText = "Global Kh";
+            this.Global.Name = "Global";
+            this.Global.ReadOnly = true;
+            // 
+            // Estimate
+            // 
+            this.Estimate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Estimate.HeaderText = "Estimate";
+            this.Estimate.Name = "Estimate";
+            this.Estimate.ReadOnly = true;
+            this.Estimate.Text = "";
+            this.Estimate.UseColumnTextForButtonValue = true;
+            // 
+            // IncludeRow
+            // 
+            this.IncludeRow.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.NullValue = "True";
+            this.IncludeRow.DefaultCellStyle = dataGridViewCellStyle4;
+            this.IncludeRow.HeaderText = "Include";
+            this.IncludeRow.Name = "IncludeRow";
+            this.IncludeRow.ReadOnly = true;
+            this.IncludeRow.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.IncludeRow.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // KrigingParametersTab
             // 
@@ -584,14 +801,14 @@ namespace ModifiedKh
             this.KrigingParametersTab.Controls.Add(this.label5);
             this.KrigingParametersTab.Controls.Add(this.SillTextBox);
             this.KrigingParametersTab.Controls.Add(this.MajorDirectionTextBox);
-            this.KrigingParametersTab.Controls.Add(this.VariogramTypeComboBox);
             this.KrigingParametersTab.Controls.Add(this.MajorRangeTextBox);
             this.KrigingParametersTab.Controls.Add(this.NuggetTextBox);
             this.KrigingParametersTab.Controls.Add(this.MinorRangeTextBox);
+            this.KrigingParametersTab.Controls.Add(this.VariogramTypeComboBox);
             this.KrigingParametersTab.Location = new System.Drawing.Point(4, 22);
             this.KrigingParametersTab.Name = "KrigingParametersTab";
             this.KrigingParametersTab.Padding = new System.Windows.Forms.Padding(3);
-            this.KrigingParametersTab.Size = new System.Drawing.Size(879, 374);
+            this.KrigingParametersTab.Size = new System.Drawing.Size(873, 369);
             this.KrigingParametersTab.TabIndex = 1;
             this.KrigingParametersTab.Text = "Kriging Parameters";
             this.KrigingParametersTab.UseVisualStyleBackColor = true;
@@ -599,11 +816,11 @@ namespace ModifiedKh
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(483, 180);
+            this.label12.Location = new System.Drawing.Point(482, 179);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(112, 13);
+            this.label12.Size = new System.Drawing.Size(118, 13);
             this.label12.TabIndex = 60;
-            this.label12.Text = "Kriging Algorithm Type";
+            this.label12.Text = "Kriging Algorithm Type :";
             // 
             // KrigingAlgComboBox
             // 
@@ -624,11 +841,11 @@ namespace ModifiedKh
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(119, 180);
+            this.label11.Location = new System.Drawing.Point(114, 179);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(44, 13);
+            this.label11.Size = new System.Drawing.Size(50, 13);
             this.label11.TabIndex = 58;
-            this.label11.Text = "Azimuth";
+            this.label11.Text = "Azimuth :";
             // 
             // label10
             // 
@@ -642,47 +859,47 @@ namespace ModifiedKh
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(514, 31);
+            this.label9.Location = new System.Drawing.Point(513, 32);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(81, 13);
+            this.label9.Size = new System.Drawing.Size(87, 13);
             this.label9.TabIndex = 56;
-            this.label9.Text = "Variogram Type";
+            this.label9.Text = "Variogram Type :";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(336, 70);
+            this.label8.Location = new System.Drawing.Point(330, 70);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(20, 13);
+            this.label8.Size = new System.Drawing.Size(26, 13);
             this.label8.TabIndex = 55;
-            this.label8.Text = "Sill";
+            this.label8.Text = "Sill :";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(314, 31);
+            this.label7.Location = new System.Drawing.Point(308, 32);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(42, 13);
+            this.label7.Size = new System.Drawing.Size(48, 13);
             this.label7.TabIndex = 54;
-            this.label7.Text = "Nugget";
+            this.label7.Text = "Nugget :";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(96, 70);
+            this.label6.Location = new System.Drawing.Point(90, 70);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(68, 13);
+            this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 53;
-            this.label6.Text = "Minor Range";
+            this.label6.Text = "Minor Range :";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(96, 31);
+            this.label5.Location = new System.Drawing.Point(90, 31);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(68, 13);
+            this.label5.Size = new System.Drawing.Size(74, 13);
             this.label5.TabIndex = 52;
-            this.label5.Text = "Major Range";
+            this.label5.Text = "Major Range :";
             // 
             // SillTextBox
             // 
@@ -699,7 +916,51 @@ namespace ModifiedKh
             this.MajorDirectionTextBox.ReadOnly = true;
             this.MajorDirectionTextBox.Size = new System.Drawing.Size(100, 20);
             this.MajorDirectionTextBox.TabIndex = 48;
-            this.MajorDirectionTextBox.Leave += new System.EventHandler(this.MajorDirectionTextBox_Leave);
+            this.MajorDirectionTextBox.Leave += new System.EventHandler(this.MajorDirectionTextBox_Leave_1);
+            // 
+            // MajorRangeTextBox
+            // 
+            this.MajorRangeTextBox.Location = new System.Drawing.Point(170, 28);
+            this.MajorRangeTextBox.Name = "MajorRangeTextBox";
+            this.MajorRangeTextBox.ReadOnly = true;
+            this.MajorRangeTextBox.Size = new System.Drawing.Size(100, 20);
+            this.MajorRangeTextBox.TabIndex = 38;
+            this.MajorRangeTextBox.TextChanged += new System.EventHandler(this.MajorRangeTextBox_TextChanged);
+            // 
+            // NuggetTextBox
+            // 
+            this.NuggetTextBox.Location = new System.Drawing.Point(362, 29);
+            this.NuggetTextBox.Name = "NuggetTextBox";
+            this.NuggetTextBox.ReadOnly = true;
+            this.NuggetTextBox.Size = new System.Drawing.Size(100, 20);
+            this.NuggetTextBox.TabIndex = 42;
+            this.NuggetTextBox.Leave += new System.EventHandler(this.NuggetTextBox_Leave_1);
+            // 
+            // MinorRangeTextBox
+            // 
+            this.MinorRangeTextBox.Location = new System.Drawing.Point(170, 67);
+            this.MinorRangeTextBox.Name = "MinorRangeTextBox";
+            this.MinorRangeTextBox.ReadOnly = true;
+            this.MinorRangeTextBox.Size = new System.Drawing.Size(100, 20);
+            this.MinorRangeTextBox.TabIndex = 40;
+            this.MinorRangeTextBox.TextChanged += new System.EventHandler(this.MinorRangeTextBox_TextChanged);
+            // 
+            // VariogramTypeComboBox
+            // 
+            this.VariogramTypeComboBox.Cursor = System.Windows.Forms.Cursors.SizeNS;
+            this.VariogramTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VariogramTypeComboBox.Enabled = false;
+            this.VariogramTypeComboBox.FormattingEnabled = true;
+            this.VariogramTypeComboBox.Items.AddRange(new object[] {
+            "Spherical",
+            "Gaussian\t",
+            "Exponential"});
+            this.VariogramTypeComboBox.Location = new System.Drawing.Point(600, 28);
+            this.VariogramTypeComboBox.MaxDropDownItems = 3;
+            this.VariogramTypeComboBox.Name = "VariogramTypeComboBox";
+            this.VariogramTypeComboBox.Size = new System.Drawing.Size(100, 21);
+            this.VariogramTypeComboBox.TabIndex = 44;
+            this.VariogramTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.VariogramTypeComboBox_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -707,7 +968,7 @@ namespace ModifiedKh
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(879, 374);
+            this.tabPage1.Size = new System.Drawing.Size(873, 369);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Histogram Plots";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -734,9 +995,9 @@ namespace ModifiedKh
             // HistogramChart2
             // 
             this.HistogramChart2.Axis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            paintElement1.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
-            paintElement1.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            this.HistogramChart2.Axis.PE = paintElement1;
+            paintElement7.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
+            paintElement7.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
+            this.HistogramChart2.Axis.PE = paintElement7;
             this.HistogramChart2.Axis.X.Labels.Font = new System.Drawing.Font("Verdana", 7F);
             this.HistogramChart2.Axis.X.Labels.FontColor = System.Drawing.Color.DimGray;
             this.HistogramChart2.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near;
@@ -896,7 +1157,7 @@ namespace ModifiedKh
             this.HistogramChart2.ColorModel.ColorBegin = System.Drawing.Color.LemonChiffon;
             this.HistogramChart2.ColorModel.ColorEnd = System.Drawing.Color.Brown;
             this.HistogramChart2.ColorModel.ModelStyle = Infragistics.UltraChart.Shared.Styles.ColorModels.Office2007Style;
-            this.HistogramChart2.Effects.Effects.Add(gradientEffect1);
+            this.HistogramChart2.Effects.Effects.Add(gradientEffect7);
             this.HistogramChart2.Location = new System.Drawing.Point(441, 3);
             this.HistogramChart2.Name = "HistogramChart2";
             this.HistogramChart2.Size = new System.Drawing.Size(432, 369);
@@ -913,9 +1174,9 @@ namespace ModifiedKh
             // HistogramChart1
             // 
             this.HistogramChart1.Axis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            paintElement2.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
-            paintElement2.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
-            this.HistogramChart1.Axis.PE = paintElement2;
+            paintElement8.ElementType = Infragistics.UltraChart.Shared.Styles.PaintElementType.None;
+            paintElement8.Fill = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(248)))), ((int)(((byte)(220)))));
+            this.HistogramChart1.Axis.PE = paintElement8;
             this.HistogramChart1.Axis.X.Labels.Font = new System.Drawing.Font("Verdana", 7F);
             this.HistogramChart1.Axis.X.Labels.FontColor = System.Drawing.Color.DimGray;
             this.HistogramChart1.Axis.X.Labels.HorizontalAlign = System.Drawing.StringAlignment.Near;
@@ -1075,7 +1336,7 @@ namespace ModifiedKh
             this.HistogramChart1.ColorModel.ColorBegin = System.Drawing.Color.LightSteelBlue;
             this.HistogramChart1.ColorModel.ColorEnd = System.Drawing.Color.Brown;
             this.HistogramChart1.ColorModel.ModelStyle = Infragistics.UltraChart.Shared.Styles.ColorModels.Office2007Style;
-            this.HistogramChart1.Effects.Effects.Add(gradientEffect2);
+            this.HistogramChart1.Effects.Effects.Add(gradientEffect8);
             this.HistogramChart1.Location = new System.Drawing.Point(3, 3);
             this.HistogramChart1.Name = "HistogramChart1";
             this.HistogramChart1.Size = new System.Drawing.Size(432, 365);
@@ -1084,236 +1345,25 @@ namespace ModifiedKh
             this.HistogramChart1.Tooltips.HighlightFillColor = System.Drawing.Color.DimGray;
             this.HistogramChart1.Tooltips.HighlightOutlineColor = System.Drawing.Color.DarkGray;
             // 
-            // toolTipHotspot7
-            // 
-            this.toolTipHotspot7.Location = new System.Drawing.Point(843, 76);
-            this.toolTipHotspot7.Name = "toolTipHotspot7";
-            this.toolTipHotspot7.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot7.TabIndex = 105;
-            toolTipItem1.Text = "Creates two sets of Histogram data that can be displayed using a Histogram window" +
-    ". The data generated can be found in the Input pane or visualized in the Histogr" +
-    "am Plots tab.";
-            toolTipInfo1.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem1});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot7, toolTipInfo1);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.toolTipHotspot5);
-            this.groupBox2.Controls.Add(this.toolTipHotspot4);
-            this.groupBox2.Controls.Add(this.toolTipHotspot3);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.MaximumRatioValue);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.MinimumRatioValue);
-            this.groupBox2.Controls.Add(this.Truncate2NormalDist);
-            this.groupBox2.Controls.Add(this.KeepMissingRatio1);
-            this.groupBox2.Controls.Add(this.UseOriginalData);
-            this.groupBox2.Location = new System.Drawing.Point(401, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(281, 142);
-            this.groupBox2.TabIndex = 104;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Optional Input (Control of Ratio Values)";
-            // 
-            // toolTipHotspot5
-            // 
-            this.toolTipHotspot5.Location = new System.Drawing.Point(200, 118);
-            this.toolTipHotspot5.Name = "toolTipHotspot5";
-            this.toolTipHotspot5.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot5.TabIndex = 44;
-            toolTipItem2.Text = resources.GetString("toolTipItem2.Text");
-            toolTipInfo2.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem2});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot5, toolTipInfo2);
-            // 
-            // toolTipHotspot4
-            // 
-            this.toolTipHotspot4.Location = new System.Drawing.Point(200, 94);
-            this.toolTipHotspot4.Name = "toolTipHotspot4";
-            this.toolTipHotspot4.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot4.TabIndex = 43;
-            toolTipItem3.Text = resources.GetString("toolTipItem3.Text");
-            toolTipInfo3.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem3});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot4, toolTipInfo3);
-            // 
-            // toolTipHotspot3
-            // 
-            this.toolTipHotspot3.Location = new System.Drawing.Point(200, 72);
-            this.toolTipHotspot3.Name = "toolTipHotspot3";
-            this.toolTipHotspot3.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot3.TabIndex = 42;
-            toolTipItem4.Text = "Sets all the ratios that have no Kh (wt) defined to 1.";
-            toolTipInfo4.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem4});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot3, toolTipInfo4);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 24);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(79, 13);
-            this.label3.TabIndex = 40;
-            this.label3.Text = "Maximum Ratio";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(22, 49);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(76, 13);
-            this.label4.TabIndex = 41;
-            this.label4.Text = "Minimum Ratio";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.toolTipHotspot6);
-            this.groupBox1.Controls.Add(this.toolTipHotspot2);
-            this.groupBox1.Controls.Add(this.toolTipHotspot1);
-            this.groupBox1.Controls.Add(this.PermeabilityPresentationBox);
-            this.groupBox1.Controls.Add(this.PermeabilityDropTarget);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.SelectedWellsCheckBox);
-            this.groupBox1.Controls.Add(this.OneLayerGridPresentationBox);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.OneLayerGridDropTarget);
-            this.groupBox1.Location = new System.Drawing.Point(3, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(374, 142);
-            this.groupBox1.TabIndex = 103;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Main Input";
-            // 
-            // toolTipHotspot6
-            // 
-            this.toolTipHotspot6.Location = new System.Drawing.Point(338, 19);
-            this.toolTipHotspot6.Name = "toolTipHotspot6";
-            this.toolTipHotspot6.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot6.TabIndex = 42;
-            toolTipItem5.Text = "Populates the Kh Ratio table with the wells selected in the Input Pane instead of" +
-    " all the available wells. Make sure you check or uncheck this checkbox before dr" +
-    "opping the Selected Permeability.";
-            toolTipInfo5.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem5});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot6, toolTipInfo5);
-            // 
-            // toolTipHotspot2
-            // 
-            this.toolTipHotspot2.Location = new System.Drawing.Point(338, 91);
-            this.toolTipHotspot2.Name = "toolTipHotspot2";
-            this.toolTipHotspot2.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot2.TabIndex = 41;
-            toolTipItem6.Text = "Select Grid that contains one layer per zone.";
-            toolTipInfo6.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem6});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot2, toolTipInfo6);
-            // 
-            // toolTipHotspot1
-            // 
-            this.toolTipHotspot1.Location = new System.Drawing.Point(338, 50);
-            this.toolTipHotspot1.Name = "toolTipHotspot1";
-            this.toolTipHotspot1.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot1.TabIndex = 40;
-            toolTipItem7.Text = "Select Permeability data from original model.";
-            toolTipInfo7.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem7});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot1, toolTipInfo7);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 55);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(114, 13);
-            this.label1.TabIndex = 38;
-            this.label1.Text = "Selected Permeability :";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 97);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(131, 13);
-            this.label2.TabIndex = 39;
-            this.label2.Text = "One Layer Per Zone Grid :";
-            // 
-            // OK
-            // 
-            this.OK.Location = new System.Drawing.Point(491, 566);
-            this.OK.Name = "OK";
-            this.OK.Size = new System.Drawing.Size(75, 23);
-            this.OK.TabIndex = 47;
-            this.OK.Text = "OK";
-            this.OK.UseVisualStyleBackColor = true;
-            this.OK.Click += new System.EventHandler(this.OK_Click);
-            // 
-            // Cancel
-            // 
-            this.Cancel.Location = new System.Drawing.Point(594, 566);
-            this.Cancel.Name = "Cancel";
-            this.Cancel.Size = new System.Drawing.Size(75, 23);
-            this.Cancel.TabIndex = 48;
-            this.Cancel.Text = "Cancel";
-            this.Cancel.UseVisualStyleBackColor = true;
-            this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
-            // 
-            // toolTipHotspot8
-            // 
-            this.toolTipHotspot8.Location = new System.Drawing.Point(843, 124);
-            this.toolTipHotspot8.Name = "toolTipHotspot8";
-            this.toolTipHotspot8.Size = new System.Drawing.Size(20, 20);
-            this.toolTipHotspot8.TabIndex = 107;
-            toolTipItem8.Text = resources.GetString("toolTipItem8.Text");
-            toolTipInfo8.Items.AddRange(new Slb.Ocean.Petrel.UI.Controls.ToolTipItemBase[] {
-            toolTipItem8});
-            this.toolTipManager1.SetToolTip(this.toolTipHotspot8, toolTipInfo8);
-            // 
-            // SaveOriginalData
-            // 
-            this.SaveOriginalData.Enabled = false;
-            this.SaveOriginalData.Location = new System.Drawing.Point(713, 124);
-            this.SaveOriginalData.Name = "SaveOriginalData";
-            this.SaveOriginalData.Size = new System.Drawing.Size(124, 23);
-            this.SaveOriginalData.TabIndex = 106;
-            this.SaveOriginalData.Text = "Save As Original Data";
-            this.SaveOriginalData.UseVisualStyleBackColor = true;
-            this.SaveOriginalData.Click += new System.EventHandler(this.SaveOriginalData_Click);
-            // 
             // NumberOfBinsTextBox
             // 
-            this.NumberOfBinsTextBox.Location = new System.Drawing.Point(824, 50);
+            this.NumberOfBinsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tableLayoutPanel3.SetColumnSpan(this.NumberOfBinsTextBox, 2);
+            this.NumberOfBinsTextBox.Location = new System.Drawing.Point(786, 43);
             this.NumberOfBinsTextBox.Name = "NumberOfBinsTextBox";
             this.NumberOfBinsTextBox.ReadOnly = true;
-            this.NumberOfBinsTextBox.Size = new System.Drawing.Size(39, 20);
-            this.NumberOfBinsTextBox.TabIndex = 108;
-            this.NumberOfBinsTextBox.TextChanged += new System.EventHandler(this.NumberOfBinsTextBox_TextChanged);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(726, 53);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(92, 13);
-            this.label13.TabIndex = 109;
-            this.label13.Text = "Bins for Histogram";
+            this.tableLayoutPanel3.SetRowSpan(this.NumberOfBinsTextBox, 2);
+            this.NumberOfBinsTextBox.Size = new System.Drawing.Size(38, 20);
+            this.NumberOfBinsTextBox.TabIndex = 112;
             // 
             // ModifiedKhUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.NumberOfBinsTextBox);
-            this.Controls.Add(this.toolTipHotspot8);
-            this.Controls.Add(this.SaveOriginalData);
-            this.Controls.Add(this.toolTipHotspot7);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Controls.Add(this.tableLayoutPanel3);
             this.Controls.Add(this.Cancel);
-            this.Controls.Add(this.HistogramButton);
-            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.OK);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.Apply);
             this.Controls.Add(this.WellTestingIntervalCheckBox);
             this.Controls.Add(this.textBox9);
@@ -1332,23 +1382,26 @@ namespace ModifiedKh
             this.Controls.Add(this.ZonesListBox);
             this.Controls.Add(this.WellPresentationBox);
             this.Controls.Add(this.WellDropTarget);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "ModifiedKhUI";
-            this.Size = new System.Drawing.Size(893, 605);
+            this.Size = new System.Drawing.Size(896, 605);
             this.Load += new System.EventHandler(this.ModifiedKhUI_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.WellKhDataGridView)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.toolTipManager1)).EndInit();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.KhRatioTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.WellKhDataGridView)).EndInit();
             this.KrigingParametersTab.ResumeLayout(false);
             this.KrigingParametersTab.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.HistogramChart2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HistogramChart1)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.toolTipManager1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1377,7 +1430,6 @@ namespace ModifiedKh
         private System.Windows.Forms.Button Apply;
         private Slb.Ocean.Petrel.UI.DropTarget OneLayerGridDropTarget;
         private Slb.Ocean.Petrel.UI.Controls.PresentationBox OneLayerGridPresentationBox;
-        private System.Windows.Forms.DataGridView WellKhDataGridView;
         private System.Windows.Forms.CheckBox SelectedWellsCheckBox;
         private System.Windows.Forms.Button HistogramButton;
         private System.Windows.Forms.CheckBox DistributionCheckBox;
@@ -1386,30 +1438,12 @@ namespace ModifiedKh
         private System.Windows.Forms.TextBox MaximumRatioValue;
         private System.Windows.Forms.TextBox MinimumRatioValue;
         private System.Windows.Forms.CheckBox UseOriginalData;
-        private System.Windows.Forms.TextBox MajorRangeTextBox;
-        private System.Windows.Forms.TextBox MinorRangeTextBox;
-        private System.Windows.Forms.TextBox NuggetTextBox;
-        private System.Windows.Forms.ComboBox VariogramTypeComboBox;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage KhRatioTab;
-        private System.Windows.Forms.TabPage KrigingParametersTab;
-        private System.Windows.Forms.TextBox MajorDirectionTextBox;
-        private System.Windows.Forms.TextBox SillTextBox;
         private System.Windows.Forms.Button OK;
         private System.Windows.Forms.Button Cancel;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.ComboBox KrigingAlgComboBox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
         private Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot toolTipHotspot5;
@@ -1420,12 +1454,34 @@ namespace ModifiedKh
         private Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot toolTipHotspot1;
         private Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot toolTipHotspot6;
         private Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot toolTipHotspot7;
-        private System.Windows.Forms.TabPage tabPage1;
-        private Infragistics.Win.UltraWinChart.UltraChart HistogramChart1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private Infragistics.Win.UltraWinChart.UltraChart HistogramChart2;
         private System.Windows.Forms.Button SaveOriginalData;
         private Slb.Ocean.Petrel.UI.Controls.ToolTipHotspot toolTipHotspot8;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage KhRatioTab;
+        private System.Windows.Forms.DataGridView WellKhDataGridView;
+        private System.Windows.Forms.TabPage KrigingParametersTab;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.ComboBox KrigingAlgComboBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox SillTextBox;
+        private System.Windows.Forms.TextBox MajorDirectionTextBox;
+        private System.Windows.Forms.TextBox MajorRangeTextBox;
+        private System.Windows.Forms.TextBox NuggetTextBox;
+        private System.Windows.Forms.TextBox MinorRangeTextBox;
+        private System.Windows.Forms.ComboBox VariogramTypeComboBox;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private Infragistics.Win.UltraWinChart.UltraChart HistogramChart2;
+        private Infragistics.Win.UltraWinChart.UltraChart HistogramChart1;
+        private System.Windows.Forms.TextBox NumberOfBinsTextBox;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnWell;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnZones;
         private System.Windows.Forms.DataGridViewTextBoxColumn KhSim;
@@ -1434,7 +1490,5 @@ namespace ModifiedKh
         private System.Windows.Forms.DataGridViewCheckBoxColumn Global;
         private System.Windows.Forms.DataGridViewButtonColumn Estimate;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IncludeRow;
-        private System.Windows.Forms.TextBox NumberOfBinsTextBox;
-        private System.Windows.Forms.Label label13;
     }
 }

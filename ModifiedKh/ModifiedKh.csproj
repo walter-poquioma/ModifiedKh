@@ -165,14 +165,24 @@
     <Content Include="DynaRankLogoTransparent1616.png" />
     <Content Include="DynaRankLogoTransparent3232.png" />
     <None Include="PermMatchConfig1.xml" />
-    <Content Include="Resources\PermMatchConfig1.xml" />
+    <None Include="PermMatchConfig.xml" />
+    <Content Include="Resources\PermMatchConfig1.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <UsingTask TaskName="SmartAssembly.MSBuild.Tasks.Build" AssemblyName="SmartAssembly.MSBuild.Tasks,Version=4.0.0.0, Culture=neutral, PublicKeyToken=cd3409ee69028647" />
+  <Target Name="BeforeBuild" Condition=" '$(Configuration)' == 'Release' ">
+    <CreateProperty Value="true">
+      <Output TaskParameter="Value" PropertyName="RunSmartAssembly" />
+    </CreateProperty>
+  </Target>
+  <Target Name="AfterCompile" Condition=" '$(RunSmartAssembly)' != '' ">
+    <SmartAssembly.MSBuild.Tasks.Build ProjectFile="C:\Users\BuildSlave1\Documents\GitHub\ModifiedKh\ModifiedKh\obj\Release\SA\ModifiedKh.{sa}proj" OverwriteAssembly="True" />
+  </Target>
   <PropertyGroup>
-    <PostBuildEvent>del "$(ProjectDir)\plugin.xml"
-"%25OCEAN2014HOME%25\PluginPackager.exe" /g "$(TargetPath)" "$(ProjectDir)\plugin.xml" "%25OCEAN2014HOME_x64%25\petrel.exe"
-"%25OCEAN2014HOME%25\PluginPackager.exe" /m "$(ProjectDir)\plugin.xml" "%25OCEAN2014HOME_x64%25\petrel.exe" "$(TargetDir)"
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 		Other similar extension points exist, see Microsoft.Common.targets.

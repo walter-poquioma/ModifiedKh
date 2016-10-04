@@ -14,7 +14,7 @@ namespace ModifiedKh
 
         public override string Author
         {
-            get { return "Walter Poquioma"; }
+            get { return "Kelkar And Associates"; }
         }
 
         public override string Contact
@@ -29,7 +29,7 @@ namespace ModifiedKh
 
         public override string Description
         {
-            get { return ""; }
+            get { return "CONNECT-PermMatch for Petrel 2014"; }
         }
 
         public override string ImageResourceName
@@ -39,7 +39,7 @@ namespace ModifiedKh
 
         public override Uri PluginUri
         {
-            get { return new Uri("http://www.pluginuri.info"); }
+            get { return new Uri("http://www.kelkarandassoc.com"); }
         }
 
         public override IEnumerable<ModuleReference> Modules
@@ -55,7 +55,7 @@ namespace ModifiedKh
 
         public override string Name
         {
-            get { return "CONNECT-PermMatch"; }
+            get { return "CONNECT-PermMatch 1.0"; }
         }
 
         public override PluginIdentifier PluginId

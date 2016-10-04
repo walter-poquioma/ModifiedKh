@@ -54,7 +54,7 @@ namespace ModifiedKh
             else
             {
                 CoreLogger.Info("License is not valid for " + FeatureName + ", " + FeatureVersion);
-                PetrelLogger.InfoOutputWindow("CONNECT-TransMod license is not available or expired");
+                PetrelLogger.InfoOutputWindow("CONNECT-PermMatch license is not available or expired");
             }
         }
 
@@ -70,7 +70,7 @@ namespace ModifiedKh
             
             // Register ModifiedKh
             if (m_HasLicense == true)
-            {
+           {
                 PermMatching modifiedkhInstance = new PermMatching();
                 PetrelSystem.WorkflowEditor.AddUIFactory<PermMatching.Arguments>(new PermMatching.UIFactory());
                 //PetrelSystem.WorkflowEditor.Add(modifiedkhInstance);
@@ -78,7 +78,9 @@ namespace ModifiedKh
                 PetrelSystem.ProcessDiagram.Add(m_modifiedkhInstance, "Property modeling");
                 PetrelSystem.AddDataSourceFactory(new CONNECTModifiedKhDataSourceFactory());
                 PetrelSystem.CommandManager.CreateCommand(PermMatchCommandHandler.Id, new PermMatchCommandHandler());
-            }
+
+              
+           }
 
           //  PetrelSystem.CommandManager.CreateCommand("Slb.Ocean.Example.MyFirstPluginCommand",  new DoSomethingCommandHandler());
 
@@ -93,10 +95,28 @@ namespace ModifiedKh
         {
 
             // TODO:  Add ModifiedKhModule.IntegratePresentation implementation
-            if (m_HasLicense == true)
+           if (m_HasLicense == true)
+           {
+                PetrelSystem.ConfigurationService.AddConfiguration(ModifiedKh.Properties.Resources.PermMatchConfig);
+           }
+
+
+      
+            //Register help content via PetrelSystem.HelpService
+            string helpDirectory1 = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            HelpService helpService1 = PetrelSystem.HelpService;
+            PluginHelpManifest helpContent3 = new PluginHelpManifest(System.IO.Path.Combine(helpDirectory1, @"HelpFiles\CONNECT PermMatch_CL.chm"))
             {
-                PetrelSystem.ConfigurationService.AddConfiguration(ModifiedKh.Properties.Resources.PermMatchConfig1);
-            }
+                Text = "CONNECT-PermMatch",
+                HelpTargets = HelpTargets.Classic
+            };
+            helpService1.Add(helpContent3);
+            PluginHelpManifest helpContent4 = new PluginHelpManifest(System.IO.Path.Combine(helpDirectory1, @"HelpFiles\CONNECT PermMatch.chm"))
+            {
+                Text = "CONNECT-PermMatch",
+                HelpTargets = HelpTargets.Default
+            };
+            helpService1.Add(helpContent4);
         }
 
         /// <summary>

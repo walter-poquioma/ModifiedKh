@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5630790E-5AE8-4C4D-A5F5-10655F4C86C6}</ProjectGuid>
+    <ProjectGuid>{85C1DF67-A06E-49D1-819B-4A3214CE5590}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PermMatch</RootNamespace>
-    <AssemblyName>PermMatch</AssemblyName>
+    <RootNamespace>CONNECT_PermMatch_14_ver_1</RootNamespace>
+    <AssemblyName>CONNECT_PermMatch_14_ver_1</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -53,7 +53,7 @@
   <PropertyGroup>
     <PreBuildEvent>rmdir "$(ProjectDir)\obj\copytemp" /s /q
 "$(ProjectDir)DeployCopier.exe" "$(ProjectDir)DeployList.xml" "$(ProjectDir)\obj\copytemp" /config:$(ConfigurationName) /platform:"$(PlatformName)"</PreBuildEvent>
-    <PostBuildEvent>"%25OCEAN2014HOME%25\PluginPackager.exe" /p "$(ProjectDir)\obj\copytemp\ModifiedKh.dll" "$(TargetDir)$(TargetName).pip" "%25OCEAN2014HOME%25\petrel.exe" </PostBuildEvent>
+    <PostBuildEvent>"%25OCEAN2014HOME%25\PluginPackager.exe" /p "$(ProjectDir)\obj\copytemp\ModifiedKh.dll" "$(TargetDir)$(TargetName).pip" "%25OCEAN2014HOME%25\petrel.exe" -helpfile  "$(ProjectDir)\HelpFiles\CONNECT PermMatch_CL.chm" "$(ProjectDir)\HelpFiles\CONNECT PermMatch.chm"</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -61,5 +61,9 @@
   <ItemGroup>
     <Content Include="DeployCopier.exe" />
     <Content Include="DeployList.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HelpFiles\CONNECT PermMatch.chm" />
+    <None Include="HelpFiles\CONNECT PermMatch_CL.chm" />
   </ItemGroup>
 </Project>

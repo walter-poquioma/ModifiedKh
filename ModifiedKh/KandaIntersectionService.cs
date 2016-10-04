@@ -172,7 +172,7 @@ namespace ModifiedKh
                 else
                 {
                     ListOfPropertieValuesCorrespondingToCellIndices.Add(-1);
-                    PetrelLogger.InfoOutputWindow("One of the intersected cells has an undefined Check property");
+                  //  PetrelLogger.InfoOutputWindow("One of the intersected cells has an undefined Check property");
                 }
 
             }
@@ -204,7 +204,7 @@ namespace ModifiedKh
                 else
                 {
                     ListOfPropertieValuesCorrespondingToCellIndices.Add(0.0/0.0);
-                    PetrelLogger.InfoOutputWindow("One of the intersected cells has an undefined Check property");
+                   // PetrelLogger.InfoOutputWindow("One of the intersected cells has an undefined Check property");
                 }
             }
             MyPropertyIndexer.Close();

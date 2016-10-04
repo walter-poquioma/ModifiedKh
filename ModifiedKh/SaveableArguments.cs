@@ -90,6 +90,22 @@ namespace ModifiedKh
             }
         }
 
+        private List<Droid> listOfBoreholeDroids = new List<Droid>();
+        [Archived(FromVersion = 1)]
+        public List<Droid> ListOfBoreholeDroids
+        {
+            get
+            {
+                return listOfBoreholeDroids;
+            }
+
+            set
+            {
+                listOfBoreholeDroids = value;
+                SetDataSourceToDirty();
+            }
+        }
+
 
         private bool firstTimeEditingRatio = true;
         [Archived(FromVersion = 1)]
@@ -174,7 +190,7 @@ namespace ModifiedKh
             }
         }
        
-        private double maxRatio;
+        private double maxRatio= Double.MaxValue;
 
         [Archived(FromVersion = 1)]
         public double MaxRatio
@@ -191,7 +207,7 @@ namespace ModifiedKh
             }
         }
 
-        private double minRatio;
+        private double minRatio  = 0.0000000000001;
 
         [Archived(FromVersion = 1)]
         public double MinRatio

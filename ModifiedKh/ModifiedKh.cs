@@ -138,12 +138,18 @@ namespace ModifiedKh
 
                     }
 
+                    if (this.arguments.PBar.IsCanceled == true)
+                    {
+                        return;
+                    }
+           
 
                     #endregion
 
                     #region Normal Score Transformation of kh ratio data
 
                     arguments.ListOfRatios.Clear();
+                    arguments.ListOfNormalTransformData.Clear();
                     arguments.mean = 0;
                     arguments.std = 0;
 
@@ -158,6 +164,12 @@ namespace ModifiedKh
                     }
 
                     arguments.mean = arguments.mean / arguments.ListOfRatios.Count;
+
+                    if (this.arguments.PBar.IsCanceled == true)
+                    {
+                        return;
+                    }
+               
 
                     //getting the standard deviation
                     foreach (double value in arguments.ListOfRatios)
@@ -174,7 +186,7 @@ namespace ModifiedKh
                     }
 
                     #endregion
-
+                    
 
 
                     double Kh_ave; double Kh_wt = 0;
@@ -233,7 +245,7 @@ namespace ModifiedKh
                         trans.Lock(pc1);
 
                         #region Creating and Setting the Kh ratio as a Property
-                        Property p = pc1.CreateProperty(PetrelProject.WellKnownTemplates.LogTypes2DGroup.RelativePermeability);
+                        Property p = pc1.CreateProperty(PetrelProject.WellKnownTemplates.MiscellaneousGroup.General);
                         p.Name = "Kh Ratio Of One Layer Per Zone Grid";
 
                         //Assigning normal-transformed kh ratio values to their corresponding cells in the One Layer per Grid property "p".
@@ -423,6 +435,10 @@ namespace ModifiedKh
                         //Multiplying the cells that were penetrated by a well by their corresponding Kh ratio. 
                         //We use the original k (contained in arguments.PermeabilityFromModel) and multiply it by the ratio corresponding to their corresponding
                         //hard data kh ratio.
+                        if (this.arguments.PBar.IsCanceled == true)
+                        {
+                            return;
+                        }
 
                         for (int i = 0; i < arguments.ListOfRatios.Count; i++)
                         {
@@ -443,10 +459,10 @@ namespace ModifiedKh
 
                     arguments.Successful = true;
                 }
-                catch 
+                catch(Exception e)
                 {
-
                     arguments.Successful = false;
+                    PetrelLogger.InfoOutputWindow(e.Message + "\n" + e.StackTrace);
                 }
              
 
@@ -639,7 +655,7 @@ namespace ModifiedKh
             /// </summary>
             public string Description
             {
-                get { return ""; }
+                get { return "CONNECT-PermMatch is a program that allows you to use dynamic data (Kh) to adequately adjust the static model's permeability field."; }
             }
 
             #endregion
@@ -656,10 +672,33 @@ namespace ModifiedKh
             /// <param name="argumentPackage">the arguments to pass to the UI</param>
             /// <param name="context">the underlying context in which the UI is being used</param>
             /// <returns>a Windows.Forms.Control to edit the argument package with</returns>
+            /// 
+
+            string strPath;
+
             protected override System.Windows.Forms.Control CreateDialogUICore(Workstep workstep, object argumentPackage, WorkflowContext context)
             {
-                return new ModifiedKhUI((PermMatching)workstep, (Arguments)argumentPackage, context);
+                if (IsProjectExist())
+                {
+                    return new ModifiedKhUI((PermMatching)workstep, (Arguments)argumentPackage, context);
+                }
+                else
+                {
+                    return null;
+                }
+             
             }
+
+
+            private bool IsProjectExist()
+            {
+                bool bExist = true;
+                Slb.Ocean.Petrel.Basics.IProjectInfo pi = PetrelProject.GetProjectInfo(DataManager.DataSourceManager);
+                if (pi.ProjectFile != null) this.strPath = pi.ProjectStorageDirectory.Parent.FullName;
+                else bExist = false;
+                return bExist;
+            }
+           
         }
       
 

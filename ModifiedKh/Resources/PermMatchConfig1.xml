@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration Type="Configuration.ConfigurationState" Version="1.0.0.10" Caption="CONNECT-PermMatchConfig">
+  <Extensions Type="Extensibility.ExtensionCollection">
+    <Workspaces.WorkspaceExtension EntityId="f473c60f-579a-4e0a-853d-73f13e1122b1" />
+  </Extensions>
+  <Sections Type="Extesibility.ConfigurationSectionCollection">
+    <Commands.CommandSection Version="1.0.0.4">
+      <Extensions Type="Extensibility.ExtensionCollection">
+        <Workspaces.WorkspaceExtension EntityId="a0e0405b-ce1d-4548-ad4b-c39e21ccc673" />
+      </Extensions>
+      <Commands Type="Commands.CommandCollection" />
+      <CommandGroups Type="Commands.CommandGroupCollection" />
+    </Commands.CommandSection>
+    <ToolContainers.RibbonSection Version="1.0.0.9">
+      <Extensions Type="Extensibility.ExtensionCollection">
+        <Workspaces.WorkspaceExtension EntityId="68839bf1-f0ec-4533-a9df-eaa74256dff8" />
+      </Extensions>
+      <Ribbons Type="ToolContainers.RibbonCollection">
+        <ToolContainers.Ribbon Id="9f42ae22-15c5-4351-9057-5921be95969d">
+          <Extensions Type="Extensibility.ExtensionCollection">
+            <Attributes.AttributesExtension>
+              <Attributes Type="Attributes.AttributeCollection">
+                <Attributes.AttributeValue AttributeId="Appearance.Caption" ValueType="System.String" Value="Platform" />
+              </Attributes>
+            </Attributes.AttributesExtension>
+          </Extensions>
+          <Tabs Type="ToolContainers.RibbonTabCollection">
+            <ToolContainers.RibbonTab Id="94593690-bcb4-4e71-8193-5c9ab834731e">
+              <Extensions Type="Extensibility.ExtensionCollection">
+                <Attributes.AttributesExtension>
+                  <Attributes Type="Attributes.AttributeCollection">
+                    <Attributes.AttributeValue AttributeId="Appearance.Caption" ValueType="System.String" Value="Property Modeling" />
+                  </Attributes>
+                </Attributes.AttributesExtension>
+              </Extensions>
+              <TabGroups Type="ToolContainers.RibbonTabGroupCollection">
+                <ToolContainers.RibbonTabGroup Id="bb27a897-4330-4e58-9b28-019c33077a3a">
+                  <Extensions Type="Extensibility.ExtensionCollection">
+                    <Attributes.AttributesExtension>
+                      <Attributes Type="Attributes.AttributeCollection">
+                        <Attributes.AttributeValue AttributeId="Appearance.Caption" ValueType="System.String" Value="CONNECT" />
+                      </Attributes>
+                    </Attributes.AttributesExtension>
+                  </Extensions>
+                  <Tools Type="Tools.ToolCollection">
+                    <Tools.StateButtonTool CommandId="Core.Services.ShowHideProcessDialog" Parameter="Kanda.CONNECT.PermMatch.Process">
+                      <Extensions Type="Extensibility.ExtensionCollection">
+                        <Attributes.AttributesExtension>
+                          <Attributes Type="Attributes.AttributeCollection">
+                            <Attributes.AttributeValue AttributeId="Appearance.Caption" ValueType="System.String" Value="PermMatch" />
+                            <Attributes.AttributeValue AttributeId="Appearance.ToolTipText" ValueType="System.String" Value="Open PermMatch UI" />
+                            <Attributes.AttributeValue AttributeId="Appearance.ToolStyle" ValueType="Tools.ToolStyle" Value="LargeImageAndText" />
+                            <Attributes.AttributeValue AttributeId="Appearance.Image.16" ValueType="Appearance.ImageData" Value="{Png:iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAYAAAAmlE46AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMgSURBVDhPZZNdaBNZFMf/c2eSadKJNW3amKKk6lqqyGJrEz+grvGloitVl6q0IoiCZS2Lgj74UEJw/UDZlbLLsi+C7aK+KBIQxOqK2hrsSrsFd6mKWm3S2uo2bSczyUzm43pTxIf1vNx74P+/5/zOvZfD/6L9aHt4MpVq06cz1RyfF+WsK7FpS8ONjhMd9z9J5uKzMRqNCk8S/V0vR4ZbwoEF8HI86jfrSE9ziD9SQYTyro5YrC0SiWgF/ZyxubmZl2U5YX8YDzcHqxCUbDhdJbj0ZhCHmvzAPBcuxyeQzJQO1K5tCMdiMZtQSp0GLTol/TcdPlTuQ1CRIWomnIKFxuoGXOtTIcHEgW2VqJQmVz/7J/lToRjp/rXbk0m+PLLXIcKtKDB5GzbhYZoUd4aGEQmXQuMkCDSPPRt9UMf62+LxuJ8XPFxrbVresUxTMCN6MKjOIKnn0ZsaxcbNHgS9CojoBKgTlHsPnarCvQfp17zfJ33fmHPUPc3lcHFqCv1sfZrVoQoi5NkkRjIUmu2B1+OAxWUYbhZ3ErkJvnH12qg1+i7why5DJWRuXtSiyKoGUh8Ino/k8HBwFg96x5CWDYS+ciKV8YGQnAUun8XXkgsCb4EiD8objJ7tKQE1iyGyg2SLw59DNghfBtgG+JLy+eHA1ETdEoYRCgRRVeyE32HDwxcjZ7P6RRZUzkRgnhvnf6hETcUY4gP+AaG0oqxv7M3bAysN5syl4TMNeBUNeU3GN+uXYuUKP9zzga11eXiMFK7cYp24F94ijfv39oyWenVZ5Bkda9sW8N5yQKpdhDPH12DftxS76xWUMJxxqwjdj9zaztYd18nB7S3jC0L1v/1tKoyJsjvk8Iq12n54A9xQAEti3DwUk+DkhQmULV7/e0tT02RhjMir2vFs1fLehKyzzEIdJ+CXUzeRMVxsEMDQMEXr2RcYIdWJ77ZvOVbwfH7knZ2dYs/dnq6p4X931xgGRFNHRWQRXs9YePJsFguX1HT9fO7S4VWrAmpB/8W3ikZ/DD/uu72L02nIFHnO6SIDoRXrrsbOnf7rk4QF8BGxcVXiDs7BNQAAAABJRU5ErkJggg==}" />
+                            <Attributes.AttributeValue AttributeId="Appearance.Image.32" ValueType="Appearance.ImageData" Value="{Png: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}" />
+                          </Attributes>
+                        </Attributes.AttributesExtension>
+                      </Extensions>
+                    </Tools.StateButtonTool>
+                  </Tools>
+                </ToolContainers.RibbonTabGroup>
+              </TabGroups>
+            </ToolContainers.RibbonTab>
+          </Tabs>
+          <Backstage Type="ToolContainers.RibbonBackstage">
+            <LeftTools Type="Tools.ToolCollection" />
+            <RightTools Type="Tools.ToolCollection" />
+            <FooterTools Type="Tools.ToolCollection" />
+          </Backstage>
+          <Backstage2010 Type="ToolContainers.RibbonBackstage2010">
+            <Tools Type="Tools.ToolCollection" />
+          </Backstage2010>
+          <QuickAccessToolbar Type="ToolContainers.QuickAccessToolbar">
+            <Tools Type="Tools.ToolCollection" />
+          </QuickAccessToolbar>
+          <TabToolbar Type="ToolContainers.RibbonTabToolbar">
+            <Tools Type="Tools.ToolCollection" />
+          </TabToolbar>
+        </ToolContainers.Ribbon>
+      </Ribbons>
+    </ToolContainers.RibbonSection>
+    <ToolContainers.PaletteSection Version="1.0.0.3">
+      <Extensions Type="Extensibility.ExtensionCollection">
+        <Workspaces.WorkspaceExtension EntityId="281bba4a-90e0-4a5a-9ef0-05de4b6a62b4" />
+      </Extensions>
+      <Palettes Type="ToolContainers.PaletteCollection" />
+    </ToolContainers.PaletteSection>
+    <ToolContainers.MiniToolbarSection Version="1.0.0.3">
+      <Extensions Type="Extensibility.ExtensionCollection">
+        <Workspaces.WorkspaceExtension EntityId="f7eb7f1c-957f-4fa2-8d76-b054d0baa8c8" />
+      </Extensions>
+      <MiniToolbars Type="ToolContainers.MiniToolbarCollection" />
+    </ToolContainers.MiniToolbarSection>
+    <Configuration.ResourceSection Version="1.0.0.7">
+      <Extensions Type="Extensibility.ExtensionCollection">
+        <Workspaces.WorkspaceExtension EntityId="86eff343-633f-4fc7-8cc0-b5af2ffe8e48" />
+      </Extensions>
+      <Resources Type="Configuration.ResourceCollection" />
+    </Configuration.ResourceSection>
+    <Rules.RuleSection Version="1.0.0.3">
+      <Extensions Type="Extensibility.ExtensionCollection">
+        <Workspaces.WorkspaceExtension EntityId="29121e55-44e8-47ce-a314-f57773393b22" />
+      </Extensions>
+      <Rules Type="Rules.RuleCollection" />
+    </Rules.RuleSection>
+  </Sections>
+</Configuration>

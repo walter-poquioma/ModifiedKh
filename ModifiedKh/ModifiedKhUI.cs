@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Collections.ObjectModel;
-
+using Slb.Ocean.Petrel.UI.Controls;
 using Slb.Ocean.Petrel.Workflow;
 using Slb.Ocean.Petrel;
 using Slb.Ocean.Geometry;
@@ -20,10 +20,10 @@ using Slb.Ocean.Petrel.DomainObject.PillarGrid;
 using Slb.Ocean.Petrel.DomainObject.Shapes;
 using Slb.Ocean.Petrel.Well;
 using Slb.Ocean.Petrel.DomainObject.ColorTables;
-using Slb.Ocean.Petrel.UI.Controls;
 using System.Text.RegularExpressions;
 using Infragistics.Win.UltraWinChart;
 using Infragistics.UltraChart.Shared.Styles;
+using Slb.Ocean.Data.Hosting;
 
 namespace ModifiedKh
 {
@@ -65,10 +65,14 @@ namespace ModifiedKh
         int OldIndex;
         double MaxRatio = Double.MaxValue; double MinRatio = 0.0000000000001;
        // double MaxRatio = 1; double MinRatio = 1;    
-        bool FirstTimeTruncating = true;
-        int numberOfBins = 10;
+        int numberOfBins = 1;
         Grid OneLayerGrid;
-        IStairstepModelingService SMS = CoreSystem.GetService<IStairstepModelingService>(); 
+        IStairstepModelingService SMS = CoreSystem.GetService<IStairstepModelingService>();
+        bool EditRatio = false;
+        DateTime OldDate = DateTime.Now;
+        bool NotDuringUILoad = true;
+        private string strPath;
+ 
         
 
         private SaveableArguments SaveArgs;
@@ -84,15 +88,30 @@ namespace ModifiedKh
         /// <param name="context">the underlying context in which this UI is being used</param>
         public ModifiedKhUI(PermMatching workstep, PermMatching.Arguments args, WorkflowContext context)
         {
-            InitializeComponent();
+            if (IsProjectExist())
+            {
+                InitializeComponent();
 
-            this.workstep = workstep;
-            this.args = args;
-            this.context = context;
+                this.workstep = workstep;
+                this.args = args;
+                this.context = context;
+            }
+            else
+            {
+                MessageBox.Show("Please open up a project before opening CONNNECT-PermMatch.");
+                return;
+            }
  
         }
 
- 
+         private bool IsProjectExist()
+        {
+            bool bExist = true;
+            Slb.Ocean.Petrel.Basics.IProjectInfo pi = PetrelProject.GetProjectInfo(DataManager.DataSourceManager);
+            if (pi.ProjectFile != null) this.strPath = pi.ProjectStorageDirectory.Parent.FullName;
+            else bExist = false;
+            return bExist;
+        }
 
         private void UpdateArgs(WellKh WellKhObj)
         { 
@@ -206,16 +225,14 @@ namespace ModifiedKh
         private void PermeabilityDropTarget_DragDrop(object sender, DragEventArgs e)
         {
            
-            WellKhObj.Permeability = e.Data.GetData(typeof(Property)) as Property;
-
-
-            if (WellKhObj.Permeability == null)
+           if (e.Data.GetData(typeof(Property)) as Property == null)
             {
                 MessageBox.Show("A Permeability Property needs to be dropped");
                 return;
             }
 
-            
+            WellKhObj.Permeability = e.Data.GetData(typeof(Property)) as Property;
+            NotDuringUILoad = true;
 
             if (UpdateArgsWithNewPerm())
             {
@@ -223,16 +240,55 @@ namespace ModifiedKh
             } 
             else
 	        {
-                e.Effect = DragDropEffects.None; 
+                e.Effect = DragDropEffects.None;
+                object sender1 = new object();
+                EventArgs e1 = new EventArgs();
+                Perm_Deleted(sender1, e1);
 	        }
            
  
         }
 
+        private bool IsDroppedPropertyPetroPhysical(Property prop)
+        {
+            bool returnValue = false; // the purpose of the returnvalue is in 
+            //case the IEnumerable is empty, i.e execution never enters the foreach looop
+
+                if (prop.Template.TemplateCollection == PetrelProject.WellKnownTemplateCollections.Petrophysical)
+                {
+                    returnValue = true; // set it to true we are inside loop 
+                }
+                else
+                {
+                    //PetrelLogger.WarnStatus("Some of the dropped properties are not porosity");
+                    returnValue = false;
+                }
+
+            
+            //if all of the properties are porosity then return true, but if foreach loop was never entered return false
+            return returnValue; // all are porosity property return true;
+        }
+
+
+          
         private bool UpdateArgsWithNewPerm()
         {
             bool Success = false;
-            if(WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.Perm))
+            if(WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.Perm) ||
+               WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermI) ||
+                WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermIJ) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermIK) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermJ) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermJK) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermK) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermKR) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermMF) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermX) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermXY) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermXZ) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermY) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermYZ) ||
+                 WellKhObj.Permeability.Template.TemplateType.Equals(Slb.Ocean.Petrel.DomainObject.Basics.TemplateType.PermZ))
             {
 
                 if(!SMS.IsStairstepped(WellKhObj.Permeability.Grid) && !SMS.HasLayerMap(WellKhObj.Permeability.Grid))
@@ -251,7 +307,7 @@ namespace ModifiedKh
                 
                     #region Enabling and Disabling certain UI objects
 
-                    SelectedWellsCheckBox.Enabled = false;
+                   // SelectedWellsCheckBox.Enabled = false;
                     NumberOfBinsTextBox.ReadOnly = false;
                     HistogramButton.Enabled = true;
                     SaveOriginalData.Enabled = true;
@@ -293,7 +349,7 @@ namespace ModifiedKh
                     args.VarArg.MajorDirection = Angle.CreateFromCompassAngle(0, false);
                     MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
 
-                    args.VarArg.ModelVariogramType = ModelVariogramType.Spherical;
+                    args.VarArg.ModelVariogramType = ModelVariogramType.Gaussian;
                     VariogramTypeComboBox.SelectedIndex = 0;
 
                     args.KrigType = Slb.Ocean.Petrel.PropertyModeling.KrigingType.Ordinary;
@@ -345,7 +401,8 @@ namespace ModifiedKh
 
                     if (WellKhObj.ZoneIndex!=null)
                     {
-                        Slb.Ocean.Petrel.DomainObject.PillarGrid.PropertyCollection pc = WellKhObj.ZoneIndex.Grid.PropertyCollection;
+                      //  Slb.Ocean.Petrel.DomainObject.PillarGrid.PropertyCollection pc = WellKhObj.ZoneIndex.Grid.PropertyCollection;
+                        Slb.Ocean.Petrel.DomainObject.PillarGrid.PropertyCollection pc = WellKhObj.Permeability.Grid.PropertyCollection;
                        
                         using (ITransaction trans = DataManager.NewTransaction())
                         {
@@ -377,19 +434,27 @@ namespace ModifiedKh
                     #region Updating the DataGridView and ListOfRowInfo object
                     //UpdateRowObjectsWithNewWells(ListOfBoreholes);
                     WellKhDataGridView.AllowUserToAddRows = true;
-                    UpdateRowObjectsWithNewWells(ListOfBoreholes);
+                    UpdateRowObjectsWithNewWells(ref ListOfBoreholes);
                    
                     PBar1.ProgressStatus = PBar1.ProgressStatus + 45;
                     if (PBar1.IsCanceled == true)
                     {
+                        ListOfRowInfo.Clear();
+                        WellKhDataGridView.AllowUserToAddRows = false;
                         return false;
                     }
 
+
+                    WellKhDataGridView.Rows.Clear();
                     UpdateAllRows();
                    
                     PBar1.ProgressStatus = PBar1.ProgressStatus + 15;
                     if (PBar1.IsCanceled == true)
                     {
+                        WellKhDataGridView.Rows.Clear();
+                        ListOfRowInfo.Clear();
+                        ListOfBoreholes.Clear();
+                        WellKhDataGridView.AllowUserToAddRows = false;
                         return false;
                     }
                    
@@ -420,6 +485,83 @@ namespace ModifiedKh
         {
             this.args.PermeabilityFromModel = null;
             PermeabilityPresentationBox.Text = "";
+            PermeabilityPresentationBox.Image = null;
+            WellKhDataGridView.Rows.Clear();
+            WellKhDataGridView.Refresh();
+            SelectedWellsCheckBoxUpdateArgs(SelectedWellsCheckBox.Checked);
+            ListOfRowInfo.Clear();
+            ListOfFilledKhwtIndices.Clear();
+            ListOfOriginalRowDataInfo.Clear();
+            ListOfOriginalFilledKhwtIndices.Clear();
+            NotDuringUILoad = false;
+
+
+            #region Setting the default Variogram parameters
+            args.VarArg.MajorRange = 0.1;
+            args.VarArg.MinorRange = 0.1;
+
+            MajorRangeTextBox.TextChanged -= MajorRangeTextBox_TextChanged;
+            MajorRangeTextBox.Text = "";
+            MajorRangeTextBox.TextChanged += MajorRangeTextBox_TextChanged;
+            MinorRangeTextBox.TextChanged -= MinorRangeTextBox_TextChanged;
+            MinorRangeTextBox.Text = "";
+            MinorRangeTextBox.TextChanged += MinorRangeTextBox_TextChanged;
+
+            
+            args.VarArg.Nugget = 0.0;
+            NuggetTextBox.Text = "";
+
+            args.VariogramType = ModelVariogramType.Spherical;
+            VariogramTypeComboBox.SelectedIndex = 0;
+
+            args.VarArg.MajorDirection = Angle.CreateFromCompassAngle(0, false);
+            MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
+
+            args.VarArg.ModelVariogramType = ModelVariogramType.Gaussian;
+            VariogramTypeComboBox.SelectedIndex = 0;
+
+            args.KrigType = Slb.Ocean.Petrel.PropertyModeling.KrigingType.Ordinary;
+            KrigingAlgComboBox.SelectedIndex = 0;
+
+            UpdateSillTextBox();
+
+            NumberOfBinsTextBox.TextChanged -= NumberOfBinsTextBox_TextChanged;
+            NumberOfBinsTextBox.Text = System.Convert.ToString(numberOfBins);
+            NumberOfBinsTextBox.TextChanged += NumberOfBinsTextBox_TextChanged;
+
+            #endregion
+
+            #region Enabling and Disabling certain UI objects
+
+            // SelectedWellsCheckBox.Enabled = false;
+            NumberOfBinsTextBox.ReadOnly = true;
+            HistogramButton.Enabled = false;
+            SaveOriginalData.Enabled = false;
+            //Missing2Mean.Enabled = true;
+            Truncate2NormalDist.Enabled = false;
+            UseOriginalData.Enabled = false;
+            KeepMissingRatio1.Enabled = false;
+
+            WellKhDataGridView.Columns[5].ReadOnly = true;
+            WellKhDataGridView.Columns[3].ReadOnly = true;
+            WellKhDataGridView.Columns[4].ReadOnly = true;
+            WellKhDataGridView.Columns[7].ReadOnly = true;
+            WellKhDataGridView.Columns[6].ReadOnly = true;
+
+            MajorRangeTextBox.ReadOnly = true;
+            MinorRangeTextBox.ReadOnly = true;
+            MajorDirectionTextBox.ReadOnly = true;
+            NuggetTextBox.ReadOnly = true;
+            VariogramTypeComboBox.Enabled = false;
+            KrigingAlgComboBox.Enabled = false;
+            MaximumRatioValue.ReadOnly = true;
+            MinimumRatioValue.ReadOnly = true;
+
+            #endregion
+
+     
+
+
         //#if DEBUG
         //    PetrelLogger.InfoOutputWindow("permXCoarse Deleted Ran");
         //#endif
@@ -429,6 +571,7 @@ namespace ModifiedKh
         {
             this.args.OneLayerPerZoneGrid = null;
             OneLayerGridPresentationBox.Text = "";
+            OneLayerGridPresentationBox.Image = null;
             //#if DEBUG
             //    PetrelLogger.InfoOutputWindow("permXCoarse Deleted Ran");
             //#endif
@@ -446,7 +589,26 @@ namespace ModifiedKh
             if (perm != null)
             {
                 args.PermeabilityFromModel = perm;
-                PermeabilityPresentationBox.Text = args.PermeabilityFromModel.Name;
+
+
+                INameInfoFactory nif = CoreSystem.GetService<INameInfoFactory>(args.PermeabilityFromModel);
+                IImageInfoFactory imgif = CoreSystem.GetService<IImageInfoFactory>(args.PermeabilityFromModel);
+                if (nif != null && imgif != null)
+                {
+                        // IPresentation pres = presFactory.GetPresentation(prop);
+                        NameInfo ninfo = nif.GetNameInfo(args.PermeabilityFromModel);
+                        ImageInfo imgInfo = imgif.GetImageInfo(args.PermeabilityFromModel);
+                  
+                        if (ninfo != null && imgInfo != null)
+                        {
+                            PermeabilityPresentationBox.Image = imgInfo.GetDisplayImage(new ImageInfoContext(false));
+                            PermeabilityPresentationBox.Text = ninfo.DisplayName;
+                        }
+                 }
+
+                
+
+               // PermeabilityPresentationBox.Text = args.PermeabilityFromModel.Name;
                 args.PermeabilityFromModel.Deleted += deletedHandler;
                 //#if DEBUG
                 //PetrelLogger.InfoOutputWindow(PermXCoarse.Name + " deleted connected");
@@ -466,7 +628,23 @@ namespace ModifiedKh
               if (grid != null)
               {
                   args.OneLayerPerZoneGrid = grid;
-                  OneLayerGridPresentationBox.Text = args.OneLayerPerZoneGrid.Name;
+
+                  INameInfoFactory nif = CoreSystem.GetService<INameInfoFactory>(args.OneLayerPerZoneGrid);
+                  IImageInfoFactory imgif = CoreSystem.GetService<IImageInfoFactory>(args.OneLayerPerZoneGrid);
+                  if (nif != null && imgif != null)
+                  {
+                      // IPresentation pres = presFactory.GetPresentation(prop);
+                      NameInfo ninfo = nif.GetNameInfo(args.OneLayerPerZoneGrid);
+                      ImageInfo imgInfo = imgif.GetImageInfo(args.OneLayerPerZoneGrid);
+
+                      if (ninfo != null && imgInfo != null)
+                      {
+                          OneLayerGridPresentationBox.Image = imgInfo.GetDisplayImage(new ImageInfoContext(false));
+                          OneLayerGridPresentationBox.Text = ninfo.DisplayName;
+                      }
+                  }
+
+                 // OneLayerGridPresentationBox.Text = args.OneLayerPerZoneGrid.Name;
                   args.OneLayerPerZoneGrid.Deleted += deletedHandler;
                   //#if DEBUG
                   //PetrelLogger.InfoOutputWindow(PermXCoarse.Name + " deleted connected");
@@ -607,7 +785,7 @@ namespace ModifiedKh
                     }
                     ListOfSelectedWellZones.Clear();
                 }
-
+                
                 //List<string> ListOfCurrentlyDisplayedZones = ZonesListBox;
 
                 
@@ -726,12 +904,15 @@ namespace ModifiedKh
                     }
                     else
                     {
-                        PetrelLogger.InfoOutputWindow("The Plug-In did not perform the operation correctly. \n" + "Please make sure that all the required inputs are provided.");
+                        PetrelLogger.InfoBox("The Plug-In did not perform the operation correctly. \n" + "Please make sure that all the required inputs are provided." + "Please check the Message Log to get more information about the error.");
+                        //PetrelLogger.InfoOutputWindow("The Plug-In did not perform the operation correctly. \n" + "Please make sure that all the required inputs are provided.");
                     } 
                 }
                 else
                 {
+                    UpdateSaveableArgs();
                     PetrelLogger.InfoOutputWindow("The Plug-In did not perform the operation correctly. \n" + "Please make sure that all the required inputs are provided.");
+                    PetrelLogger.InfoBox("Please make sure that a Permeability and a One Layer Per Zone Grid have been dropped in the UI and that both grids have the same zones.");
                 }
               
             }
@@ -739,16 +920,20 @@ namespace ModifiedKh
 
         private void OneLayerGridDropTarget_DragDrop(object sender, DragEventArgs e)
         {
-            OneLayerGrid = e.Data.GetData(typeof(Grid)) as Grid;
-            ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(OneLayerGrid.Zones);
+            
 
-            if (OneLayerGrid == null)
+
+            if (e.Data.GetData(typeof(Grid)) as Grid == null)
             {
                 MessageBox.Show("A Grid needs to be dropped");
                 return;
             }
             else
             {
+                OneLayerGrid = e.Data.GetData(typeof(Grid)) as Grid;
+
+                ListOfZones = KandaPropertyCreator.GetAllLowLevelZones(OneLayerGrid.Zones);
+
                 if (!SMS.IsStairstepped(OneLayerGrid) && !SMS.HasLayerMap(OneLayerGrid))
                 {
                     if (OneLayerGrid.NumCellsIJK.K == ListOfZones.Count)
@@ -870,8 +1055,15 @@ namespace ModifiedKh
                                 }
 
 
-
-                                RatioTotal = KhwtIn / KhTotal;
+                                if (KhTotal>0)
+                                {
+                                    RatioTotal = KhwtIn / KhTotal; 
+                                }
+                                else
+                                {
+                                    RatioTotal = 1.0;
+                                }
+                               
 
 
                             foreach (int index in ListOfIndeces)
@@ -974,7 +1166,7 @@ namespace ModifiedKh
           {
             if (Double.TryParse(Entry, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue)) //
             {
-                if (DoubleValue >0)
+                if (DoubleValue > 0 && DoubleValue <= 9.999999999999E+307)
                 {
                     if (ListOfFilledKhwtIndices.Any(ind => ind == RowInd))
                     {
@@ -994,10 +1186,10 @@ namespace ModifiedKh
                 }
                 else
                 {
-                    MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas");
+                    MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas or that the value is less than 9.999999999999E+307");
+                    WellKhDataGridView.Rows[RowInd].Cells[3].Value = String.Empty;
                     return false;
                 }
-
                
             }
             else
@@ -1080,13 +1272,14 @@ namespace ModifiedKh
 
                   if (Double.TryParse(Entry, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue)) //
                   {
-                      if (DoubleValue>0)
+                      if (DoubleValue > 0 && DoubleValue <= 9.999999999999E+307)
                       {
+                          EditRatio = true;
                           ExcludeKhFromTotalRatio(ref WellKhDataGridView, RowInd);
 
                           ListOfRowInfo[RowInd].Ratio = DoubleValue;
 
-                          if (ListOfFilledKhwtIndices.Any(ind => ind == RowInd))
+                          if (ListOfRowInfo[RowInd].Kh_wt > 0)
                           {
                               ListOfFilledKhwtIndices.Add(RowInd);
                           }
@@ -1094,12 +1287,13 @@ namespace ModifiedKh
 
 
                           WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
+                          EditRatio = false;
                           return true; 
                       }
                       else
                       {
                           WellKhDataGridView.Rows[RowInd].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[RowInd].Ratio, SignificantDigits));
-                          MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas");
+                          MessageBox.Show("Invalid Input: Please make sure that the input is a positive number and it does not contain any commas  or that the value is less than 9.999999999999E+307");
                           return false;
                       }
                      
@@ -1279,14 +1473,42 @@ namespace ModifiedKh
 
         //}
         private void ModifiedKhUI_Load(object sender, EventArgs e)
-        {  
-            Project proj = PetrelProject.PrimaryProject;
-            WellRoot wr = WellRoot.Get(proj);
+        {
+            //Project proj = PetrelProject.PrimaryProject;
+            //WellRoot wr = WellRoot.Get(proj);
 
-            BoreholeCollection BhCollection = wr.BoreholeCollection;
-            ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
+            //BoreholeCollection BhCollection = wr.BoreholeCollection;
+            //ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
 
-            UpdateRowsInDataGridWithNewWells(ListOfBoreholes); 
+            //UpdateRowsInDataGridWithNewWells(ListOfBoreholes); 
+
+            //this.MinimumSize = new System.Drawing.Size(this.Width, this.Height);
+
+            //// no larger than screen size
+            //this.MaximumSize = new System.Drawing.Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+
+            //this.AutoSize = true;
+            //this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+            //this.MaximumSize = new Size(905, 615);
+            
+            //OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            //Apply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            //Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+
+            System.Windows.Forms.Control parent = this.Parent;
+            parent.Size = this.Size;
+
+            Apply.Parent = parent;
+            Apply.BringToFront();
+            OK.Parent = parent;
+            OK.BringToFront();
+            Cancel.Parent = parent;
+            Cancel.BringToFront();
+
+            Apply.Image = PetrelImages.Apply;
+            OK.Image = PetrelImages.OK;
+            Cancel.Image = PetrelImages.Cancel;
 
             WellKhDataGridView.AllowUserToAddRows = false;
            
@@ -1347,6 +1569,10 @@ namespace ModifiedKh
                 Remove = true;
                // SumOfRatios = SumOfRatios - System.Convert.ToDouble(WellKhDataGridView.Rows[e.OldStartingIndex].Cells[4].Value);
             }
+            else
+            {
+                return;
+            }
 
             for (int i = 0; i <WellKhDataGridView.Rows.Count; i++)
             {
@@ -1398,8 +1624,12 @@ namespace ModifiedKh
             if (args.PermeabilityFromModel ==null)
             {
                 int position = ListOfBoreholes.IndexOf(ListOfBoreholes.Find(x => x.Droid == Well.Droid));
-                ListOfBoreholes.RemoveAt(position);
-                UpdateRowsInDataGridWithNewWells(ListOfBoreholes);  
+                if (position>-1)
+                {
+                    ListOfBoreholes.RemoveAt(position);
+                    UpdateRowsInDataGridWithNewWells(ListOfBoreholes);    
+                }
+               
             }            
             else 
             {
@@ -1416,16 +1646,24 @@ namespace ModifiedKh
                         {
                             var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == position);
                             ListOfFilledKhwtIndices.Remove(itemToRemove);
+
+                            for (int i = 0; i < ListOfFilledKhwtIndices.Count; i++)
+                            {
+                                if (ListOfFilledKhwtIndices[i] > position)
+                                {
+                                    ListOfFilledKhwtIndices[i] = ListOfFilledKhwtIndices[i] - 1; //Decreasing the position number because the row information has been deleted.
+                                }
+                            }
                         }
                         
 
-                        for (int i = 0; i < ListOfFilledKhwtIndices.Count; i++)
-                        {
-                            if (ListOfFilledKhwtIndices[i] > position)
-                            {
-                                ListOfFilledKhwtIndices[i] = ListOfFilledKhwtIndices[i] - 1; //Decreasing the position number because the row information has been deleted.
-                            }
-                        }
+                        //for (int i = 0; i < ListOfFilledKhwtIndices.Count; i++)
+                        //{
+                        //    if (ListOfFilledKhwtIndices[i] > position)
+                        //    {
+                        //        ListOfFilledKhwtIndices[i] = ListOfFilledKhwtIndices[i] - 1; //Decreasing the position number because the row information has been deleted.
+                        //    }
+                        //}
                     }
                     
 
@@ -1443,14 +1681,14 @@ namespace ModifiedKh
                 ListOfOriginalRowDataInfo.Clear();
                 ListOfOriginalFilledKhwtIndices.Clear();
 
-                MessageBox.Show("If previous data was saved as original data it has been deleted due to the change in the wells.");
+                PetrelLogger.InfoOutputWindow("If previous data was saved as original data it has been deleted due to the change in the wells.");
 
    
             }
             
         }
 
-        private void UpdateRowsInDataGridWithNewWells(List<Borehole> ListOfBoreholes) 
+        private void UpdateRowsInDataGridWithNewWells(List<Borehole> ListOfBoreholes) //function that clears the whole table and adds the new names of wells to their corresponding row.
         {
             ListOfBoreholes = SortListOfBoreholesByName(ListOfBoreholes);
             WellKhDataGridView.Rows.Clear();
@@ -1475,52 +1713,63 @@ namespace ModifiedKh
             }
         }
 
-        private void UpdateRowObjectsWithNewWells(List<Borehole> ListOfWells)
+        private void UpdateRowObjectsWithNewWells(ref List<Borehole> ListOfWells)
         {
             ListOfRowInfo.Clear();
             List<String> ListOfIntersectedZonesNames = new List<string>();
             ListOfWells = SortListOfBoreholesByName(ListOfWells);
+            ListOfWells.Reverse();
+            args.ListOfPenetratedZoneNames.Clear();
 
-            foreach (Borehole bh in ListOfWells)
+            for (int i = ListOfWells.Count-1; i >= 0; i--  )
             {
-                WellKhObj.Well = bh;
+                WellKhObj.Well = ListOfWells[i];
 
 
                 if (WellKhObj.SetListOfNamesOfIntersectedZones(true))
                 {
                     ListOfIntersectedZonesNames = WellKhObj.ListOfNamesOfIntersectedZones.Distinct().ToList();
 
-                    WellKhObj.VerticalContinuity(ListOfIntersectedZonesNames);
-                    #region Getting all the names of penetrated zones into one list
-                    if (args.ListOfPenetratedZoneNames != null)
+                    if (ListOfIntersectedZonesNames.Count > 0)
                     {
-                        foreach (String name in ListOfIntersectedZonesNames)
+
+                        WellKhObj.VerticalContinuity(ListOfIntersectedZonesNames);
+                        #region Getting all the names of penetrated zones into one list
+                        if (args.ListOfPenetratedZoneNames != null)
                         {
-                            if (!args.ListOfPenetratedZoneNames.Contains(name))
+                            foreach (String name in ListOfIntersectedZonesNames)
                             {
-                                args.ListOfPenetratedZoneNames.Add(name);
+                                if (!args.ListOfPenetratedZoneNames.Contains(name))
+                                {
+                                    args.ListOfPenetratedZoneNames.Add(name);
+                                }
                             }
                         }
+                        else
+                        {
+                            args.ListOfPenetratedZoneNames.AddRange(ListOfIntersectedZonesNames);
+                        }
+                        #endregion
+
+                        #region Creating new KhTableRowInfoContainer objects to contain all relevant information about zones, well,cells and kh
+
+                        Dictionary<int, List<CellData>> Dict = WellKhObj.GetKhDictionaryOfSelectedGridCells(Depth_or_Zones, PerforatedZonesOnly, true);
+
+                        // int counter = 0;
+                        foreach (int ind in Dict.Keys)
+                        {
+                            //  Droid ArgsDroid = new Droid(CONNECTModifiedKhDataSourceFactory.DataSourceId, "ModifiedKh.KhTableRowInfoContainer_" + System.Convert.ToString(counter));
+                            KhTableRowInfoContainer RowInfoObj = new KhTableRowInfoContainer(Dict, ind, ListOfZones[ind]);
+                            ListOfRowInfo.Add(RowInfoObj);
+                            // counter = counter + 1;
+
+                        }
+                        #endregion
                     }
                     else
                     {
-                        args.ListOfPenetratedZoneNames.AddRange(ListOfIntersectedZonesNames);
+                        ListOfWells.RemoveAt(i);
                     }
-                    #endregion
-
-                    #region Creating new KhTableRowInfoContainer objects to contain all relevant information about zones, well,cells and kh
-                    Dictionary<int, List<CellData>> Dict = WellKhObj.GetKhDictionaryOfSelectedGridCells(Depth_or_Zones, PerforatedZonesOnly, true);
-
-                   // int counter = 0;
-                    foreach (int ind in Dict.Keys)
-                    {
-                      //  Droid ArgsDroid = new Droid(CONNECTModifiedKhDataSourceFactory.DataSourceId, "ModifiedKh.KhTableRowInfoContainer_" + System.Convert.ToString(counter));
-                        KhTableRowInfoContainer RowInfoObj = new KhTableRowInfoContainer(Dict, ind, ListOfZones[ind]);
-                        ListOfRowInfo.Add(RowInfoObj);
-                       // counter = counter + 1;
-
-                    }
-                    #endregion
                 }
 
                 else
@@ -1535,7 +1784,7 @@ namespace ModifiedKh
 
         private List<Borehole> SortListOfBoreholesByName(List<Borehole> ListOfBoreholes)
         {
-            List<Borehole> SortedList = ListOfBoreholes.OrderBy(o => o.Name).ToList(); ;
+            List<Borehole> SortedList = ListOfBoreholes.OrderBy(o => o.Name).ToList(); 
             return SortedList;
         }
 
@@ -1568,15 +1817,21 @@ namespace ModifiedKh
                     }
 
                     ListOfRowInfo[e.RowIndex] = ListOfOriginalRowDataInfo[e.RowIndex].CreateCopy();
-                    ListOfFilledKhwtIndices.Add(e.RowIndex);
+                   
 
                     WellKhDataGridView.Rows[e.RowIndex].Cells[4].Value = ListOfRowInfo[e.RowIndex].Ratio;
 
-                    if (FieldUnitsFlag)
-                    { WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));}
+
+                    if (ListOfRowInfo[e.RowIndex].Kh_wt > 0)
+                    {
+                        if (FieldUnitsFlag)
+                        { WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits)); }
+                        else
+                        { WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits)); }
+                        ListOfFilledKhwtIndices.Add(e.RowIndex);
+                    }
                     else
-                    { WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[e.RowIndex].Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits)); }
-                    
+                        WellKhDataGridView.Rows[e.RowIndex].Cells[3].Value = String.Empty;
 
                 }
                     
@@ -1589,11 +1844,11 @@ namespace ModifiedKh
             if (ListOfRowInfo[RowIndex].Kh_wt > 0)
             {
 
-                if ((bool)senderGrid.Rows[RowIndex].Cells[7].Value==false && (bool)senderGrid.Rows[RowIndex].Cells[5].Value==false)
+                if (((bool)senderGrid.Rows[RowIndex].Cells[7].Value == false && (bool)senderGrid.Rows[RowIndex].Cells[5].Value == false) || (EditRatio && (bool)senderGrid.Rows[RowIndex].Cells[5].Value == false))
                 {
                     
                 }
-                else
+                else      
                 {
                     double NewRatio = 1.0 / (1.0 / (ListOfRowInfo[RowIndex].Ratio) - ListOfRowInfo[RowIndex].Kh_sim / ListOfRowInfo[RowIndex].Kh_wt);
 
@@ -1607,12 +1862,13 @@ namespace ModifiedKh
                                 ListOfFilledKhwtIndices.Remove(itemToRemove);
                             }
                             ListOfRowInfo[i].Ratio = NewRatio;
-                            senderGrid.Rows[i].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(NewRatio, SignificantDigits));
+                            senderGrid.Rows[i].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(ListOfRowInfo[i].Ratio, SignificantDigits));
                             ListOfFilledKhwtIndices.Add(i);
                         }
 
                     }
                 }
+                
             
 
             //Making sure that the previous ratio is removed from the List of Filled Khwt so that the calculation of the total average ratio of the datagridview is done without that number
@@ -1637,62 +1893,535 @@ namespace ModifiedKh
         private void WellKhDataGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
             var senderGrid = (DataGridView)sender;
-
-            if (senderGrid.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn && e.RowIndex >= 0)
+            try
             {
-                WellKhDataGridView.EndEdit();
+                if (senderGrid.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn && e.RowIndex >= 0)
+                {
+                    WellKhDataGridView.EndEdit();
 
+                }
             }
+            catch (Exception)
+            {
+                
+               
+            }
+
+            
         }
 
         private void SelectedWellsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            SelectedWellsCheckBoxUpdateArgs(SelectedWellsCheckBox.Checked);
-        }
+            bool SuccessfulRun;
 
-
-
-        private void SelectedWellsCheckBoxUpdateArgs(bool CheckBoxState)
-        {
-            ListOfBoreholes.Clear();
-            if (CheckBoxState == true)
+           // if ((args.PermeabilityFromModel != null || WellKhObj.Permeability !=null) && NotDuringUILoad)
+            if (WellKhObj.Permeability != null && NotDuringUILoad)
             {
-                //ListOfBoreholes = PetrelProject.Inputs.GetSelected<Borehole>().ToList();
-                //ListOfBoreholes = PetrelProject.ToggleWindows.GetSelected<Borehole>().ToList();
-                ToggleWindow twindow = (ToggleWindow)PetrelProject.ToggleWindows.Active;
-                foreach (object item in twindow.VisibleObjects)
-                {
-                    if (item is Borehole)
-                    {
-                        Borehole item2 = (Borehole)item;
-                        item2.Deleted -= Deleted_Well;
-                        item2.Deleted += Deleted_Well;
-                        ListOfBoreholes.Add(item2);
-
-                    }
-                }
-                if (ListOfBoreholes != null)
-                {
-                    UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
-                }
-                else
-                    MessageBox.Show("Please select the wells in the Input Tab that you would like to use");
+                SuccessfulRun = ReloadTableWithNewWellSelection(SelectedWellsCheckBox.Checked);
             }
             else
             {
-                Project proj = PetrelProject.PrimaryProject;
-                WellRoot wr = WellRoot.Get(proj);
+                SuccessfulRun = SelectedWellsCheckBoxUpdateArgs(SelectedWellsCheckBox.Checked);
+            }
+            if (SuccessfulRun == false)
+            {
+                ListOfBoreholes.Clear();
+                WellKhDataGridView.Rows.Clear();
+                ListOfFilledKhwtIndices.Clear();
+                ListOfRowInfo.Clear();
+            }
+            
+            
+        }
 
-                BoreholeCollection BhCollection = wr.BoreholeCollection;
-                ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
-                if (ListOfBoreholes != null)
+
+
+        private bool SelectedWellsCheckBoxUpdateArgs(bool CheckBoxState)
+        {
+       
+
+            using (IProgress PBar1 = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, Cursors.WaitCursor))
+            {
+
+                ListOfBoreholes.Clear();
+                if (CheckBoxState == true)
                 {
-                    UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
+                    //ListOfBoreholes = PetrelProject.Inputs.GetSelected<Borehole>().ToList();
+                    //ListOfBoreholes = PetrelProject.ToggleWindows.GetSelected<Borehole>().ToList();
+                    
+                    ToggleWindow twindow = (ToggleWindow)PetrelProject.ToggleWindows.Active;
+                    if (twindow != null)
+                    {
+
+                        PBar1.SetProgressText("Creating Rows in Table...");
+                        PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
+                        if (PBar1.IsCanceled == true)
+                        {
+                            return false;
+                        }
+
+                        foreach (object item in twindow.VisibleObjects)
+                        {
+                            if (item is Borehole)
+                            {
+                                Borehole item2 = (Borehole)item;
+                                item2.Deleted -= Deleted_Well;
+                                item2.Deleted += Deleted_Well;
+                                ListOfBoreholes.Add(item2);
+
+                            }
+                        }
+                        PBar1.ProgressStatus = PBar1.ProgressStatus + 40;
+                        if (PBar1.IsCanceled == true)
+                        {
+                            return false;
+                        }
+
+                        if (ListOfBoreholes != null)
+                        {
+                            UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
+                        }
+                        else
+                            MessageBox.Show("Please select the wells in the Input Tab that you would like to use");
+                        PBar1.ProgressStatus = PBar1.ProgressStatus + 50;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
-                    MessageBox.Show("Please create some wells in the Input Tab");
+                {
+                    Project proj = PetrelProject.PrimaryProject;
+                    WellRoot wr = WellRoot.Get(proj);
+
+                    BoreholeCollection BhCollection = wr.BoreholeCollection;
+                    ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
+                    if (ListOfBoreholes != null)
+                    {
+                        UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
+                    }
+                    else
+                        MessageBox.Show("Please create some wells in the Input Tab");
+                }
             }
+            return true;
         }
+
+        private bool ReloadTableWithNewWellSelection(bool CheckBoxState) //Code to edit table whenever the user clicks on the Selected Wells checkbox if he/she has already dropped a permeability.
+        {
+            using (IProgress PBar1 = PetrelLogger.NewProgress(0, 100, ProgressType.Cancelable, Cursors.WaitCursor))
+            {
+
+                PBar1.SetProgressText("Creating Rows in Table...");
+                PBar1.ProgressStatus = PBar1.ProgressStatus + 10;
+                if (PBar1.IsCanceled == true)
+                {
+                    return false;
+                }
+                int rowCounter = 0;
+                List<Borehole> ListOfNewSelectedWells = new List<Borehole>();
+                List<string> ListOfIntersectedZonesNames = new List<string>();
+                WellKh WellKhObj1 = new WellKh();
+                int index = 0;
+                //  ListOfBoreholes.Clear();
+
+                //ListOfBoreholes = PetrelProject.Inputs.GetSelected<Borehole>().ToList();
+                //ListOfBoreholes = PetrelProject.ToggleWindows.GetSelected<Borehole>().ToList();
+
+
+
+                if (CheckBoxState == true) //Assigning the new wells to the table while keeping the rows containing the old wells that are still being selected by the user.
+                {
+                    if (ListOfOriginalRowDataInfo.Count > 0) MessageBox.Show("The data saved as \"Original Data\" has been cleared");
+
+
+                    ListOfOriginalFilledKhwtIndices.Clear();
+                    ListOfOriginalRowDataInfo.Clear();
+
+
+
+                    ToggleWindow twindow = (ToggleWindow)PetrelProject.ToggleWindows.Active;
+                 if (twindow != null)                    
+                 {
+                    foreach (object item in twindow.VisibleObjects)
+                    {
+                        if (item is Borehole)
+                        {
+                            ListOfNewSelectedWells.Add((Borehole)item);
+                        }
+                    }
+              //  }
+                //else
+                //{
+                //    Project proj = PetrelProject.PrimaryProject;
+                //    WellRoot wr = WellRoot.Get(proj);
+
+                //    BoreholeCollection BhCollection = wr.BoreholeCollection;
+                //    ListOfNewSelectedWells = GetAllBoreholesInProject(BhCollection);
+                //}
+
+                PBar1.ProgressStatus = PBar1.ProgressStatus + 20;
+                if (PBar1.IsCanceled == true)
+                {
+                    return false;
+                }
+
+                ListOfNewSelectedWells = SortListOfBoreholesByName(ListOfNewSelectedWells);
+
+                #region Deleting those rows with wells which are no longer selected and the appropiate entries in lists containing names of selected wells.
+
+                for (int i = WellKhDataGridView.Rows.Count - 1; i >= 0; i--)//Looping through all the rows of the table and checking if their well column matches any of the selected wells.
+                {
+
+                    if (!ListOfNewSelectedWells.Any(w => w.Name == System.Convert.ToString(WellKhDataGridView.Rows[i].Cells[0].Value))) //If there is no match the row must be eliminated from the Table, ListOfRowInfo and ListOfBoreholes.
+                    {
+                        try
+                        {
+                            var itemToRemove = ListOfFilledKhwtIndices.Single(r => r == i);
+
+                            ListOfFilledKhwtIndices.Remove(itemToRemove);
+
+                            for (int j = 0; j < ListOfFilledKhwtIndices.Count; j++)
+                            {
+                                if (ListOfFilledKhwtIndices[j] > (int)itemToRemove)
+                                {
+                                    ListOfFilledKhwtIndices[j] = ListOfFilledKhwtIndices[j] - 1;
+                                }
+                            }
+
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+                        index = ListOfBoreholes.FindIndex(w => w.Name == System.Convert.ToString(WellKhDataGridView.Rows[i].Cells[0].Value));
+
+                        if (index > -1)
+                        {
+                            ListOfBoreholes.RemoveAt(index);
+                        }
+
+
+                        ListOfRowInfo.RemoveAt(i);
+                        WellKhDataGridView.Rows.RemoveAt(i);
+
+                    }
+                }
+
+
+                #endregion
+
+                PBar1.ProgressStatus = PBar1.ProgressStatus + 20;
+                if (PBar1.IsCanceled == true)
+                {
+                    return false;
+                }
+
+                ListOfBoreholes = SortListOfBoreholesByName(ListOfBoreholes);
+                foreach (Borehole well in ListOfNewSelectedWells)
+                {
+                    if (ListOfBoreholes.Any(w => w.Name == well.Name))
+                    {
+                        #region Going through each row where that well is named and incrementing the row counter
+                        for (int i = rowCounter; i < WellKhDataGridView.Rows.Count; i++)
+                        {
+                            if (ListOfRowInfo[rowCounter].WellName == well.Name)
+                            {
+                                rowCounter++;
+                            }
+                        }
+                        #endregion
+                    }
+                    else
+                    {
+
+                        WellKhObj1.Well = well;
+
+                        if (args.PermeabilityFromModel != null)
+                        {
+                            WellKhObj1.Permeability = args.PermeabilityFromModel;
+                        }
+                        else
+                        {
+                            WellKhObj1.Permeability = WellKhObj.Permeability;
+                        }
+
+                        #region Setting the ZoneIndex Property of the WellKhObj1
+                        if (WellKhObj1.ZoneIndex != null)
+                        {
+                            Slb.Ocean.Petrel.DomainObject.PillarGrid.PropertyCollection pc1 = WellKhObj1.ZoneIndex.Grid.PropertyCollection;
+
+                            using (ITransaction trans = DataManager.NewTransaction())
+                            {
+                                try
+                                {
+                                    trans.Lock(WellKhObj1.ZoneIndex);
+                                    WellKhObj1.ZoneIndex.Delete();
+                                    trans.Commit();
+                                }
+                                catch (Exception)
+                                {
+
+                                    MessageBox.Show("The previously created Zone Index property was not deleted.");
+                                }
+
+                            }
+                        }
+                        WellKhObj1.ZoneIndex = KandaPropertyCreator.CreateZoneIndex(WellKhObj.Permeability.Grid);
+                        #endregion
+
+
+
+                        if (WellKhObj1.SetListOfNamesOfIntersectedZones(true))
+                        {
+                            ListOfIntersectedZonesNames = WellKhObj1.ListOfNamesOfIntersectedZones.Distinct().ToList();
+
+                            WellKhObj1.VerticalContinuity(ListOfIntersectedZonesNames);
+                            #region Getting all the names of penetrated zones into one list
+                            if (args.ListOfPenetratedZoneNames != null)
+                            {
+                                foreach (String name in ListOfIntersectedZonesNames)
+                                {
+                                    if (!args.ListOfPenetratedZoneNames.Contains(name))
+                                    {
+                                        args.ListOfPenetratedZoneNames.Add(name);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                args.ListOfPenetratedZoneNames.AddRange(ListOfIntersectedZonesNames);
+                            }
+
+                            #endregion
+
+
+                            #region Creating new KhTableRowInfoContainer objects to contain all relevant information about zones, well,cells and kh
+                            Dictionary<int, List<CellData>> Dict = WellKhObj1.GetKhDictionaryOfSelectedGridCells(Depth_or_Zones, PerforatedZonesOnly, true);
+
+                            // int counter = 0;
+                            foreach (int ind in Dict.Keys)
+                            {
+                                //  Droid ArgsDroid = new Droid(CONNECTModifiedKhDataSourceFactory.DataSourceId, "ModifiedKh.KhTableRowInfoContainer_" + System.Convert.ToString(counter));
+                                KhTableRowInfoContainer RowInfoObj = new KhTableRowInfoContainer(Dict, ind, ListOfZones[ind]);
+                                Button B1 = new Button();
+                                // ListOfRowInfo.Add(RowInfoObj);
+                               
+                                if (rowCounter < ListOfRowInfo.Count - 1)
+                                {
+                                    ListOfRowInfo.Insert(rowCounter, RowInfoObj);
+                                    WellKhDataGridView.Rows.Insert(rowCounter, 1);
+
+
+                                    for (int j = 0; j < ListOfFilledKhwtIndices.Count; j++)
+                                    {
+                                        if (ListOfFilledKhwtIndices[j] >= rowCounter)
+                                        {
+                                            ListOfFilledKhwtIndices[j] = ListOfFilledKhwtIndices[j] + 1;
+                                        }
+                                    }
+
+
+                                    if (FieldUnitsFlag)
+                                    {
+                                        WellKhDataGridView.Rows[rowCounter].Cells[0].Value = RowInfoObj.WellName;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[1].Value = RowInfoObj.ZoneName;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[2].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_sim * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));
+                                        //  WellKhDataGridView.Rows[rowCounter].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));
+                                        if (ListOfFilledKhwtIndices.Count > 0 && !KeepMissingRatio1.Checked)
+                                        {
+                                            if (Truncate2NormalDist.Checked == false && UseOriginalData.Checked == false)
+                                            {
+                                                if (SumOfRatios / ListOfFilledKhwtIndices.Count < MinRatio && MinimumRatioValue.Text != "")
+                                                {
+                                                    WellKhDataGridView.Rows[rowCounter].Cells[4].Value = MinRatio;
+                                                }
+                                                else
+                                                {
+                                                    WellKhDataGridView.Rows[rowCounter].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(SumOfRatios / ListOfFilledKhwtIndices.Count, SignificantDigits));
+                                                }
+
+                                                if (System.Convert.ToDouble(WellKhDataGridView.Rows[rowCounter].Cells[4].Value) > MaxRatio && MaximumRatioValue.Text != "")
+                                                {
+                                                    WellKhDataGridView.Rows[rowCounter].Cells[4].Value = MaxRatio;
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                WellKhDataGridView.Rows[rowCounter].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(SumOfRatios / ListOfFilledKhwtIndices.Count, SignificantDigits));
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            WellKhDataGridView.Rows[rowCounter].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Ratio, SignificantDigits));
+                                        }
+
+                                        WellKhDataGridView.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[5].Value = false;
+                                        WellKhDataGridView.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[6].Value = B1;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[7].Value = true;
+                                    }
+                                    else
+                                    {
+                                        WellKhDataGridView.Rows[rowCounter].Cells[0].Value = RowInfoObj.WellName;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[1].Value = RowInfoObj.ZoneName;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[2].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_sim * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits));
+                                        // WellKhDataGridView.Rows[rowCounter].Cells[3].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits));
+                                        if (ListOfFilledKhwtIndices.Count > 0 && !KeepMissingRatio1.Checked)
+                                        {
+                                            if (Truncate2NormalDist.Checked == false && UseOriginalData.Checked == false)
+                                            {
+                                                if (SumOfRatios / ListOfFilledKhwtIndices.Count < MinRatio && MinimumRatioValue.Text != "")
+                                                {
+                                                    WellKhDataGridView.Rows[rowCounter].Cells[4].Value = MinRatio;
+                                                }
+                                                else
+                                                {
+                                                    WellKhDataGridView.Rows[rowCounter].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(SumOfRatios / ListOfFilledKhwtIndices.Count, SignificantDigits));
+                                                }
+
+                                                if (System.Convert.ToDouble(WellKhDataGridView.Rows[rowCounter].Cells[4].Value) > MaxRatio && MaximumRatioValue.Text != "")
+                                                {
+                                                    WellKhDataGridView.Rows[rowCounter].Cells[4].Value = MaxRatio;
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                WellKhDataGridView.Rows[rowCounter].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(SumOfRatios / ListOfFilledKhwtIndices.Count, SignificantDigits));
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            WellKhDataGridView.Rows[rowCounter].Cells[4].Value = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Ratio, SignificantDigits));
+                                        }
+                                        WellKhDataGridView.CellValueChanged -= WellKhDataGridView_CellValueChanged;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[5].Value = false;
+                                        WellKhDataGridView.CellValueChanged += WellKhDataGridView_CellValueChanged;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[6].Value = B1;
+                                        WellKhDataGridView.Rows[rowCounter].Cells[7].Value = true;
+                                    }
+
+
+
+
+
+
+                                    rowCounter++;
+                                }
+                                else
+                                {
+                                    
+
+                                    string Kh_sim = "" ;
+                                    string Kh_wt = "" ;
+
+
+                                    if (RowInfoObj.Kh_wt > 0)
+                                    {
+                                        if (FieldUnitsFlag)
+                                        {
+                                            Kh_sim = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_sim * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));
+                                            Kh_wt = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_wt * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));
+
+                                        }
+                                        else
+                                        {
+                                            Kh_sim = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_sim * (1 / WellKh.FactorToConvert_mdm_To_m3),SignificantDigits));
+                                            Kh_wt = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_wt * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits));
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (FieldUnitsFlag)
+                                        {
+                                            Kh_sim = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_sim * (1 / WellKh.FactorToConvert_mdft_To_m3), SignificantDigits));
+                                            Kh_wt = String.Empty;
+                                        }
+
+                                        else {
+
+                                            Kh_sim = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Kh_sim * (1 / WellKh.FactorToConvert_mdm_To_m3), SignificantDigits));
+                                            Kh_wt = String.Empty;
+
+                                          }
+                                            
+                                    }
+
+                                    if (ListOfFilledKhwtIndices.Count > 0 && !KeepMissingRatio1.Checked)
+                                    {
+                                        if (Truncate2NormalDist.Checked == false && UseOriginalData.Checked == false)
+                                        {
+                                            if (SumOfRatios / ListOfFilledKhwtIndices.Count < MinRatio && MinimumRatioValue.Text != "")
+                                            {
+                                                RowInfoObj.Ratio = MinRatio;
+                                            }
+                                            else
+                                            {
+                                                RowInfoObj.Ratio = SumOfRatios / ListOfFilledKhwtIndices.Count;
+                                            }
+
+                                            if (SumOfRatios / ListOfFilledKhwtIndices.Count > MaxRatio && MaximumRatioValue.Text != "")
+                                            {
+                                                RowInfoObj.Ratio = MaxRatio;
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            RowInfoObj.Ratio = SumOfRatios / ListOfFilledKhwtIndices.Count;
+                                        }
+
+                                    }
+
+                                    WellKhDataGridView.Rows.Add(RowInfoObj.WellName, RowInfoObj.ZoneName, Kh_sim, Kh_wt, System.Convert.ToString(RoundingClass.RoundToSignificantDigits(RowInfoObj.Ratio, SignificantDigits)), false, B1, true);
+                                    ListOfRowInfo.Add(RowInfoObj);
+
+                                    rowCounter++;
+                                }
+
+                                // counter = counter + 1;
+
+                            }
+                            #endregion
+                        }
+
+
+                        ListOfIntersectedZonesNames.Clear();
+                    }
+
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 30;
+                    if (PBar1.IsCanceled == true)
+                    {
+                        return false;
+                    }
+
+                    well.Deleted -= Deleted_Well;
+                    well.Deleted += Deleted_Well;
+                    if (!ListOfBoreholes.Any(w => w.Name == well.Name))
+                    {
+                        ListOfBoreholes.Add(well);
+                    }
+                    PBar1.ProgressStatus = PBar1.ProgressStatus + 20;
+
+
+                }
+               }
+            }
+
+
+            }
+                   return true;
+        }
+
+
         private void CreateHistograms(List<double> ListOfRatios)
         {
             try
@@ -2019,7 +2748,7 @@ namespace ModifiedKh
 
             if (Truncate2NormalDist.Checked)
             {
-                if (!Truncate2NormalDistData(args.ListOfModellingData, args.ListOfModellingKhwtIndices, ref mean, ref std, ref  MaxRatio, ref  MinRatio))
+                if (!Truncate2NormalDistData(args.ListOfModellingData, args.ListOfModellingKhwtIndices, ref mean, ref std))
                 {
                     MessageBox.Show("The data  could not be truncated by using a normal distribution because no data was input in the Kh well testing column. \n" +
                              "If you do not wish to truncate the data using a normal distribution please uncheck the Truncate to Normal Distribution checkbox.");
@@ -2128,110 +2857,6 @@ namespace ModifiedKh
 
         }
 
-        private void MinimumRatioValue_TextChanged(object sender, EventArgs e)
-        {   
-            double DoubleValue;
-
-            Truncate2NormalDist.Checked = false;
-            UseOriginalData.Checked = false;
-          
-            if (Double.TryParse(MinimumRatioValue.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
-	         {
-                 if (DoubleValue>=0)
-                 {
-                     MinRatio = DoubleValue;
-
-                     //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
-                     TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio, true);
-                     //End of Change.
-                 }
-                 else
-                 {
-                     //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
-                     if (MinRatio != 0.0000000000001)
-                     {
-                         MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
-                     }
-                     else
-                     {
-                         MinimumRatioValue.Text = String.Empty;
-                     }
-                     
-                     MessageBox.Show("Please make sure that you input a positive number without any commas");
-                     //End of Change.
-                 }
-                 
-	         }
-                else
-            {
-                //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
-                if (MinRatio != 0.0000000000001)
-                {
-                    MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
-                }
-                else
-                {
-                    MinimumRatioValue.Text = String.Empty;
-                }
-                    MessageBox.Show("Please make sure that you input a positive number without any commas");
-               
-	         }
-                  
-
-        }
-
-        private void MaximumRatioValue_TextChanged(object sender, EventArgs e)
-        {
-
-            double DoubleValue;
-
-            Truncate2NormalDist.Checked = false;
-            UseOriginalData.Checked = false;
-
-            if (Double.TryParse(MaximumRatioValue.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
-            {
-                if (DoubleValue>=0)
-                {
-                    MaxRatio = DoubleValue;  
-
-                    //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
-                    TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio,true);
-                    //End of Change.
-                }
-                else
-                {
-                    //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
-                    if (MaxRatio != Double.MaxValue)
-                    {
-                        MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));  
-                    }
-                    else
-                    {
-                        MaximumRatioValue.Text = String.Empty;
-                    }
-                    //End of Change.
-
-                    MessageBox.Show("Please make sure that you input a positive number without any commas");
-                }
-                
-            }
-            else
-            {
-                //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
-                if (MaxRatio != Double.MaxValue)
-                {
-                    MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
-                }
-                else
-                {
-                    MaximumRatioValue.Text = String.Empty;
-                }
-                //End of Change.
-                MessageBox.Show("Please make sure that you input a positive number without any commas");
-
-            }
-        }
-
         private void Truncate2NormalDist_CheckedChanged(object sender, EventArgs e)
         {
 
@@ -2247,9 +2872,10 @@ namespace ModifiedKh
 
 
         private bool Truncate2NormalDistData(List<KhTableRowInfoContainer> ListOfRowInfoData, List<int> ListOfIndices, ref double mean,
-            ref double std,ref double MaxVal, ref double MinVal)
+            ref double std)
         {
-
+            double MaxVal;
+            double MinVal;
             //Calculate the mean and std
             if (ListOfIndices.Count>0)
             {
@@ -2272,6 +2898,19 @@ namespace ModifiedKh
 
                 MaxVal = mean + 3 * std;
                 MinVal = mean - 3 * std;
+
+                foreach (int i in ListOfIndices)
+                {  
+                    if (ListOfRowInfoData[i].Ratio> MaxVal)
+	                {
+                        ListOfRowInfoData[i].Ratio = MaxVal;
+	                }
+                    else if (ListOfRowInfoData[i].Ratio< MinVal)
+                    {
+                        ListOfRowInfoData[i].Ratio = MinVal;
+                    }
+
+                }
                
 
                 return true;
@@ -2336,22 +2975,28 @@ namespace ModifiedKh
 
             if (Double.TryParse(MajorRangeTextBox.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
             {
-                if (DoubleValue>0)
+                if (DoubleValue > 0 && DoubleValue <= 9.999999999999E+307)
                 {
                     args.VarArg.MajorRange = DoubleValue;
+                    MajorRangeTextBox.TextChanged -= MajorRangeTextBox_TextChanged;
                     MajorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MajorRange, SignificantDigits));
+                    MajorRangeTextBox.TextChanged += MajorRangeTextBox_TextChanged;
                     UpdateSillTextBox();
                 }
                 else
                 {
+                    MajorRangeTextBox.TextChanged -= MajorRangeTextBox_TextChanged;
                     MajorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MajorRange, SignificantDigits));
-                    MessageBox.Show("Please make sure that you input a positive number without any commas");
+                    MajorRangeTextBox.TextChanged += MajorRangeTextBox_TextChanged;
+                    MessageBox.Show("Please make sure that you input a positive number without any commas or that the value is less than 9.999999999999E+307");
                 }
                 
             }
             else
             {
+                MajorRangeTextBox.TextChanged -= MajorRangeTextBox_TextChanged;
                 MajorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MajorRange,SignificantDigits));
+                MajorRangeTextBox.TextChanged += MajorRangeTextBox_TextChanged;
                 MessageBox.Show("Please make sure that you input a positive number without any commas");
 
             }
@@ -2363,31 +3008,32 @@ namespace ModifiedKh
 
             if (Double.TryParse(MinorRangeTextBox.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
             {
-                if (DoubleValue>0)
+                if (DoubleValue > 0 && DoubleValue <= 9.999999999999E+307)
                 {
                     args.VarArg.MinorRange = DoubleValue;
+                    MinorRangeTextBox.TextChanged -= MinorRangeTextBox_TextChanged;
                     MinorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MinorRange, SignificantDigits));
+                    MinorRangeTextBox.TextChanged += MinorRangeTextBox_TextChanged;
                      UpdateSillTextBox();
                 }
                 else
                 {
+                    MinorRangeTextBox.TextChanged -= MinorRangeTextBox_TextChanged;
                     MinorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MinorRange, SignificantDigits));
-                    MessageBox.Show("Please make sure that you input a positive number without any commas");
+                    MinorRangeTextBox.TextChanged += MinorRangeTextBox_TextChanged;
+                    MessageBox.Show("Please make sure that you input a positive number without any commas or that the value is less than 9.999999999999E+307");
 
                 }
                 
             }
             else
             {
+                MinorRangeTextBox.TextChanged -= MinorRangeTextBox_TextChanged;
                 MinorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MinorRange, SignificantDigits));
+                MinorRangeTextBox.TextChanged += MinorRangeTextBox_TextChanged;
                 MessageBox.Show("Please make sure that you input a positive number without any commas");
 
             }
-        }
-
-        private void NuggetTextBox_TextChanged(object sender, EventArgs e)
-        {
-          
         }
 
         private void VariogramTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -2424,43 +3070,7 @@ namespace ModifiedKh
 
         private void MajorDirectionTextBox_Leave(object sender, EventArgs e)
         {
-            double DoubleValue;
-            double CosValue;
-            double SinValue;
-            double Alpha = 0;
-
-            if (Double.TryParse(MajorDirectionTextBox.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
-            {
-                CosValue = Math.Cos((Math.PI / 180) * DoubleValue);
-                SinValue = Math.Sin((Math.PI / 180) * DoubleValue);
-
-                if (CosValue >= 0 && SinValue >= 0)
-                {
-                    Alpha = Math.Acos(CosValue)*(180/Math.PI);
-                }
-                else if (CosValue <= 0 && SinValue > 0)
-                {
-                    Alpha = -180 + Math.Acos(CosValue) * (180 / Math.PI);
-                }
-                else if (CosValue < 0 && SinValue <= 0)
-                {
-                    Alpha = 180 - Math.Acos(CosValue) * (180 / Math.PI);
-                }
-                else if (CosValue >= 0 && SinValue < 0)
-                {
-                    Alpha = -Math.Acos(CosValue) * (180 / Math.PI);
-                }
-
-                args.VarArg.MajorDirection = Angle.CreateFromCompassAngle(Alpha, false);
-                MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
-                UpdateSillTextBox();
-            }
-            else
-            {
-                MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
-                MessageBox.Show("Please make sure that you input a number without any commas");
-
-            }
+           
         }
 
         private void UpdateSillTextBox() 
@@ -2519,9 +3129,12 @@ namespace ModifiedKh
             {
                 SaveArgs.ListOfOriginalKhwtIndices = ListOfOriginalFilledKhwtIndices;
             }
-            
+
+
             SaveArgs.MaxRatio = MaxRatio;
             SaveArgs.MinRatio = MinRatio;
+
+            
             SaveArgs.KeepMissingAs1 = KeepMissingRatio1.Checked;
             SaveArgs.MajorRange = args.VarArg.MajorRange;
             SaveArgs.MinorRange = args.VarArg.MinorRange;
@@ -2529,6 +3142,12 @@ namespace ModifiedKh
             SaveArgs.VariogramTypeIndex = VariogramTypeComboBox.SelectedIndex;
             SaveArgs.KrigingAlgIndex = KrigingAlgComboBox.SelectedIndex;
             SaveArgs.MajorDirection = Angle.CreateFromCompassAngle(args.VarArg.MajorDirection.CompassDegrees, false);
+            
+            SaveArgs.ListOfBoreholeDroids.Clear();
+            foreach (Borehole bh in ListOfBoreholes)
+            {
+                SaveArgs.ListOfBoreholeDroids.Add(bh.Droid);
+            }
             //SaveArgs.ModelDataGridView = WellKhDataGridView;
             
         }
@@ -2537,10 +3156,56 @@ namespace ModifiedKh
         {
             SaveArgs = workstep.SaveableSettings;
 
+            NotDuringUILoad = false;
+
             if (SaveArgs.SelectedWellsCheck)
             {
+                SelectedWellsCheckBox.CheckedChanged -= SelectedWellsCheckBox_CheckedChanged;
                 SelectedWellsCheckBox.Checked = SaveArgs.SelectedWellsCheck;
+                SelectedWellsCheckBox.CheckedChanged += SelectedWellsCheckBox_CheckedChanged;
             }
+
+            #region Checking if the saved wells are available in the Project
+            ListOfBoreholes.Clear();
+            
+            foreach (Droid dr in SaveArgs.ListOfBoreholeDroids)
+            {
+                if (dr !=null)
+                {
+                        Borehole item2 = (Borehole)DataManager.Resolve(dr);
+                        if (item2 ==null)
+                        {
+                            ListOfBoreholes.Clear();
+                              break;
+                        }
+                        item2.Deleted -= Deleted_Well;
+                        item2.Deleted += Deleted_Well;
+                        ListOfBoreholes.Add(item2);
+                }
+                else
+                {
+                    ListOfBoreholes.Clear();
+                    break;
+                }
+            }
+            if (ListOfBoreholes.Count>0)
+            {
+                UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
+            }
+            else
+            {
+                Project proj = PetrelProject.PrimaryProject;
+                WellRoot wr = WellRoot.Get(proj);
+
+                BoreholeCollection BhCollection = wr.BoreholeCollection;
+                ListOfBoreholes = GetAllBoreholesInProject(BhCollection);
+                if (ListOfBoreholes.Count > 0)
+                {
+                    UpdateRowsInDataGridWithNewWells(ListOfBoreholes);
+                }
+            }
+
+            #endregion
 
             //Perm Droid
             if (SaveArgs.PermDroid != null)
@@ -2554,6 +3219,10 @@ namespace ModifiedKh
                 {
                     PermeabilityPresentationBox.Text = "Permeability Property Deleted";
                 }
+            }
+            else
+            {
+                args.PermeabilityFromModel = null;
             }
 
             if (SaveArgs.GridDroid != null)
@@ -2570,10 +3239,23 @@ namespace ModifiedKh
                     }
 
             }
-
-            if (SaveArgs.ListOfRowInfo.Count == WellKhDataGridView.Rows.Count)
+            else
             {
+                args.OneLayerPerZoneGrid = null;
+            }
 
+
+            if (SaveArgs.ListOfRowInfo.Count == 0)
+            {
+               
+            }
+            else if (SaveArgs.PermDroid == null)
+            {
+                
+            }
+            else if (SaveArgs.ListOfRowInfo.Count == WellKhDataGridView.Rows.Count)
+            {
+                
                 MaxRatio = SaveArgs.MaxRatio;
 
                 MinRatio = SaveArgs.MinRatio;
@@ -2586,10 +3268,15 @@ namespace ModifiedKh
                 KeepMissingRatio1.CheckedChanged += KeepMissingRatio1_CheckedChanged;
 
 
-                if (!UseOriginalData.Checked && !Truncate2NormalDist.Checked)
+                if (!UseOriginalData.Checked && !Truncate2NormalDist.Checked && MaxRatio != Double.MaxValue && MinRatio != 0.0000000000001)
                 {
+                  //  MaximumRatioValue.TextChanged -= MaximumRatioValue_TextChanged;
                     MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
+                  //  MaximumRatioValue.TextChanged += MaximumRatioValue_TextChanged;
+
+                   // MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
                     MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                   // MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
                 }
 
                 if (SaveArgs.ListOfRowInfo.Count > 0)
@@ -2630,16 +3317,25 @@ namespace ModifiedKh
             }
             else
             {
-                MessageBox.Show("There was a problem loading the saved data into the Table. \n" +
-                    "The number of rows of the current Table does not match the number of rows of the previously saved Table. \n" +
+                SelectedWellsCheckBox.CheckedChanged -= SelectedWellsCheckBox_CheckedChanged;
+                SelectedWellsCheckBox.Checked = false;
+                SelectedWellsCheckBox.CheckedChanged += SelectedWellsCheckBox_CheckedChanged;
+
+                MessageBox.Show("There was a problem loading the saved data into the Table.The number of rows of the current Table does not match\n" +
+                    "the number of rows of the previously saved Table (the selected wells in the Input Pane might not match the saved selected wells). \n" +
                      "The Table will be cleared.");
+               
             }
 
-            if (SaveArgs.MajorRange>0.0)
+            if (SaveArgs.PermDroid != null)
+            {
+             if (SaveArgs.MajorRange>0.0)
             {
                 args.VarArg.MajorRange = SaveArgs.MajorRange;
                 MajorRangeTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.MajorRange, SignificantDigits)); 
             }
+
+
 
             if (SaveArgs.MinorRange>0.0)
             {
@@ -2691,12 +3387,45 @@ namespace ModifiedKh
                 }
             }
             UpdateSillTextBox();
+         }
+          else
+          {
+              MajorRangeTextBox.ReadOnly = true;
+              MinorRangeTextBox.ReadOnly = true;
+              MajorDirectionTextBox.ReadOnly = true;
+              NuggetTextBox.ReadOnly = true;
+              KrigingAlgComboBox.Enabled = false;
+              VariogramTypeComboBox.Enabled = false;
+
+          }
+
+            NotDuringUILoad = true;
         }
 
         private bool TestUserInput()
         {
-            if (this.args.PermeabilityFromModel !=null && this.args.OneLayerPerZoneGrid !=null)
+          //  if (this.args.PermeabilityFromModel !=null && this.args.OneLayerPerZoneGrid !=null)
+            if (WellKhObj.Permeability != null && OneLayerGrid != null)
             {
+                List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZonesCheck1 = KandaPropertyCreator.GetAllLowLevelZones(this.args.PermeabilityFromModel.Grid.Zones);
+                List<Slb.Ocean.Petrel.DomainObject.PillarGrid.Zone> ListOfZonesCheck2 = KandaPropertyCreator.GetAllLowLevelZones(this.args.OneLayerPerZoneGrid.Zones);
+
+                if (ListOfZonesCheck1.Count == ListOfZonesCheck2.Count)
+                {
+                    for (int i = 0; i < ListOfZonesCheck1.Count; i++)
+                    {
+                        if (!ListOfZonesCheck1[i].Name.Equals(ListOfZonesCheck2[i].Name))
+	                    {
+
+                            return false;
+	                    } 
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
                 return true; 
             }
             else
@@ -2766,6 +3495,7 @@ namespace ModifiedKh
                                    dgv.Rows[i].ReadOnly = true;
                                    dgv.Rows[i].Cells[5].ReadOnly = false;
                                    dgv.Rows[i].Cells[7].ReadOnly = false;
+                                   dgv.Rows[i].Cells[4].ReadOnly = false;
                                }
                             }
                            // dgv.CellValueChanged += WellKhDataGridView_CellValueChanged;
@@ -2788,29 +3518,7 @@ namespace ModifiedKh
 
         private void NuggetTextBox_Leave(object sender, EventArgs e)
         {
-            double DoubleValue;
-
-            if (Double.TryParse(NuggetTextBox.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
-            {
-                if (DoubleValue <= 1 && DoubleValue >= 0)
-                {
-                    args.VarArg.Nugget = DoubleValue;
-                    NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
-                    UpdateSillTextBox();
-                }
-                else
-                {
-                    NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
-                    MessageBox.Show("The Nugget can not have a value bigger than 1.");
-                }
-
-            }
-            else
-            {
-                NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
-                MessageBox.Show("Please make sure that you input a positive number without any commas");
-
-            }
+          
         }
 
 
@@ -3010,8 +3718,356 @@ namespace ModifiedKh
                  MessageBox.Show("Please make sure that you input a positive number without any commas that does not exceed the number of rows of the Kh Ratio Table");
 
              }
-         
+
          }
+
+         private void MinimumRatioValue_TextChanged_1(object sender, EventArgs e)
+         {
+
+          ////   DateTime ActualDate = DateTime.Now;
+
+          ////   if (ActualDate.Subtract(OldDate).TotalMilliseconds < 1000)
+          ////   {
+
+          //        DateTime Tthen = DateTime.Now;
+          //       do
+          //       {
+          //            Application.DoEvents();
+
+          //      } while (Tthen.AddSeconds(2) > DateTime.Now); 
+
+
+          //       double DoubleValue;
+
+          //       Truncate2NormalDist.Checked = false;
+          //       UseOriginalData.Checked = false;
+
+          //       if (Double.TryParse(MinimumRatioValue.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
+          //       {
+          //           if (DoubleValue >= 0 && DoubleValue <= MaxRatio && DoubleValue <= 9.999999999999E+307)
+          //           {
+          //               MinRatio = DoubleValue;
+
+          //               //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+          //               TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio, true);
+          //               //End of Change.
+          //           }
+          //           else
+          //           {
+          //               //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+          //               //if (MinRatio != 0.0000000000001)
+          //               //{
+          //               //    MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+          //               //}
+          //               //else
+          //               //{
+          //               //    MinimumRatioValue.Text = String.Empty;
+          //               //}
+          //               MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+          //               MinimumRatioValue.Text = String.Empty;
+          //               MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+          //               MinRatio = 0.0000000000001;
+
+          //               MessageBox.Show("Please make sure that you input a positive number without any commas or that the value chosen is lower than the maximum ratio. The maximum number that can be input is 9.999999999999E+307");
+          //               //End of Change.
+          //           }
+
+          //       }
+          //       else
+          //       {
+          //           //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+          //           if (MinRatio != 0.0000000000001 && MinRatio > 0)
+          //           {
+          //               MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+          //               MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+          //               MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+          //               MessageBox.Show("Please make sure that you input a positive number without any commas");
+          //           }
+          //           else if (MinRatio == 0.0000000000001)
+          //           {
+          //               MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+          //               MinimumRatioValue.Text = String.Empty;
+          //               MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+          //           }
+          //           else
+          //           {
+          //               MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+          //               MinimumRatioValue.Text = String.Empty;
+          //               MinRatio = 0.0000000000001;
+          //               MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+          //               MessageBox.Show("Please make sure that you input a positive number without any commas");
+          //           }
+             
+
+          //       }
+
+
+         }
+
+         private void MajorDirectionTextBox_Leave_1(object sender, EventArgs e)
+         {
+
+             if (MajorDirectionTextBox.ReadOnly != true)
+             {
+                 double DoubleValue;
+                 double CosValue;
+                 double SinValue;
+                 double Alpha = 0;
+                 double Radians;
+
+                 if (Double.TryParse(MajorDirectionTextBox.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
+                 {
+                     Radians = (Math.PI / 180) * DoubleValue;
+
+
+                     if (Radians > -9223372036854775295 && Radians < 9223372036854775295)
+                     {
+
+                         CosValue = Math.Cos(Radians);
+                         SinValue = Math.Sin(Radians);
+
+
+                         if (CosValue >= 0 && SinValue >= 0)
+                         {
+                             Alpha = Math.Acos(CosValue) * (180 / Math.PI);
+                         }
+                         else if (CosValue <= 0 && SinValue > 0)
+                         {
+                             Alpha = -180 + Math.Acos(CosValue) * (180 / Math.PI);
+                         }
+                         else if (CosValue < 0 && SinValue <= 0)
+                         {
+                             Alpha = 180 - Math.Acos(CosValue) * (180 / Math.PI);
+                         }
+                         else if (CosValue >= 0 && SinValue < 0)
+                         {
+                             Alpha = -Math.Acos(CosValue) * (180 / Math.PI);
+                         }
+
+                         args.VarArg.MajorDirection = Angle.CreateFromCompassAngle(Alpha, false);
+                         MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
+                         UpdateSillTextBox();
+                     }
+                     else
+                     {
+                         MessageBox.Show("Please make sure that the number (in degrees) is smaller than 1.60E+17 and bigger than -1.60+17");
+                         MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
+                     }
+
+
+                 }
+                 else
+                 {
+                     MajorDirectionTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(System.Convert.ToDouble(args.VarArg.MajorDirection.CompassDegrees), SignificantDigits));
+                     MessageBox.Show("Please make sure that you input a number without any commas");
+
+                 } 
+             }
+            
+         }
+
+         private void NuggetTextBox_Leave_1(object sender, EventArgs e)
+         {
+             if (NuggetTextBox.ReadOnly != true)
+             {
+                 
+
+             double DoubleValue;
+
+             if (Double.TryParse(NuggetTextBox.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
+             {
+                 if (DoubleValue < 1 && DoubleValue >= 0)
+                 {
+                     args.VarArg.Nugget = DoubleValue;
+                     NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
+                     UpdateSillTextBox();
+                 }
+                 else
+                 {
+                     NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
+                     MessageBox.Show("The Nugget can not have a value bigger than or equal to 1.");
+                 }
+
+             }
+             else
+             {
+                 NuggetTextBox.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(args.VarArg.Nugget, SignificantDigits));
+                 MessageBox.Show("Please make sure that you input a positive number without any commas");
+
+             }
+
+             }
+         }
+
+         private void MinimumRatioValue_Leave(object sender, EventArgs e)
+         {
+
+             if (MinimumRatioValue.ReadOnly != true)
+             {
+                 //DateTime Tthen = DateTime.Now;
+                 //do
+                 //{
+                 //    Application.DoEvents();
+
+                 //} while (Tthen.AddSeconds(2) > DateTime.Now);
+
+
+                 double DoubleValue;
+
+                 Truncate2NormalDist.Checked = false;
+                 UseOriginalData.Checked = false;
+
+                 if (Double.TryParse(MinimumRatioValue.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
+                 {
+                     if (DoubleValue >= 0 && DoubleValue <= MaxRatio && DoubleValue <= 9.999999999999E+307)
+                     {
+                         MinRatio = DoubleValue;
+
+                         //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                         TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio, true);
+                         //End of Change.
+                     }
+                     else
+                     {
+                         //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                         //if (MinRatio != 0.0000000000001)
+                         //{
+                         //    MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                         //}
+                         //else
+                         //{
+                         //    MinimumRatioValue.Text = String.Empty;
+                         //}
+                         //  MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+                         MinimumRatioValue.Text = String.Empty;
+                         //  MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+                         MinRatio = 0.0000000000001;
+
+                         MessageBox.Show("Please make sure that you input a positive number without any commas or that the value chosen is lower than the maximum ratio. The maximum number that can be input is 9.999999999999E+307");
+                         //End of Change.
+                     }
+
+                 }
+                 else
+                 {
+                     //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                     if (MinRatio != 0.0000000000001 && MinRatio > 0)
+                     {
+                         //  MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+                         MinimumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MinRatio, SignificantDigits));
+                         //  MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+                         MessageBox.Show("Please make sure that you input a positive number without any commas");
+                     }
+                     else if (MinRatio == 0.0000000000001)
+                     {
+                         //   MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+                         MinimumRatioValue.Text = String.Empty;
+                         //  MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+                     }
+                     else
+                     {
+                         //     MinimumRatioValue.TextChanged -= MinimumRatioValue_TextChanged_1;
+                         MinimumRatioValue.Text = String.Empty;
+                         MinRatio = 0.0000000000001;
+                         //    MinimumRatioValue.TextChanged += MinimumRatioValue_TextChanged_1;
+                         MessageBox.Show("Please make sure that you input a positive number without any commas");
+                     }
+
+
+                 }
+             }
+           
+         }
+
+         private void MaximumRatioValue_Leave(object sender, EventArgs e)
+         {
+             if (MaximumRatioValue.ReadOnly !=true)
+             {
+                 //DateTime Tthen = DateTime.Now;
+                 //do
+                 //{
+                 //    Application.DoEvents();
+
+                 //} while (Tthen.AddSeconds(2) > DateTime.Now);
+
+                 double DoubleValue;
+
+                 Truncate2NormalDist.Checked = false;
+                 UseOriginalData.Checked = false;
+
+                 if (Double.TryParse(MaximumRatioValue.Text, System.Globalization.NumberStyles.Float, new CultureInfo("en-US"), out DoubleValue))
+                 {
+                     if (DoubleValue >= 0 && DoubleValue >= MinRatio && DoubleValue <= 9.999999999999E+307)
+                     {
+                         MaxRatio = DoubleValue;
+
+                         //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                         TruncateData(ref WellKhDataGridView, ref ListOfRowInfo, MaxRatio, MinRatio, true);
+                         //End of Change.
+                     }
+                     else
+                     {
+                         //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                         //if (MaxRatio != Double.MaxValue)
+                         //{
+                         //    MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
+                         //}
+                         //else
+                         //{
+                         //    MaximumRatioValue.Text = String.Empty;
+                         //}
+                         //End of Change.
+
+                         //New Change
+                         //  MaximumRatioValue.TextChanged -= MaximumRatioValue_TextChanged;
+                         MaximumRatioValue.Text = String.Empty;
+                         //   MaximumRatioValue.TextChanged += MaximumRatioValue_TextChanged;
+                         MaxRatio = Double.MaxValue;
+
+                         //End of Change
+
+                         MessageBox.Show("Please make sure that you input a positive number without any commas or that the value chosen is higher than the minimum ratio. The maximum number that can be input is 9.999999999999E+307");
+                     }
+
+                 }
+                 else
+                 {
+                     //New change. Comment these lines if some odd behaviour occurs when using max or min ratio in UI or table.
+                     if (MaxRatio != Double.MaxValue && MaxRatio > MinRatio)
+                     {
+                         //     MaximumRatioValue.TextChanged -= MaximumRatioValue_TextChanged;
+                         MaximumRatioValue.Text = System.Convert.ToString(RoundingClass.RoundToSignificantDigits(MaxRatio, SignificantDigits));
+                         //     MaximumRatioValue.TextChanged += MaximumRatioValue_TextChanged;
+                         MessageBox.Show("Please make sure that you input a positive number without any commas");
+                     }
+                     else if (MaxRatio == Double.MaxValue)
+                     {
+                         //     MaximumRatioValue.TextChanged -= MaximumRatioValue_TextChanged;
+                         MaximumRatioValue.Text = String.Empty;
+                         //     MaximumRatioValue.TextChanged += MaximumRatioValue_TextChanged;
+                         MaxRatio = Double.MaxValue;
+                     }
+                     else
+                     {
+                         //     MaximumRatioValue.TextChanged -= MaximumRatioValue_TextChanged;
+                         MaximumRatioValue.Text = String.Empty;
+                         //     MaximumRatioValue.TextChanged += MaximumRatioValue_TextChanged;
+                         MaxRatio = Double.MaxValue;
+                         MessageBox.Show("Please make sure that you input a positive number without any commas");
+                     }
+                     //End of Change.
+
+
+                 }
+             }
+
+         }
+
+   
+
+           //  OldDate = DateTime.Now;
+            
+         //}
     }
 
     static class RoundingClass
